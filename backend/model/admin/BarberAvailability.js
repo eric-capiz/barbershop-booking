@@ -7,11 +7,27 @@ const BarberAvailabilitySchema = new mongoose.Schema(
       ref: "Admin",
       required: true,
     },
+    currentMonth: {
+      month: Number,
+      year: Number,
+      isSet: {
+        type: Boolean,
+        default: false,
+      },
+    },
     schedule: [
       {
         date: {
           type: Date,
           required: true,
+        },
+        isWorkingDay: {
+          type: Boolean,
+          default: false,
+        },
+        workHours: {
+          start: Date,
+          end: Date,
         },
         timeSlots: [
           {
