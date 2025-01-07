@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const BarberProfile = require("../../model/admin/BarberProfile");
+const Admin = require("../../model/admin/Admin");
 
 // @route   GET /api/admin/profile
 // @desc    Get admin's barber profile
@@ -9,11 +10,12 @@ const BarberProfile = require("../../model/admin/BarberProfile");
 router.get("/", async (req, res) => {
   try {
     const profile = await BarberProfile.findOne({ adminId: req.user.id });
+    const admin = await Admin.findById(req.user.id).select("-password");
 
     if (!profile) {
       return res.status(404).json({ message: "Profile not found" });
     }
-    res.json(profile);
+    res.json({ profile, admin });
   } catch (error) {
     console.error(err.message);
     res.status(500).json({ message: "Server error" });
@@ -25,12 +27,45 @@ router.get("/", async (req, res) => {
 // @access  Private/Admin
 router.put("/", async (req, res) => {
   try {
-    const { bio, specialties, yearsOfExperience, socialMedia } = req.body;
+    const {
+      // Admin fields
+      name,
+      email,
+      username,
 
+      // BarberProfile fields
+      bio,
+      specialties,
+      yearsOfExperience,
+      socialMedia,
+    } = req.body;
+
+    // Update Admin info
+    let admin = await Admin.findById(req.user.id);
+
+    // Check for unique fields before updating
+    if (username && username !== admin.username) {
+      const existingUser = await Admin.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+      admin.username = username;
+    }
+
+    if (email && email !== admin.email) {
+      const existingUser = await Admin.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+      admin.email = email;
+    }
+
+    if (name) admin.name = name;
+    await admin.save();
+
+    // Update BarberProfile
     let profile = await BarberProfile.findOne({ adminId: req.user.id });
-
     if (!profile) {
-      // Create new profile
       profile = new BarberProfile({
         adminId: req.user.id,
         bio,
@@ -39,16 +74,17 @@ router.put("/", async (req, res) => {
         socialMedia,
       });
     } else {
-      // Update existing profile
-      profile.bio = bio || profile.bio;
-      profile.specialties = specialties || profile.specialties;
-      profile.yearsOfExperience =
-        yearsOfExperience || profile.yearsOfExperience;
-      profile.socialMedia = socialMedia || profile.socialMedia;
+      if (bio) profile.bio = bio;
+      if (specialties) profile.specialties = specialties;
+      if (yearsOfExperience) profile.yearsOfExperience = yearsOfExperience;
+      if (socialMedia) profile.socialMedia = socialMedia;
     }
 
     await profile.save();
-    res.json(profile);
+
+    // Return both updated admin and profile info
+    const updatedAdmin = await Admin.findById(req.user.id).select("-password");
+    res.json({ profile, admin: updatedAdmin });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Server error" });

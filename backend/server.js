@@ -4,6 +4,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const authRoutes = require("./routes/auth/auth");
 const adminRoutes = require("./routes/admin");
+const userRoutes = require("./routes/user");
 require("dotenv").config();
 
 const app = express();
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/user", userRoutes);
 
 // Database connection
 mongoose
