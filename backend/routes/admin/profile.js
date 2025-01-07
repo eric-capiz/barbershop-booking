@@ -1,5 +1,10 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../../cloudinary/CloudinaryMiddleware");
+const {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+} = require("../../cloudinary/cloudinaryUtils");
 
 const BarberProfile = require("../../model/admin/BarberProfile");
 const Admin = require("../../model/admin/Admin");
@@ -94,23 +99,78 @@ router.put("/", async (req, res) => {
 // @route   PUT /api/admin/profile/image
 // @desc    Update profile image
 // @access  Private/Admin
-router.put("/image", async (req, res) => {
+router.put("/image", upload.single("image"), async (req, res) => {
   try {
-    const { url, publicId } = req.body;
-
     let profile = await BarberProfile.findOne({ adminId: req.user.id });
 
     if (!profile) {
       return res.status(404).json({ message: "Profile not found" });
     }
 
-    profile.profileImage = {
-      url: url || profile.profileImage.url,
-      publicId: publicId || profile.profileImage.publicId,
-    };
+    if (!req.file) {
+      return res.status(400).json({ message: "Please upload an image" });
+    }
 
-    await profile.save();
-    res.json(profile);
+    try {
+      // Delete old image if exists
+      if (profile.profileImage.publicId) {
+        await deleteFromCloudinary(profile.profileImage.publicId);
+      }
+
+      // Upload new image
+      const result = await uploadToCloudinary(req.file, "profile");
+      profile.profileImage = {
+        url: result.secure_url,
+        publicId: result.public_id,
+      };
+
+      await profile.save();
+      res.json(profile);
+    } catch (error) {
+      return res.status(400).json({
+        message: "Failed to update profile image",
+        error: error.message,
+      });
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// @route   DELETE /api/admin/profile/image
+// @desc    Delete profile image
+// @access  Private/Admin
+router.delete("/image", async (req, res) => {
+  try {
+    let profile = await BarberProfile.findOne({ adminId: req.user.id });
+
+    if (!profile) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
+
+    if (!profile.profileImage.publicId) {
+      return res.status(400).json({ message: "No profile image exists" });
+    }
+
+    try {
+      // Delete from Cloudinary
+      await deleteFromCloudinary(profile.profileImage.publicId);
+
+      // Clear image data
+      profile.profileImage = {
+        url: "",
+        publicId: "",
+      };
+
+      await profile.save();
+      res.json(profile);
+    } catch (error) {
+      return res.status(400).json({
+        message: "Failed to delete profile image",
+        error: error.message,
+      });
+    }
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Server error" });

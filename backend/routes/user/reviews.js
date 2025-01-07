@@ -1,6 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/auth");
+const upload = require("../../cloudinary/CloudinaryMiddleware");
+const {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+} = require("../../cloudinary/cloudinaryUtils");
 
 const Review = require("../../model/review/Review");
 const UserAppointment = require("../../model/user/UserAppointment");
@@ -27,15 +32,14 @@ router.use(auth);
 // @route   POST /api/user/reviews
 // @desc    Create a review for a completed appointment
 // @access  Private
-router.post("/", async (req, res) => {
+router.post("/", upload.single("image"), async (req, res) => {
   try {
-    const { appointmentId, rating, feedback, image } = req.body;
+    const { appointmentId, rating, feedback } = req.body;
 
-    // Check if appointment exists and belongs to user
     const appointment = await UserAppointment.findOne({
       _id: appointmentId,
       userId: req.user.id,
-      status: "completed", // Can only review completed appointments
+      status: "completed",
     });
 
     if (!appointment) {
@@ -44,12 +48,27 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Check if review already exists
     const existingReview = await Review.findOne({ appointmentId });
     if (existingReview) {
       return res.status(400).json({
         message: "Review already exists for this appointment",
       });
+    }
+
+    let image = {};
+    if (req.file) {
+      try {
+        const result = await uploadToCloudinary(req.file, "reviews");
+        image = {
+          url: result.secure_url,
+          publicId: result.public_id,
+        };
+      } catch (error) {
+        return res.status(400).json({
+          message: "Failed to upload image",
+          error: error.message,
+        });
+      }
     }
 
     const newReview = new Review({
@@ -62,7 +81,6 @@ router.post("/", async (req, res) => {
     });
 
     const review = await newReview.save();
-
     await review.populate("userId", "name");
     await review.populate("appointmentId", "appointmentDate");
 
@@ -76,9 +94,9 @@ router.post("/", async (req, res) => {
 // @route   PUT /api/user/reviews/:id
 // @desc    Update a review
 // @access  Private
-router.put("/:id", async (req, res) => {
+router.put("/:id", upload.single("image"), async (req, res) => {
   try {
-    const { rating, feedback, image } = req.body;
+    const { rating, feedback } = req.body;
 
     let review = await Review.findById(req.params.id);
 
@@ -86,17 +104,36 @@ router.put("/:id", async (req, res) => {
       return res.status(404).json({ message: "Review not found" });
     }
 
-    // Check if review belongs to user
     if (review.userId.toString() !== req.user.id) {
       return res.status(401).json({ message: "Not authorized" });
     }
 
+    // Handle image update if new image is uploaded
+    if (req.file) {
+      try {
+        // Delete old image if exists
+        if (review.image && review.image.publicId) {
+          await deleteFromCloudinary(review.image.publicId);
+        }
+
+        // Upload new image
+        const result = await uploadToCloudinary(req.file, "reviews");
+        review.image = {
+          url: result.secure_url,
+          publicId: result.public_id,
+        };
+      } catch (error) {
+        return res.status(400).json({
+          message: "Failed to update image",
+          error: error.message,
+        });
+      }
+    }
+
     if (rating) review.rating = rating;
     if (feedback) review.feedback = feedback;
-    if (image) review.image = image;
 
     await review.save();
-
     await review.populate("userId", "name");
     await review.populate("appointmentId", "appointmentDate");
 
@@ -108,7 +145,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // @route   DELETE /api/user/reviews/:id
-// @desc    Soft delete a review
+// @desc    Soft delete a review and remove image
 // @access  Private
 router.delete("/:id", async (req, res) => {
   try {
@@ -118,9 +155,18 @@ router.delete("/:id", async (req, res) => {
       return res.status(404).json({ message: "Review not found" });
     }
 
-    // Check if review belongs to user
     if (review.userId.toString() !== req.user.id) {
       return res.status(401).json({ message: "Not authorized" });
+    }
+
+    // Delete image from Cloudinary if exists
+    if (review.image && review.image.publicId) {
+      try {
+        await deleteFromCloudinary(review.image.publicId);
+        review.image = {}; // Clear image data
+      } catch (error) {
+        console.error("Failed to delete image from Cloudinary:", error);
+      }
     }
 
     review.isActive = false;
