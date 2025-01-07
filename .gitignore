@@ -3,6 +3,10 @@ node_modules/
 
 # Environment variables
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
 logs
@@ -34,3 +38,16 @@ coverage
 
 # Seed files
 seeds/
+
+# Frontend build
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
