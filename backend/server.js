@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const morgan = require("morgan");
+const authRoutes = require("./routes/auth/auth");
 require("dotenv").config();
 
 const app = express();
@@ -16,15 +17,14 @@ app.get("/", (req, res) => {
   res.json({ message: "Sanchez Barbershop API is up and running!" });
 });
 
+// Routes
+app.use("/api/auth", authRoutes);
+
 // Database connection
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
-
-// Routes ( add these later)
-// app.use('/api/admin', require('./routes/admin'));
-// app.use('/api/users', require('./routes/users'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

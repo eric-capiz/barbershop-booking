@@ -31,3 +31,6 @@ coverage
 
 # VS Code files
 .vscode/ 
+
+# Seed files
+seeds/
