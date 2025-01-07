@@ -1,8 +1,28 @@
 const express = require("express");
 const router = express.Router();
+const auth = require("../../middleware/auth");
 
 const Review = require("../../model/review/Review");
 const UserAppointment = require("../../model/user/UserAppointment");
+
+// @route   GET /api/user/reviews
+// @desc    Get all active reviews
+// @access  Public
+router.get("/", async (req, res) => {
+  try {
+    const reviews = await Review.find({ isActive: true })
+      .populate("userId", "name")
+      .sort({ createdAt: -1 });
+
+    res.json(reviews);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Apply auth middleware for protected routes
+router.use(auth);
 
 // @route   POST /api/user/reviews
 // @desc    Create a review for a completed appointment
@@ -53,25 +73,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// @route   GET /api/user/reviews
-// @desc    Get all reviews by the user
-// @access  Private
-router.get("/", async (req, res) => {
-  try {
-    const reviews = await Review.find({
-      userId: req.user.id,
-      isActive: true,
-    })
-      .populate("appointmentId", "appointmentDate")
-      .sort({ createdAt: -1 });
-
-    res.json(reviews);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
 // @route   PUT /api/user/reviews/:id
 // @desc    Update a review
 // @access  Private
@@ -107,7 +108,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // @route   DELETE /api/user/reviews/:id
-// @desc    Soft delete a review (set isActive to false)
+// @desc    Soft delete a review
 // @access  Private
 router.delete("/:id", async (req, res) => {
   try {

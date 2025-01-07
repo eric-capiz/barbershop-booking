@@ -1,20 +1,26 @@
 const express = require("express");
 const router = express.Router();
+const auth = require("../../middleware/auth");
+const isAdmin = require("../../middleware/isAdmin");
 
 const Service = require("../../model/admin/Service");
 
 // @route   GET /api/admin/services
 // @desc    Get all services
-// @access  Private/Admin
+// @access  Public
 router.get("/", async (req, res) => {
   try {
-    const services = await Service.find({ adminId: req.user.id });
+    const services = await Service.find({ isActive: true });
     res.json(services);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// Apply auth middleware for protected routes
+router.use(auth);
+router.use(isAdmin);
 
 // @route   POST /api/admin/services
 // @desc    Create a service

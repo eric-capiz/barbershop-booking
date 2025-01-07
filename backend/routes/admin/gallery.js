@@ -1,14 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const auth = require("../../middleware/auth");
+const isAdmin = require("../../middleware/isAdmin");
 
 const GalleryItem = require("../../model/admin/GalleryItem");
 
 // @route   GET /api/admin/gallery
 // @desc    Get all gallery items
-// @access  Private/Admin
+// @access  Public
 router.get("/", async (req, res) => {
   try {
-    const gallery = await GalleryItem.find({ adminId: req.user.id }).populate(
+    const gallery = await GalleryItem.find({ isActive: true }).populate(
       "serviceType",
       "name"
     ); // Populate service name
@@ -18,6 +20,10 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// Apply auth middleware for protected routes
+router.use(auth);
+router.use(isAdmin);
 
 // @route   POST /api/admin/gallery
 // @desc    Add a gallery item
