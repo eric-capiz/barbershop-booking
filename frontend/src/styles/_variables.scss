@@ -1,8 +1,30 @@
-// Colors
-$primary-black: #1a1a1a;
-$secondary-black: #2c2c2c;
-$gold: #c6a87d;
-$silver: #d4d4d4;
-$white: #ffffff;
+// Core Colors
+$black-primary: #111111;
+$black-secondary: #1a1a1a;
+$black-light: #222222;
+
+// Metallics
+$gold-primary: #c6a87d;
+$gold-light: #d4bc8d;
+$gold-dark: #b89b70;
+
+$silver-primary: #d4d4d4;
+$silver-light: #e5e5e5;
+$silver-dark: #adadad;
+
+// Gradients
+$gradient-dark: linear-gradient(
+  135deg,
+  $black-primary 0%,
+  $black-secondary 100%
+);
+$gradient-gold: linear-gradient(135deg, $gold-dark 0%, $gold-primary 100%);
+
+// Typography
 $font-primary: "Playfair Display", serif;
 $font-secondary: "Roboto", sans-serif;
+
+// Z-index layers
+$z-background: 1;
+$z-elements: 5;
+$z-content: 10;
