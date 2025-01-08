@@ -1,13 +1,22 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { RxHamburgerMenu, RxCross2 } from "react-icons/rx";
+import { HiMenu, HiX } from "react-icons/hi";
 import "./_header.scss";
+import AuthModal from "../auth/AuthModal";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authType, setAuthType] = useState<"login" | "register">("login");
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleAuthClick = (type: "login" | "register") => {
+    setAuthType(type);
+    setIsAuthModalOpen(true);
+    setIsMenuOpen(false);
   };
 
   return (
@@ -22,7 +31,7 @@ const Header = () => {
           onClick={toggleMenu}
           aria-label="Toggle menu"
         >
-          {isMenuOpen ? <RxCross2 size={24} /> : <RxHamburgerMenu size={24} />}
+          {isMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
         </button>
 
         <nav className={`nav-menu ${isMenuOpen ? "active" : ""}`}>
@@ -42,15 +51,26 @@ const Header = () => {
             Contact
           </Link>
           <div className="auth-links">
-            <Link to="/login" className="nav-link auth-link">
+            <button
+              onClick={() => handleAuthClick("login")}
+              className="nav-link auth-link login"
+            >
               Login
-            </Link>
-            <Link to="/register" className="nav-link auth-link signup">
+            </button>
+            <button
+              onClick={() => handleAuthClick("register")}
+              className="nav-link auth-link signup"
+            >
               Sign Up
-            </Link>
+            </button>
           </div>
         </nav>
       </div>
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialView={authType}
+      />
     </header>
   );
 };
