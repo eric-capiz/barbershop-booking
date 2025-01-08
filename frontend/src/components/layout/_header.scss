@@ -89,7 +89,8 @@
         border-color: $gold-dark;
       }
     }
-    &.login {
+    &.login,
+    &.logout {
       background: $black-primary;
     }
   }

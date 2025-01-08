@@ -1,0 +1,24 @@
+import axios from "axios";
+import {
+  LoginCredentials,
+  RegisterData,
+  AuthResponse,
+} from "../types/auth.types";
+
+export const authService = {
+  login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
+    const { data } = await axios.post<AuthResponse>(
+      "/api/auth/login",
+      credentials
+    );
+    return data;
+  },
+
+  register: async (userData: RegisterData): Promise<AuthResponse> => {
+    const { data } = await axios.post<AuthResponse>(
+      "/api/auth/register",
+      userData
+    );
+    return data;
+  },
+};
