@@ -1,18 +1,19 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService } from "../services/auth.service";
 import { LoginCredentials, RegisterData } from "../types/auth.types";
-import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../components/store/authStore";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
   const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
 
   return useMutation({
-    mutationFn: (credentials: LoginCredentials) =>
-      authService.login(credentials),
+    mutationFn: async (credentials: LoginCredentials) => {
+      const data = await authService.login(credentials);
+      localStorage.setItem("token", data.token); // Set token immediately
+      return data;
+    },
     onSuccess: (data) => {
-      // Store the token
-      localStorage.setItem("token", data.token);
       setIsAuthenticated(true);
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },

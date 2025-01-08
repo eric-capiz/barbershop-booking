@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
-import AuthModal from "../auth/AuthModal";
 import { useLogout } from "../../hooks/useAuth";
+import { useAuthStore } from "../store/authStore";
+import { useUser } from "../../hooks/useUser";
+import AuthModal from "../auth/AuthModal";
 import "./_header.scss";
-import { useAuthStore } from "../../store/authStore";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,6 +13,8 @@ const Header = () => {
   const [authType, setAuthType] = useState<"login" | "register">("login");
   const logout = useLogout();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { data: userData } = useUser();
+  console.log(userData);
 
   const handleAuthClick = (type: "login" | "register") => {
     setAuthType(type);
@@ -58,12 +61,17 @@ const Header = () => {
             </Link>
             <div className="auth-links">
               {isAuthenticated ? (
-                <button
-                  onClick={handleLogout}
-                  className="nav-link auth-link logout"
-                >
-                  Logout
-                </button>
+                <>
+                  <span className="username">
+                    Welcome, {userData?.username}
+                  </span>
+                  <button
+                    onClick={handleLogout}
+                    className="nav-link auth-link logout"
+                  >
+                    Logout
+                  </button>
+                </>
               ) : (
                 <>
                   <button
