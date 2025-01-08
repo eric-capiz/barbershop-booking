@@ -10,12 +10,17 @@ export interface RegisterData extends LoginCredentials {
 
 export interface AuthResponse {
   token: string;
+  isAdmin?: boolean;
 }
 
 export interface User {
-  id: string;
+  _id: string;
   username: string;
   email: string;
-  name: string;
-  role: "user" | "admin";
+  name?: string;
+}
+
+export interface Admin extends User {
+  role: "admin";
+  isActive: boolean;
 }

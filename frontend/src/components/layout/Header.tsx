@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
 import { useLogout } from "../../hooks/useAuth";
-import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../../store/authStore";
 import { useUser } from "../../hooks/useUser";
 import AuthModal from "../auth/AuthModal";
 import "./_header.scss";
@@ -13,8 +13,8 @@ const Header = () => {
   const [authType, setAuthType] = useState<"login" | "register">("login");
   const logout = useLogout();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isAdmin = useAuthStore((state) => state.isAdmin);
   const { data: userData } = useUser();
-  console.log(userData);
 
   const handleAuthClick = (type: "login" | "register") => {
     setAuthType(type);
@@ -26,6 +26,8 @@ const Header = () => {
     logout();
     setIsMenuOpen(false);
   };
+
+  console.log(userData);
 
   return (
     <>
@@ -62,9 +64,18 @@ const Header = () => {
             <div className="auth-links">
               {isAuthenticated ? (
                 <>
-                  <span className="username">
-                    Welcome, {userData?.username}
-                  </span>
+                  {isAdmin ? (
+                    <Link
+                      to="/dashboard"
+                      className="nav-link auth-link dashboard"
+                    >
+                      Admin Dashboard
+                    </Link>
+                  ) : (
+                    <span className="username">
+                      Welcome, {userData?.username}
+                    </span>
+                  )}
                   <button
                     onClick={handleLogout}
                     className="nav-link auth-link logout"

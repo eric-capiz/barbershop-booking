@@ -21,4 +21,12 @@ export const authService = {
     );
     return data;
   },
+
+  getCurrentUser: async () => {
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    const { data } = await axios.get(
+      isAdmin ? "/api/admin/profile" : "/api/user/profile"
+    );
+    return isAdmin ? data.admin : data;
+  },
 };

@@ -93,7 +93,7 @@ router.post("/login", async (req, res) => {
         { expiresIn: "24h" },
         (err, token) => {
           if (err) throw err;
-          res.json({ token });
+          res.json({ token, isAdmin: true });
         }
       );
     } else {
@@ -123,7 +123,7 @@ router.post("/login", async (req, res) => {
         { expiresIn: "24h" },
         (err, token) => {
           if (err) throw err;
-          res.json({ token });
+          res.json({ token, isAdmin: false });
         }
       );
     }
