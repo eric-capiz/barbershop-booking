@@ -1,20 +1,7 @@
 import { useEffect, useState } from "react";
+import { useProfile } from "../../hooks/useProfile";
+import { useProfileStore } from "../../store/profileStore";
 import "./_about.scss";
-
-interface Profile {
-  bio: string;
-  specialties: string[];
-  yearsOfExperience: number;
-  profileImage: {
-    url: string;
-    publicId: string;
-  };
-  socialMedia: {
-    instagram: string;
-    facebook: string;
-    twitter: string;
-  };
-}
 
 interface Service {
   _id: string;
@@ -26,38 +13,34 @@ interface Service {
   isActive: boolean;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-
 const About = () => {
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const { data: profile, isLoading } = useProfile();
+  const setProfile = useProfileStore((state) => state.setProfile);
   const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  // Set profile in global store when data is fetched
+  useEffect(() => {
+    if (profile) {
+      setProfile(profile);
+    }
+  }, [profile, setProfile]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchServices = async () => {
       try {
-        const [profileRes, servicesRes] = await Promise.all([
-          fetch(`${API_URL}/api/admin/profile`),
-          fetch(`${API_URL}/api/admin/services`),
-        ]);
-
-        const profileData = await profileRes.json();
-        const servicesData = await servicesRes.json();
-
-        setProfile(profileData);
-        setServices(servicesData);
+        const response = await fetch(`/api/admin/services`);
+        const data = await response.json();
+        setServices(data);
       } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching services:", error);
       }
     };
 
-    fetchData();
+    fetchServices();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  console.log(profile);
+  if (isLoading) return <div>Loading...</div>;
+
   return (
     <div className="about">
       {/* Profile Section */}

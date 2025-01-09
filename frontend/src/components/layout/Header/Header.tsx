@@ -27,8 +27,6 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-  console.log(userData);
-
   return (
     <>
       <header className="header">
