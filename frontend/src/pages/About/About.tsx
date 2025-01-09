@@ -1,24 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useProfile } from "../../hooks/useProfile";
+import { useServices } from "../../hooks/useService";
 import { useProfileStore } from "../../store/profileStore";
+import { useServicesStore } from "../../store/serviceStore";
 import "./_about.scss";
 
-interface Service {
-  _id: string;
-  name: string;
-  description: string;
-  duration: number;
-  price: number;
-  category: string;
-  isActive: boolean;
-}
-
 const About = () => {
-  const { data: profile, isLoading } = useProfile();
+  const { data: profile, isLoading: profileLoading } = useProfile();
+  const { data: services, isLoading: servicesLoading } = useServices();
   const setProfile = useProfileStore((state) => state.setProfile);
-  const [services, setServices] = useState<Service[]>([]);
+  const setServices = useServicesStore((state) => state.setServices);
 
-  // Set profile in global store when data is fetched
   useEffect(() => {
     if (profile) {
       setProfile(profile);
@@ -26,20 +18,12 @@ const About = () => {
   }, [profile, setProfile]);
 
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const response = await fetch(`/api/admin/services`);
-        const data = await response.json();
-        setServices(data);
-      } catch (error) {
-        console.error("Error fetching services:", error);
-      }
-    };
+    if (services) {
+      setServices(services);
+    }
+  }, [services, setServices]);
 
-    fetchServices();
-  }, []);
-
-  if (isLoading) return <div>Loading...</div>;
+  if (profileLoading || servicesLoading) return <div>Loading...</div>;
 
   return (
     <div className="about">
@@ -72,7 +56,7 @@ const About = () => {
       <section className="about-services">
         <h2>Services</h2>
         <div className="services-grid">
-          {services.map((service) => (
+          {services?.map((service) => (
             <div key={service._id} className="service-card">
               <h3>{service.name}</h3>
               <p>{service.description}</p>
