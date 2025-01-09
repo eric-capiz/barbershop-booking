@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const auth = require("../../middleware/auth");
+const isAdmin = require("../../middleware/isAdmin");
 const upload = require("../../cloudinary/CloudinaryMiddleware");
 const {
   uploadToCloudinary,
@@ -10,22 +12,27 @@ const BarberProfile = require("../../model/admin/BarberProfile");
 const Admin = require("../../model/admin/Admin");
 
 // @route   GET /api/admin/profile
-// @desc    Get admin's barber profile
-// @access  Private/Admin
+// @desc    Get barber profile (public)
+// @access  Public
 router.get("/", async (req, res) => {
   try {
-    const profile = await BarberProfile.findOne({ adminId: req.user.id });
-    const admin = await Admin.findById(req.user.id).select("-password");
+    const profile = await BarberProfile.findOne().select(
+      "bio specialties yearsOfExperience profileImage socialMedia"
+    );
 
     if (!profile) {
       return res.status(404).json({ message: "Profile not found" });
     }
-    res.json({ profile, admin });
+    res.json(profile);
   } catch (error) {
-    console.error(err.message);
+    console.error(error.message);
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// Apply auth middleware for protected routes
+router.use(auth);
+router.use(isAdmin);
 
 // @route   PUT /api/admin/profile
 // @desc    Update admin's barber profile
