@@ -50,7 +50,7 @@ const Header = () => {
               Home
             </Link>
             <Link to="/about" className="nav-link">
-              About Us
+              About
             </Link>
             <Link to="/services" className="nav-link">
               Services
