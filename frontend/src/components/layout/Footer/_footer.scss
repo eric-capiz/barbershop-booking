@@ -1,0 +1,41 @@
+@use "@styles/variables" as *;
+
+.footer {
+  background-color: $black-secondary;
+  color: $silver-primary;
+  padding: 0.75rem 0;
+  width: 100%;
+  border-top: 1px solid rgba($gold-primary, 0.1);
+  font-size: 0.8rem;
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .location,
+  .contact {
+    color: $gold-primary;
+
+    a {
+      color: $silver-primary;
+      text-decoration: none;
+
+      &:hover {
+        color: $gold-primary;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .footer-content {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
+  }
+}

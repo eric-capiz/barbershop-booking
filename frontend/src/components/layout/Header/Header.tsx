@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
-import { useLogout } from "../../hooks/useAuth";
-import { useAuthStore } from "../../store/authStore";
-import { useUser } from "../../hooks/useUser";
-import AuthModal from "../auth/AuthModal";
+import { useLogout } from "../../../hooks/useAuth";
+import { useAuthStore } from "../../../store/authStore";
+import { useUser } from "../../../hooks/useUser";
+import AuthModal from "../../auth/AuthModal";
 import "./_header.scss";
 
 const Header = () => {
