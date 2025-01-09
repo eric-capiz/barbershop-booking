@@ -26,6 +26,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    @media (max-width: 1023px) {
+      justify-content: center;
+    }
   }
 
   .hero-text {
@@ -64,6 +68,12 @@
       &:hover {
         background: $gold-dark;
       }
+    }
+
+    @media (max-width: 1023px) {
+      text-align: center;
+      padding-left: 0;
+      max-width: 100%;
     }
   }
 
