@@ -1,4 +1,10 @@
-import { FaUserAlt, FaCut, FaImage, FaClock } from "react-icons/fa";
+import {
+  FaUserAlt,
+  FaCut,
+  FaImage,
+  FaClock,
+  FaCalendarAlt,
+} from "react-icons/fa";
 // import "./_adminSidebar.scss";
 
 interface AdminSidebarProps {
@@ -15,6 +21,7 @@ const AdminSidebar = ({
     { id: "services", label: "Services", icon: <FaCut /> },
     { id: "gallery", label: "Gallery", icon: <FaImage /> },
     { id: "availability", label: "Availability", icon: <FaClock /> },
+    { id: "appointments", label: "Appointments", icon: <FaCalendarAlt /> },
   ];
 
   return (
