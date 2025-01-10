@@ -50,8 +50,8 @@ const Header = () => {
             <Link to="/about" className="nav-link">
               About
             </Link>
-            <Link to="/gallery" className="nav-link">
-              Gallery
+            <Link to="/my-work" className="nav-link">
+              My Work
             </Link>
             <Link to="/contact" className="nav-link">
               Contact

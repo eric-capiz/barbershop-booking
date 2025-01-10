@@ -11,7 +11,7 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
-          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/my-work" element={<Gallery />} />
           <Route path="/about" element={<About />} />
           {/* Auth Routes */}
           <Route path="/login" element={<div>Login</div>} />
