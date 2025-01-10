@@ -19,7 +19,7 @@ const Gallery = () => {
 
   return (
     <div className="gallery-page">
-      <h1>Our Work</h1>
+      <h1>Sample Cuts</h1>
       <GallerySection />
       <ReviewsSection />
     </div>
