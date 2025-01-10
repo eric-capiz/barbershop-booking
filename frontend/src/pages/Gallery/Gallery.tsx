@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useGallery } from "../../hooks/useGallery";
 import { useGalleryStore } from "../../store/galleryStore";
 import GallerySection from "./components/GallerySection";
+import ReviewsSection from "./components/ReviewsSection";
 import "./_gallery.scss";
 
 const Gallery = () => {
@@ -20,6 +21,7 @@ const Gallery = () => {
     <div className="gallery-page">
       <h1>Our Work</h1>
       <GallerySection />
+      <ReviewsSection />
     </div>
   );
 };

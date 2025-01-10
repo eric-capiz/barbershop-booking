@@ -82,3 +82,84 @@
     }
   }
 }
+
+.reviews-section {
+  margin-top: 4rem;
+  padding: 2rem 0;
+
+  h2 {
+    text-align: center;
+    color: $gold-primary;
+    margin-bottom: 2rem;
+  }
+
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+
+    .review-card {
+      background: $black-secondary;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+      .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        h3 {
+          color: $silver-primary;
+          font-size: 1.1rem;
+        }
+
+        .rating {
+          display: flex;
+          gap: 0.25rem;
+
+          .star-filled {
+            color: $gold-primary;
+          }
+
+          .star-empty {
+            color: rgba($gold-primary, 0.3);
+          }
+        }
+      }
+
+      .review-text {
+        color: $silver-primary;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+      }
+
+      .review-image {
+        margin: 1rem 0;
+
+        img {
+          width: 100%;
+          height: 200px;
+          object-fit: cover;
+          border-radius: 4px;
+        }
+      }
+
+      .review-date {
+        color: rgba($silver-primary, 0.6);
+        font-size: 0.9rem;
+        text-align: right;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 2rem;
+
+    .reviews-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+}
