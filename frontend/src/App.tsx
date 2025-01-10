@@ -5,7 +5,7 @@ import About from "./pages/About/About";
 import Gallery from "./pages/Gallery/Gallery";
 import ProtectedAdminRoute from "./components/auth/ProtectedAdminRoute";
 import ProtectedUserRoute from "./components/auth/ProtectedUserRoute";
-
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 function App() {
   return (
     <Router>
@@ -42,7 +42,7 @@ function App() {
             path="/dashboard/*"
             element={
               <ProtectedAdminRoute>
-                <div>Admin Dashboard</div>
+                <AdminDashboard />
               </ProtectedAdminRoute>
             }
           />

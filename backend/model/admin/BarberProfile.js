@@ -2,10 +2,36 @@ const mongoose = require("mongoose");
 
 const BarberProfileSchema = new mongoose.Schema(
   {
-    adminId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Admin",
+    email: {
+      type: String,
       required: true,
+      unique: true,
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      default: "admin",
+      enum: ["admin", "superadmin"],
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    lastLogin: {
+      type: Date,
+      default: Date.now,
     },
     bio: {
       type: String,

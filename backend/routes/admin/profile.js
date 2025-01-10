@@ -9,7 +9,6 @@ const {
 } = require("../../cloudinary/cloudinaryUtils");
 
 const BarberProfile = require("../../model/admin/BarberProfile");
-const Admin = require("../../model/admin/Admin");
 
 // @route   GET /api/admin/profile
 // @desc    Get barber profile (public)
@@ -17,7 +16,7 @@ const Admin = require("../../model/admin/Admin");
 router.get("/", async (req, res) => {
   try {
     const profile = await BarberProfile.findOne().select(
-      "bio specialties yearsOfExperience profileImage socialMedia"
+      "name email username bio specialties yearsOfExperience profileImage socialMedia"
     );
 
     if (!profile) {
@@ -35,68 +34,57 @@ router.use(auth);
 router.use(isAdmin);
 
 // @route   PUT /api/admin/profile
-// @desc    Update admin's barber profile
+// @desc    Update barber profile
 // @access  Private/Admin
 router.put("/", async (req, res) => {
   try {
     const {
-      // Admin fields
       name,
       email,
       username,
-
-      // BarberProfile fields
       bio,
       specialties,
       yearsOfExperience,
       socialMedia,
     } = req.body;
 
-    // Update Admin info
-    let admin = await Admin.findById(req.user.id);
+    let profile = await BarberProfile.findById(req.user.id);
 
-    // Check for unique fields before updating
-    if (username && username !== admin.username) {
-      const existingUser = await Admin.findOne({ username });
+    if (!profile) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
+
+    // Check unique fields
+    if (username && username !== profile.username) {
+      const existingUser = await BarberProfile.findOne({ username });
       if (existingUser) {
         return res.status(400).json({ message: "Username already exists" });
       }
-      admin.username = username;
     }
 
-    if (email && email !== admin.email) {
-      const existingUser = await Admin.findOne({ email });
+    if (email && email !== profile.email) {
+      const existingUser = await BarberProfile.findOne({ email });
       if (existingUser) {
         return res.status(400).json({ message: "Email already exists" });
       }
-      admin.email = email;
     }
 
-    if (name) admin.name = name;
-    await admin.save();
-
-    // Update BarberProfile
-    let profile = await BarberProfile.findOne({ adminId: req.user.id });
-    if (!profile) {
-      profile = new BarberProfile({
-        adminId: req.user.id,
-        bio,
-        specialties,
-        yearsOfExperience,
-        socialMedia,
-      });
-    } else {
-      if (bio) profile.bio = bio;
-      if (specialties) profile.specialties = specialties;
-      if (yearsOfExperience) profile.yearsOfExperience = yearsOfExperience;
-      if (socialMedia) profile.socialMedia = socialMedia;
-    }
+    // Update fields
+    if (name) profile.name = name;
+    if (email) profile.email = email;
+    if (username) profile.username = username;
+    if (bio) profile.bio = bio;
+    if (specialties) profile.specialties = specialties;
+    if (yearsOfExperience) profile.yearsOfExperience = yearsOfExperience;
+    if (socialMedia) profile.socialMedia = socialMedia;
 
     await profile.save();
 
-    // Return both updated admin and profile info
-    const updatedAdmin = await Admin.findById(req.user.id).select("-password");
-    res.json({ profile, admin: updatedAdmin });
+    // Return updated profile without password
+    const updatedProfile = await BarberProfile.findById(req.user.id).select(
+      "-password"
+    );
+    res.json(updatedProfile);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Server error" });
@@ -108,7 +96,7 @@ router.put("/", async (req, res) => {
 // @access  Private/Admin
 router.put("/image", upload.single("image"), async (req, res) => {
   try {
-    let profile = await BarberProfile.findOne({ adminId: req.user.id });
+    let profile = await BarberProfile.findById(req.user.id);
 
     if (!profile) {
       return res.status(404).json({ message: "Profile not found" });
@@ -119,12 +107,10 @@ router.put("/image", upload.single("image"), async (req, res) => {
     }
 
     try {
-      // Delete old image if exists
       if (profile.profileImage.publicId) {
         await deleteFromCloudinary(profile.profileImage.publicId);
       }
 
-      // Upload new image
       const result = await uploadToCloudinary(req.file, "profile");
       profile.profileImage = {
         url: result.secure_url,
@@ -150,7 +136,7 @@ router.put("/image", upload.single("image"), async (req, res) => {
 // @access  Private/Admin
 router.delete("/image", async (req, res) => {
   try {
-    let profile = await BarberProfile.findOne({ adminId: req.user.id });
+    let profile = await BarberProfile.findById(req.user.id);
 
     if (!profile) {
       return res.status(404).json({ message: "Profile not found" });
@@ -161,10 +147,8 @@ router.delete("/image", async (req, res) => {
     }
 
     try {
-      // Delete from Cloudinary
       await deleteFromCloudinary(profile.profileImage.publicId);
 
-      // Clear image data
       profile.profileImage = {
         url: "",
         publicId: "",

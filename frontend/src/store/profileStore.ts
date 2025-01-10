@@ -1,12 +1,17 @@
 import { create } from "zustand";
-import { Profile } from "../types/profile.types";
+import { BarberProfile } from "../types/auth.types";
 
-interface ProfileStore {
-  profile: Profile | null;
-  setProfile: (profile: Profile | null) => void;
+interface ProfileState {
+  profile: BarberProfile | null;
+  setProfile: (profile: BarberProfile | null) => void;
+  updateProfile: (updates: Partial<BarberProfile>) => void;
 }
 
-export const useProfileStore = create<ProfileStore>((set) => ({
+export const useProfileStore = create<ProfileState>((set) => ({
   profile: null,
   setProfile: (profile) => set({ profile }),
+  updateProfile: (updates) =>
+    set((state) => ({
+      profile: state.profile ? { ...state.profile, ...updates } : null,
+    })),
 }));

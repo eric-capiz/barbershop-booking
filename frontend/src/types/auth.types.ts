@@ -1,16 +1,42 @@
-export interface LoginCredentials {
+export interface BarberProfile {
+  _id: string;
+  email: string;
   username: string;
+  name: string;
+  role: "admin" | "superadmin";
+  isActive: boolean;
+  lastLogin: Date;
+  bio: string;
+  specialties: string[];
+  yearsOfExperience: number;
+  profileImage: {
+    url: string;
+    publicId: string;
+  };
+  socialMedia: {
+    instagram: string;
+    facebook: string;
+    twitter: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface LoginCredentials {
+  email: string;
   password: string;
 }
 
-export interface RegisterData extends LoginCredentials {
+export interface RegisterData {
   email: string;
+  password: string;
+  username: string;
   name: string;
 }
 
 export interface AuthResponse {
   token: string;
-  isAdmin?: boolean;
+  isAdmin: boolean;
 }
 
 export interface User {
