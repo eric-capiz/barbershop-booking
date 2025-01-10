@@ -1,4 +1,4 @@
-import { useProfile } from "../../../hooks/useProfile";
+import { useProfile } from "../../../../hooks/useProfile";
 import "./_adminProfile.scss";
 const AdminProfile = () => {
   const { data: profile, isLoading } = useProfile();

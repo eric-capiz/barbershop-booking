@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AdminSidebar from "./components/AdminSidebar";
-import AdminProfile from "./components/AdminProfile";
+import AdminProfile from "./components/profile/AdminProfile";
+import AdminServices from "./components/services/AdminServices";
 import "./_adminDashboard.scss";
 
 const AdminDashboard = () => {
@@ -11,7 +12,7 @@ const AdminDashboard = () => {
       case "profile":
         return <AdminProfile />;
       case "services":
-        return <div>Services</div>;
+        return <AdminServices />;
       case "gallery":
         return <div>Gallery</div>;
       case "availability":
