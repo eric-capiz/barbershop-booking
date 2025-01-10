@@ -3,6 +3,7 @@ import AdminSidebar from "./components/AdminSidebar";
 import AdminProfile from "./components/profile/AdminProfile";
 import AdminServices from "./components/services/AdminServices";
 import AdminGallery from "./components/gallery/AdminGallery";
+import AdminAvailability from "./components/availability/AdminAvailability";
 import "./_adminDashboard.scss";
 
 const AdminDashboard = () => {
@@ -17,7 +18,7 @@ const AdminDashboard = () => {
       case "gallery":
         return <AdminGallery />;
       case "availability":
-        return <div>Availability</div>;
+        return <AdminAvailability />;
       default:
         return <AdminProfile />;
     }

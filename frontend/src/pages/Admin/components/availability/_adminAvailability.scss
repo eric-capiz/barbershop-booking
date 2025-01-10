@@ -1,0 +1,122 @@
+@use "@styles/variables" as *;
+
+.admin-availability {
+  width: 100%;
+  padding: 2rem;
+
+  &__header {
+    margin-bottom: 2rem;
+
+    .month-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h2 {
+        font-family: $font-primary;
+        color: $gold-primary;
+        font-size: 2rem;
+      }
+
+      .btn-primary {
+        background: $gradient-gold;
+        color: $black-primary;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  &__content {
+    background: $black-secondary;
+    border: 2px solid $gold-primary;
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .day-card {
+    background: $black-primary;
+    border: 1px solid $gold-dark;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 100px;
+
+    &.working {
+      border-color: $gold-primary;
+      background: rgba($gold-primary, 0.1);
+    }
+
+    &.non-working {
+      opacity: 0.6;
+    }
+
+    &.selected {
+      background: $gold-primary;
+      color: $black-primary;
+
+      .day-name {
+        color: $black-primary !important;
+      }
+
+      .hours {
+        color: $black-primary !important;
+      }
+    }
+
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid $gold-dark;
+      padding-bottom: 0.5rem;
+
+      .date {
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+
+      .day-name {
+        color: $silver-primary;
+      }
+    }
+
+    .hours {
+      font-size: 0.9rem;
+      color: $gold-light;
+      display: flex;
+      gap: 0.25rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+  }
+
+  .day-detail {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid $gold-dark;
+
+    h3 {
+      color: $gold-primary;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .setup-prompt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    color: $silver-primary;
+    font-family: $font-secondary;
+  }
+}
