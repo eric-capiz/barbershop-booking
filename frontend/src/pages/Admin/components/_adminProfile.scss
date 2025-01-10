@@ -1,0 +1,78 @@
+@use "@styles/variables" as *;
+
+.admin-profile {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  h2 {
+    font-family: $font-primary;
+    color: $gold-primary;
+    font-size: 2rem;
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  &__section {
+    background-color: $black-secondary;
+    border: 1px solid $gold-primary;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+
+    h3 {
+      font-family: $font-primary;
+      color: $gold-primary;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid $gold-dark;
+      padding-bottom: 0.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 1rem;
+
+      label {
+        color: $gold-light;
+        width: 200px;
+        font-family: $font-secondary;
+      }
+
+      span {
+        color: $silver-primary;
+        font-family: $font-secondary;
+      }
+
+      ul {
+        list-style: none;
+
+        li {
+          color: $silver-primary;
+          margin-bottom: 0.5rem;
+          font-family: $font-secondary;
+
+          &:before {
+            content: "•";
+            color: $gold-primary;
+            margin-right: 0.5rem;
+          }
+        }
+      }
+    }
+  }
+
+  p {
+    color: $silver-primary;
+    font-family: $font-secondary;
+    line-height: 1.8;
+  }
+}
