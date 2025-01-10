@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService } from "../services/auth.service";
 import { LoginCredentials, RegisterData } from "../types/auth.types";
 import { useAuthStore } from "../store/authStore";
+import { useNavigate } from "react-router-dom";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -42,6 +43,7 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
   const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
   const setIsAdmin = useAuthStore((state) => state.setIsAdmin);
+  const navigate = useNavigate();
 
   return () => {
     localStorage.removeItem("token");
@@ -49,5 +51,6 @@ export const useLogout = () => {
     setIsAuthenticated(false);
     setIsAdmin(false);
     queryClient.removeQueries();
+    navigate("/");
   };
 };

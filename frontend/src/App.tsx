@@ -3,6 +3,8 @@ import Layout from "./components/layout/Layout";
 import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
 import Gallery from "./pages/Gallery/Gallery";
+import ProtectedAdminRoute from "./components/auth/ProtectedAdminRoute";
+import ProtectedUserRoute from "./components/auth/ProtectedUserRoute";
 
 function App() {
   return (
@@ -18,11 +20,32 @@ function App() {
           <Route path="/register" element={<div>Register</div>} />
 
           {/* Protected User Routes */}
-          <Route path="/appointments" element={<div>Appointments</div>} />
-          <Route path="/profile" element={<div>Profile</div>} />
+          <Route
+            path="/appointments"
+            element={
+              <ProtectedUserRoute>
+                <div>Appointments</div>
+              </ProtectedUserRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedUserRoute>
+                <div>Profile</div>
+              </ProtectedUserRoute>
+            }
+          />
 
           {/* Protected Admin Routes */}
-          <Route path="/admin/*" element={<div>Admin Dashboard</div>} />
+          <Route
+            path="/dashboard/*"
+            element={
+              <ProtectedAdminRoute>
+                <div>Admin Dashboard</div>
+              </ProtectedAdminRoute>
+            }
+          />
         </Routes>
       </Layout>
     </Router>
