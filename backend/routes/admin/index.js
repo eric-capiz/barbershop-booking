@@ -3,16 +3,14 @@ const router = express.Router();
 const auth = require("../../middleware/auth");
 const isAdmin = require("../../middleware/isAdmin");
 
+// Public routes
 router.use("/profile", require("./profile"));
 router.use("/services", require("./services"));
+router.use("/gallery", require("./gallery"));
 
-// Apply auth and isAdmin middleware to all admin routes
-
+// Protected admin routes
 router.use(auth);
 router.use(isAdmin);
-
-// Admin routes
-router.use("/gallery", require("./gallery"));
 router.use("/availability", require("./availability"));
 router.use("/appointments", require("./appointments"));
 
