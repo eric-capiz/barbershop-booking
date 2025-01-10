@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
+import Gallery from "./pages/Gallery/Gallery";
+
 function App() {
   return (
     <Router>
@@ -9,7 +11,7 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
-          <Route path="/gallery" element={<div>Gallery</div>} />
+          <Route path="/gallery" element={<Gallery />} />
           <Route path="/about" element={<About />} />
           {/* Auth Routes */}
           <Route path="/login" element={<div>Login</div>} />
