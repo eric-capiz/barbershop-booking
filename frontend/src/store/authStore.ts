@@ -1,13 +1,13 @@
 import { create } from "zustand";
-import { User, Admin } from "../types/auth.types";
+import { User, BarberProfile } from "../types/auth.types";
 
 interface AuthState {
   isAuthenticated: boolean;
   isAdmin: boolean;
-  user: User | Admin | null;
+  user: User | BarberProfile | null;
   setIsAuthenticated: (value: boolean) => void;
   setIsAdmin: (value: boolean) => void;
-  setUser: (user: User | Admin | null) => void;
+  setUser: (user: User | BarberProfile | null) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
