@@ -8,9 +8,8 @@ const UserAppointmentSchema = new mongoose.Schema(
       required: true,
     },
     adminId: {
-      // Add this to link to barber
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Admin",
+      ref: "BarberProfile",
       required: true,
     },
     serviceId: {
@@ -28,12 +27,10 @@ const UserAppointmentSchema = new mongoose.Schema(
       default: "pending",
     },
     rescheduleAttempted: {
-      // Add this to track reschedule
       type: Boolean,
       default: false,
     },
     rescheduleInfo: {
-      // Add this for reschedule details
       requestedBy: {
         type: String,
         enum: ["admin", "user", null],

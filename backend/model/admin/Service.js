@@ -4,7 +4,7 @@ const ServiceSchema = new mongoose.Schema(
   {
     adminId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Admin",
+      ref: "BarberProfile",
       required: true,
     },
     name: {

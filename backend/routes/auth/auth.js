@@ -3,9 +3,8 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// Models
 const User = require("../../model/user/User");
-const Admin = require("../../model/admin/Admin");
+const BarberProfile = require("../../model/admin/BarberProfile");
 
 // @route   POST /api/auth/register
 // @desc    Register a new user
@@ -71,7 +70,7 @@ router.post("/login", async (req, res) => {
     const { username, password } = req.body;
 
     // Check for admin first
-    let admin = await Admin.findOne({ username });
+    let admin = await BarberProfile.findOne({ username });
 
     if (admin) {
       const isMatch = await bcrypt.compare(password, admin.password);
