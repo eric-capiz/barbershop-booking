@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import Home from "./pages/Home/Home";
@@ -6,7 +7,15 @@ import Gallery from "./pages/Gallery/Gallery";
 import ProtectedAdminRoute from "./components/auth/ProtectedAdminRoute";
 import ProtectedUserRoute from "./components/auth/ProtectedUserRoute";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import { useAuthStore } from "@/store/authStore";
+
 function App() {
+  const initializeAuth = useAuthStore((state) => state.initializeAuth);
+
+  useEffect(() => {
+    initializeAuth();
+  }, []);
+
   return (
     <Router>
       <Layout>
