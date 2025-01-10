@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLogin, useRegister } from "../../hooks/useAuth";
+import { useLogin, useRegister } from "@/hooks/useAuth";
 import Toast from "../common/Toast";
 import "./_auth-modal.scss";
 

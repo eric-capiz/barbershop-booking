@@ -1,5 +1,5 @@
-import { useServices } from "../../../../hooks/useService";
-import { Service } from "../../../../types/service.types";
+import { useServices } from "@hooks/useService";
+import { Service } from "@types/service.types";
 import "./_adminServices.scss";
 
 const AdminServices = () => {

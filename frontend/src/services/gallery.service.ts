@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GalleryItem } from "../types/gallery.types";
+import { GalleryItem } from "@/types/gallery.types";
 
 export const galleryService = {
   getGallery: async (): Promise<GalleryItem[]> => {

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Review } from "../types/review.types";
+import { Review } from "@/types/review.types";
 
 interface ReviewsStore {
   reviews: Review[];

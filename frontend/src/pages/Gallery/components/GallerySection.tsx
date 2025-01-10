@@ -1,4 +1,4 @@
-import { useGalleryStore } from "../../../store/galleryStore";
+import { useGalleryStore } from "@/store/galleryStore";
 
 const GallerySection = () => {
   const gallery = useGalleryStore((state) => state.gallery);

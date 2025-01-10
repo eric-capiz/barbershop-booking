@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { User, BarberProfile } from "../types/auth.types";
+import { User, BarberProfile } from "@/types/auth.types";
 
 interface AuthState {
   isAuthenticated: boolean;

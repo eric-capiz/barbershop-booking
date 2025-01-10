@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { GalleryItem } from "../types/gallery.types";
+import { GalleryItem } from "@/types/gallery.types";
 
 interface GalleryStore {
   gallery: GalleryItem[];

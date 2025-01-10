@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BarberProfile } from "../types/auth.types";
+import { BarberProfile } from "@/types/auth.types";
 
 export const profileService = {
   getProfile: async (): Promise<BarberProfile> => {

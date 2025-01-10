@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useProfile } from "../../hooks/useProfile";
-import { useServices } from "../../hooks/useService";
-import { useProfileStore } from "../../store/profileStore";
-import { useServicesStore } from "../../store/serviceStore";
+import { useProfile } from "@/hooks/useProfile";
+import { useServices } from "@/hooks/useService";
+import { useProfileStore } from "@/store/profileStore";
+import { useServicesStore } from "@/store/serviceStore";
 import "./_about.scss";
 
 const About = () => {

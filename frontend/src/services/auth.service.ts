@@ -3,7 +3,7 @@ import {
   LoginCredentials,
   RegisterData,
   AuthResponse,
-} from "../types/auth.types";
+} from "@/types/auth.types";
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {

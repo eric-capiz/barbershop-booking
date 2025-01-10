@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { BarberProfile } from "../types/auth.types";
+import { BarberProfile } from "@/types/auth.types";
 
 interface ProfileState {
   profile: BarberProfile | null;

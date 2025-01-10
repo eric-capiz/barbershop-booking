@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useReviews } from "../../../hooks/useReviews";
-import { useReviewsStore } from "../../../store/reviewsStore";
+import { useReviews } from "@/hooks/useReviews";
+import { useReviewsStore } from "@/store/reviewsStore";
 import { FaStar } from "react-icons/fa";
 
 const ReviewsSection = () => {

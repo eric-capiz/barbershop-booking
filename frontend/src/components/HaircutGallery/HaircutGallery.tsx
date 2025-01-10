@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useGallery } from "../../hooks/useGallery";
-import { useGalleryStore } from "../../store/galleryStore";
+import { useGallery } from "@/hooks/useGallery";
+import { useGalleryStore } from "@/store/galleryStore";
 import "./_haircutGallery.scss";
 
 const HaircutGallery = () => {

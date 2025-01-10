@@ -1,5 +1,5 @@
 import axios from "axios";
-import { User } from "../types/auth.types";
+import { User } from "@/types/auth.types";
 
 export const userService = {
   getCurrentUser: async (): Promise<User> => {

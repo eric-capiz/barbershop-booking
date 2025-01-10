@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { authService } from "../services/auth.service";
-import { useAuthStore } from "../store/authStore";
+import { authService } from "@/services/auth.service";
+import { useAuthStore } from "@/store/authStore";
 
 export const useUser = () => {
   const isAdmin = useAuthStore((state) => state.isAdmin);

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Review } from "../types/review.types";
+import { Review } from "@/types/review.types";
 
 export const reviewService = {
   getReviews: async (): Promise<Review[]> => {
