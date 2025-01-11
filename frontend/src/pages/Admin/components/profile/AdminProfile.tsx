@@ -1,13 +1,45 @@
-import { useProfile } from "@hooks/useProfile";
+import { useProfile, useUpdateProfileImage } from "@hooks/useProfile";
+import { FaCamera } from "react-icons/fa";
 import "./_adminProfile.scss";
+
 const AdminProfile = () => {
   const { data: profile, isLoading } = useProfile();
+  const updateProfileImage = useUpdateProfileImage();
 
   if (isLoading) return <div>Loading...</div>;
   if (!profile) return <div>No profile found</div>;
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      updateProfileImage.mutate(file);
+    }
+  };
+
   return (
     <div className="admin-profile">
+      <div className="admin-profile__image-container">
+        <div className="profile-image">
+          {profile.profileImage?.url ? (
+            <img src={profile.profileImage.url} alt={profile.name} />
+          ) : (
+            <div className="profile-image-placeholder">
+              {profile.name.charAt(0)}
+            </div>
+          )}
+          <label className="image-upload-label" htmlFor="profile-image-upload">
+            <FaCamera />
+            <input
+              type="file"
+              id="profile-image-upload"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: "none" }}
+            />
+          </label>
+        </div>
+      </div>
+
       <div className="admin-profile__content">
         <div className="admin-profile__section">
           <h3>Basic Information</h3>
