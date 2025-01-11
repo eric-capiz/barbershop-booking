@@ -128,3 +128,258 @@
     line-height: 1.8;
   }
 }
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  .edit-button {
+    background: none;
+    border: none;
+    color: $gold-primary;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.edit-form {
+  background: $black-secondary;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid $gold-dark;
+
+  .form-group {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      color: $gold-primary;
+      margin-bottom: 0.5rem;
+      font-family: $font-secondary;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid $gold-dark;
+      border-radius: 4px;
+      background: $black-primary;
+      color: $silver-light;
+      font-family: $font-secondary;
+
+      &:focus {
+        outline: none;
+        border-color: $gold-primary;
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: $font-secondary;
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 0.9;
+      }
+
+      svg {
+        font-size: 1rem;
+      }
+    }
+
+    .btn-save {
+      background: $gradient-gold;
+      color: $black-primary;
+
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+    }
+
+    .btn-cancel {
+      background: $black-light;
+      color: $silver-primary;
+    }
+  }
+}
+
+.specialties-list {
+  margin-bottom: 1rem;
+
+  .specialty-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: $black-primary;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid $gold-dark;
+
+    span {
+      color: $silver-light;
+    }
+
+    .btn-remove {
+      background: none;
+      border: none;
+      color: #f44336;
+      cursor: pointer;
+      padding: 0.25rem;
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+.add-specialty {
+  display: flex;
+  gap: 0.5rem;
+
+  input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid $gold-dark;
+    border-radius: 4px;
+    background: $black-primary;
+    color: $silver-light;
+
+    &:focus {
+      outline: none;
+      border-color: $gold-primary;
+    }
+  }
+
+  .btn-add {
+    background: $gold-primary;
+    color: $black-primary;
+    border: none;
+    border-radius: 4px;
+    padding: 0 1rem;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:not(:disabled):hover {
+      opacity: 0.9;
+    }
+  }
+}
+
+.edit-bio {
+  .form-group {
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 0.75rem;
+      border: 1px solid $gold-dark;
+      border-radius: 4px;
+      background: $black-primary;
+      color: $silver-light;
+      font-family: $font-secondary;
+      resize: vertical;
+      line-height: 1.5;
+
+      &:focus {
+        outline: none;
+        border-color: $gold-primary;
+      }
+
+      &::placeholder {
+        color: $silver-dark;
+      }
+    }
+  }
+
+  .char-count {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: $silver-primary;
+
+    .limit-reached {
+      color: #f44336;
+    }
+  }
+}
+
+.edit-social {
+  .form-group {
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      svg {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .social-input {
+    display: flex;
+    align-items: center;
+    background: $black-primary;
+    border: 1px solid $gold-dark;
+    border-radius: 4px;
+    overflow: hidden;
+
+    &:focus-within {
+      border-color: $gold-primary;
+    }
+
+    .prefix {
+      padding: 0.75rem;
+      background: $black-light;
+      color: $silver-primary;
+      border-right: 1px solid $gold-dark;
+      font-family: $font-secondary;
+      font-size: 0.9rem;
+    }
+
+    input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 0.75rem;
+      color: $silver-light;
+      font-family: $font-secondary;
+
+      &:focus {
+        outline: none;
+      }
+
+      &::placeholder {
+        color: $silver-dark;
+      }
+    }
+  }
+}
