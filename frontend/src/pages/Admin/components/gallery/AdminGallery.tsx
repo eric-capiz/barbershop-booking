@@ -63,7 +63,7 @@ const AdminGallery = () => {
               <div className="tags">
                 {item.tags.map((tag, index) => (
                   <span key={index} className="tag">
-                    {tag}
+                    #{tag}
                   </span>
                 ))}
               </div>

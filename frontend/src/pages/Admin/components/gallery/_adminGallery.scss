@@ -95,11 +95,10 @@
     }
 
     &__info {
-      padding: 1.5rem;
+      padding: 1rem;
 
       .description {
         color: $silver-primary;
-        font-family: $font-secondary;
         margin-bottom: 1rem;
         line-height: 1.4;
       }
@@ -111,11 +110,11 @@
 
         .tag {
           background: $black-light;
-          color: $gold-light;
+          color: $gold-primary;
           padding: 0.25rem 0.75rem;
-          border-radius: 50px;
+          border-radius: 1rem;
           font-size: 0.875rem;
-          font-family: $font-secondary;
+          border: 1px solid $gold-dark;
         }
       }
     }

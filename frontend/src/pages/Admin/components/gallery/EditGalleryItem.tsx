@@ -47,7 +47,7 @@ const EditGalleryItem = ({ item, onClose }: EditGalleryItemProps) => {
 
     const formData = new FormData();
     if (image) {
-      formData.append("image", image);
+      formData.append("images", image);
     }
     formData.append("description", description);
     formData.append("tags", JSON.stringify(tags));

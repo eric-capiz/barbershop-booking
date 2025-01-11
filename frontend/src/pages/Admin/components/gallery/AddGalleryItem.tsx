@@ -50,10 +50,6 @@ const AddGalleryItem = ({ onClose }: AddGalleryItemProps) => {
     formData.append("description", description);
     formData.append("tags", JSON.stringify(tags));
 
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-
     try {
       await addGalleryItem.mutateAsync(formData);
       onClose();
