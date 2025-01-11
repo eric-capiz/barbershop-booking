@@ -33,55 +33,57 @@ router.use(isAdmin);
 // @route   POST /api/admin/gallery
 // @desc    Add gallery items (up to 5 images)
 // @access  Private/Admin
-router.post("/", upload.array("images", 5), async (req, res) => {
+router.post("/", upload.single("images"), async (req, res) => {
   try {
-    const { description, serviceType, tags } = req.body;
+    // Debug auth
+    console.log("Auth Header:", req.headers.authorization);
+    console.log("User from token:", req.user);
 
-    if (!req.files || req.files.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "Please upload at least one image" });
+    const { description, tags } = req.body;
+
+    if (!req.file) {
+      return res.status(400).json({ message: "Please upload an image" });
     }
 
-    const galleryItems = [];
-    const errors = [];
+    // Debug request
+    console.log("Received file:", req.file);
+    console.log("Received body:", req.body);
+    console.log("User ID:", req.user.id); // Changed from req.user._id to req.user.id
 
-    // Upload each image and create gallery items
-    for (const file of req.files) {
-      try {
-        const result = await uploadToCloudinary(file, "gallery");
-        const newItem = new GalleryItem({
-          adminId: req.user.id,
-          image: {
-            url: result.secure_url,
-            publicId: result.public_id,
-          },
-          description,
-          serviceType,
-          tags: tags ? JSON.parse(tags) : [],
-          isActive: true,
-        });
+    try {
+      const result = await uploadToCloudinary(req.file, "gallery");
 
-        const savedItem = await newItem.save();
-        await savedItem.populate("serviceType", "name");
-        galleryItems.push(savedItem);
-      } catch (error) {
-        errors.push(`Failed to upload image: ${file.originalname}`);
-      }
-    }
+      // Create new gallery item
+      const newItem = new GalleryItem({
+        adminId: req.user.id, // Changed from req.user._id to req.user.id
+        image: {
+          url: result.secure_url,
+          publicId: result.public_id,
+        },
+        description,
+        tags: tags ? JSON.parse(tags) : [],
+        isActive: true,
+      });
 
-    if (errors.length > 0) {
-      return res.status(207).json({
-        message: "Some uploads failed",
-        success: galleryItems,
-        errors: errors,
+      const savedItem = await newItem.save();
+      await savedItem.populate("adminId", "name email");
+
+      res.json(savedItem);
+    } catch (error) {
+      console.error("Inner error:", error);
+      res.status(500).json({
+        message: "Failed to save gallery item",
+        error: error.message,
+        stack: error.stack,
       });
     }
-
-    res.json(galleryItems);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ message: "Server error" });
+    console.error("Outer error:", err);
+    res.status(500).json({
+      message: "Server error",
+      error: err.message,
+      stack: err.stack,
+    });
   }
 });
 
