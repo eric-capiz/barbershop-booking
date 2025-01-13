@@ -7,6 +7,7 @@ const {
   uploadToCloudinary,
   deleteFromCloudinary,
 } = require("../../cloudinary/cloudinaryUtils");
+const bcrypt = require("bcryptjs");
 
 const BarberProfile = require("../../model/admin/BarberProfile");
 
@@ -46,6 +47,7 @@ router.put("/", async (req, res) => {
       specialties,
       yearsOfExperience,
       socialMedia,
+      password,
     } = req.body;
 
     let profile = await BarberProfile.findById(req.user.id);
@@ -77,6 +79,13 @@ router.put("/", async (req, res) => {
     if (specialties) profile.specialties = specialties;
     if (yearsOfExperience) profile.yearsOfExperience = yearsOfExperience;
     if (socialMedia) profile.socialMedia = socialMedia;
+
+    // Handle password update
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      profile.password = hashedPassword;
+    }
 
     await profile.save();
 
