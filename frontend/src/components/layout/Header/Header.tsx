@@ -15,7 +15,7 @@ const Header = () => {
   const logout = useLogout();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isAdmin = useAuthStore((state) => state.isAdmin);
-  const { data: userData } = useUser();
+  const user = useAuthStore((state) => state.user);
 
   const handleAuthClick = (type: "login" | "register") => {
     setAuthType(type);
@@ -91,7 +91,7 @@ const Header = () => {
                       className="nav-link auth-link profile"
                     >
                       <FaUser className="profile-icon" />
-                      <span>{userData?.username}</span>
+                      <span>{user?.username}</span>
                     </Link>
                   )}
                   <button
