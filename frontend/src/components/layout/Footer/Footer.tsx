@@ -1,5 +1,5 @@
 import { FaInstagram, FaFacebook, FaTwitter } from "react-icons/fa";
-import { useProfileStore } from "@/store/profileStore";
+import { useProfileStore } from "@/store/admin/profileStore";
 import "./_footer.scss";
 
 const Footer = () => {

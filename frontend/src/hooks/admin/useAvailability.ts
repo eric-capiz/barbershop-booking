@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { availabilityService } from "@/services/availability.service";
-import { MonthSetupData, DayUpdateData } from "@types/availability.types";
+import { availabilityService } from "@/services/admin/availability.service";
+import {
+  MonthSetupData,
+  DayUpdateData,
+} from "@/types/admin/availability.types";
 
 export const useAvailability = () => {
   return useQuery({

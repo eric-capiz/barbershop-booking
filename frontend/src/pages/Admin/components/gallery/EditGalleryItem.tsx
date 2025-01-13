@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from "react";
-import { useUpdateGalleryItem } from "@hooks/useGallery";
-import { GalleryItem } from "@/types/gallery.types";
-import { FaTimes, FaPlus, FaImage } from "react-icons/fa";
+import { useState, useRef } from "react";
+import { useUpdateGalleryItem } from "@hooks/admin/useGallery";
+import { GalleryItem } from "@/types/admin/gallery.types";
+import { FaTimes, FaPlus } from "react-icons/fa";
 
 interface EditGalleryItemProps {
   item: GalleryItem;

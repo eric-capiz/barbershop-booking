@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useAddGalleryItem } from "@hooks/useGallery";
+import { useAddGalleryItem } from "@hooks/admin/useGallery";
 import { FaTimes, FaPlus, FaImage } from "react-icons/fa";
 import "./_addGalleryItem.scss";
 

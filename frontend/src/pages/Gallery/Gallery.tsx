@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useGallery } from "@/hooks/useGallery";
-import { useGalleryStore } from "@/store/galleryStore";
+import { useGallery } from "@/hooks/admin/useGallery";
+import { useGalleryStore } from "@/store/admin/galleryStore";
 import GallerySection from "./components/GallerySection";
 import ReviewsSection from "./components/ReviewsSection";
 import "./_gallery.scss";

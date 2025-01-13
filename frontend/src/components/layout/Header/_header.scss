@@ -102,6 +102,26 @@
       background: $black-primary;
     }
   }
+
+  .profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: $gold-primary;
+    transition: color 0.3s ease;
+
+    .profile-icon {
+      font-size: 1rem;
+    }
+
+    &:hover {
+      color: $gold-light;
+    }
+
+    @media (max-width: 768px) {
+      justify-content: center;
+    }
+  }
 }
 
 @media (min-width: 1024px) {

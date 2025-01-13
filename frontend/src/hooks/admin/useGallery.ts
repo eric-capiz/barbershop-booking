@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { galleryService } from "@/services/gallery.service";
-import { useGalleryStore } from "@/store/galleryStore";
+import { galleryService } from "@/services/admin/gallery.service";
+import { useGalleryStore } from "@/store/admin/galleryStore";
 
 export const useGallery = () => {
   const setGallery = useGalleryStore((state) => state.setGallery);

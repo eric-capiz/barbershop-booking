@@ -5,6 +5,7 @@ import { useLogout } from "@hooks/useAuth";
 import { useAuthStore } from "@/store/authStore";
 import { useUser } from "@hooks/useUser";
 import AuthModal from "@components/auth/AuthModal";
+import { FaUser } from "react-icons/fa";
 import "./_header.scss";
 
 const Header = () => {
@@ -84,9 +85,14 @@ const Header = () => {
                       Admin Dashboard
                     </Link>
                   ) : (
-                    <span className="username">
-                      Welcome, {userData?.username}
-                    </span>
+                    <Link
+                      to="/profile"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="nav-link auth-link profile"
+                    >
+                      <FaUser className="profile-icon" />
+                      <span>{userData?.username}</span>
+                    </Link>
                   )}
                   <button
                     onClick={handleLogout}

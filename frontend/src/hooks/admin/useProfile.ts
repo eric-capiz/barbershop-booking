@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { profileService } from "@/services/profile.service";
-import { useProfileStore } from "@/store/profileStore";
+import { profileService } from "@/services/admin/profile.service";
+import { useProfileStore } from "@/store/admin/profileStore";
 import { BarberProfile } from "@/types/auth.types";
 
 export const useProfile = () => {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { FaTimes, FaClock } from "react-icons/fa";
 import Select from "react-select";
-import { ScheduleDay } from "@/types/availability.types";
+import { ScheduleDay } from "@/types/admin/availability.types";
 
 interface EditDayModalProps {
   date: Date;

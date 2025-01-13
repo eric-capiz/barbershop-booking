@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useProfile, useUpdateProfileImage } from "@hooks/useProfile";
+import { useProfile, useUpdateProfileImage } from "@hooks/admin/useProfile";
 import { FaCamera, FaEdit } from "react-icons/fa";
 import EditBasicInfo from "./EditBasicInfo";
 import EditProfessionalDetails from "./EditProfessionalDetails";

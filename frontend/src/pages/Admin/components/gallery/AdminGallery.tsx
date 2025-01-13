@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useGallery } from "@hooks/useGallery";
+import { useGallery } from "@hooks/admin/useGallery";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import AddGalleryItem from "./AddGalleryItem";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";

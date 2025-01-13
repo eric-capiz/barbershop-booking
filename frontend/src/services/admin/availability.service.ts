@@ -3,7 +3,7 @@ import {
   BarberAvailability,
   MonthSetupData,
   DayUpdateData,
-} from "@types/availability.types";
+} from "@/types/admin/availability.types";
 
 export const availabilityService = {
   getAvailability: async (): Promise<BarberAvailability> => {

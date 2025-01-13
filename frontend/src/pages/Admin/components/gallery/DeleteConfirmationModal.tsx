@@ -1,4 +1,4 @@
-import { useDeleteGalleryItem } from "@hooks/useGallery";
+import { useDeleteGalleryItem } from "@hooks/admin/useGallery";
 import { FaTimes, FaExclamationTriangle } from "react-icons/fa";
 import "./_deleteConfirmationModal.scss";
 

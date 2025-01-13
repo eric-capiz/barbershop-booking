@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useUpdateProfile } from "@hooks/useProfile";
+import { useUpdateProfile } from "@hooks/admin/useProfile";
 import { BarberProfile } from "@/types/auth.types";
 import { FaSave, FaTimes } from "react-icons/fa";
 
