@@ -51,6 +51,7 @@ const EditDayModal = ({
       : "18:00"
   );
   const [isSaving, setIsSaving] = useState(false);
+  const [timeError, setTimeError] = useState<string | null>(null);
 
   const timeOptions = generateTimeOptions();
 
@@ -90,8 +91,43 @@ const EditDayModal = ({
     }),
   };
 
+  const validateTimes = (start: string, end: string): boolean => {
+    const [startHour, startMinute] = start.split(":").map(Number);
+    const [endHour, endMinute] = end.split(":").map(Number);
+
+    const startMinutes = startHour * 60 + startMinute;
+    const endMinutes = endHour * 60 + endMinute;
+
+    if (endMinutes <= startMinutes) {
+      setTimeError("End time must be after start time");
+      return false;
+    }
+
+    setTimeError(null);
+    return true;
+  };
+
+  const handleStartTimeChange = (option: any) => {
+    if (option) {
+      setStartTime(option.value);
+      validateTimes(option.value, endTime);
+    }
+  };
+
+  const handleEndTimeChange = (option: any) => {
+    if (option) {
+      setEndTime(option.value);
+      validateTimes(startTime, option.value);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isWorking && !validateTimes(startTime, endTime)) {
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -145,7 +181,7 @@ const EditDayModal = ({
                   value={timeOptions.find(
                     (option) => option.value === startTime
                   )}
-                  onChange={(option) => option && setStartTime(option.value)}
+                  onChange={handleStartTimeChange}
                   styles={customStyles}
                   menuPlacement="bottom"
                 />
@@ -157,11 +193,20 @@ const EditDayModal = ({
                   id="endTime"
                   options={timeOptions}
                   value={timeOptions.find((option) => option.value === endTime)}
-                  onChange={(option) => option && setEndTime(option.value)}
+                  onChange={handleEndTimeChange}
                   styles={customStyles}
                   menuPlacement="bottom"
                 />
               </div>
+
+              {timeError && (
+                <div
+                  className="error-message"
+                  style={{ color: "#ff4444", marginTop: "0.5rem" }}
+                >
+                  {timeError}
+                </div>
+              )}
             </div>
           )}
 
