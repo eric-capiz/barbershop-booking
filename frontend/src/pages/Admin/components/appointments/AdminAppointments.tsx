@@ -89,17 +89,19 @@ const AdminAppointments = () => {
         <tbody>
           {appointments.map((appointment) => (
             <tr key={appointment.id}>
-              <td>{appointment.name}</td>
-              <td>{appointment.service}</td>
-              <td>{format(new Date(appointment.date), "MMM d, yyyy")}</td>
-              <td>{appointment.time}</td>
-              <td>
+              <td data-label="Client">{appointment.name}</td>
+              <td data-label="Service">{appointment.service}</td>
+              <td data-label="Date">
+                {format(new Date(appointment.date), "MMM d, yyyy")}
+              </td>
+              <td data-label="Time">{appointment.time}</td>
+              <td data-label="Status">
                 <span className={`status-badge ${appointment.status}`}>
                   {appointment.status}
                 </span>
               </td>
               {activeTab === "pending" && (
-                <td className="actions">
+                <td data-label="Actions" className="actions">
                   <button className="btn-confirm">Confirm</button>
                   <button
                     className="btn-reschedule"
