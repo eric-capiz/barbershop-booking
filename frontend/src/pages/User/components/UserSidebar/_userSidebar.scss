@@ -1,0 +1,64 @@
+@use "@styles/variables" as *;
+
+.user-sidebar {
+  background: $black-secondary;
+  min-height: 100%;
+  padding: 2rem 1rem;
+  border-right: 1px solid $gold-dark;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    border-right: none;
+    border-bottom: 1px solid $gold-dark;
+  }
+
+  .user-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    @media (max-width: 768px) {
+      flex-direction: row;
+      justify-content: space-around;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      color: $silver-primary;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        font-size: 0.875rem;
+        flex: 1;
+        justify-content: center;
+        text-align: center;
+      }
+
+      &:hover {
+        background: rgba($gold-primary, 0.1);
+        color: $gold-light;
+      }
+
+      &.active {
+        background: $gold-primary;
+        color: $black-primary;
+      }
+
+      svg {
+        font-size: 1.25rem;
+
+        @media (max-width: 768px) {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+}
