@@ -137,6 +137,12 @@
       }
     }
 
+    &:hover {
+      .service-actions {
+        opacity: 1;
+      }
+    }
+
     .service-actions {
       position: absolute;
       top: 1rem;
@@ -164,70 +170,13 @@
           color: #ff4444;
         }
       }
-    }
-  }
-}
 
-// Modal responsiveness
-.modal-content {
-  @media (max-width: 768px) {
-    width: 95%;
-    padding: 1rem;
-    margin: 1rem;
-
-    .modal-header {
-      margin-bottom: 1rem;
-
-      h3 {
-        font-size: 1.25rem;
+      @media (max-width: 768px) {
+        opacity: 1;
+        position: static;
+        justify-content: flex-end;
+        margin-top: 1rem;
       }
-    }
-
-    .service-form {
-      .form-row {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-      }
-
-      .form-group {
-        // margin-bottom: 1rem;
-      }
-
-      .form-actions {
-        flex-direction: column;
-        gap: 0.5rem;
-
-        button {
-          width: 100%;
-        }
-      }
-    }
-
-    // Delete modal specific
-    &.delete-modal {
-      .modal-actions {
-        flex-direction: column;
-        gap: 0.5rem;
-
-        button {
-          width: 100%;
-        }
-      }
-    }
-  }
-}
-
-// Form inputs responsiveness
-.form-group {
-  @media (max-width: 768px) {
-    input,
-    textarea,
-    select {
-      font-size: 16px; // Prevent zoom on iOS
-    }
-
-    textarea {
-      min-height: 80px;
     }
   }
 }

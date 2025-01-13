@@ -31,7 +31,7 @@ const Header = () => {
     <>
       <header className="header">
         <div className="header-content">
-          <Link to="/" className="logo">
+          <Link to="/" onClick={() => setIsMenuOpen(false)} className="logo">
             SANCHEZ BARBER
           </Link>
 
@@ -44,16 +44,32 @@ const Header = () => {
           </button>
 
           <nav className={`nav-menu ${isMenuOpen ? "active" : ""}`}>
-            <Link to="/" className="nav-link">
+            <Link
+              to="/"
+              onClick={() => setIsMenuOpen(false)}
+              className="nav-link"
+            >
               Home
             </Link>
-            <Link to="/about" className="nav-link">
+            <Link
+              to="/about"
+              onClick={() => setIsMenuOpen(false)}
+              className="nav-link"
+            >
               About
             </Link>
-            <Link to="/my-work" className="nav-link">
+            <Link
+              to="/my-work"
+              onClick={() => setIsMenuOpen(false)}
+              className="nav-link"
+            >
               My Work
             </Link>
-            <Link to="/contact" className="nav-link">
+            <Link
+              to="/contact"
+              onClick={() => setIsMenuOpen(false)}
+              className="nav-link"
+            >
               Contact
             </Link>
             <div className="auth-links">
@@ -62,6 +78,7 @@ const Header = () => {
                   {isAdmin ? (
                     <Link
                       to="/dashboard"
+                      onClick={() => setIsMenuOpen(false)}
                       className="nav-link auth-link dashboard"
                     >
                       Admin Dashboard
