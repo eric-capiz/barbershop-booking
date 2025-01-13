@@ -2,77 +2,31 @@
 @use "sass:color";
 
 .delete-confirmation {
-  max-width: 400px !important;
+  @media (max-width: 768px) {
+    width: 100% !important;
+    margin: 0;
+    border-radius: 0;
+  }
 
   .modal-body {
-    padding: 2rem 1.5rem;
-    text-align: center;
+    @media (max-width: 768px) {
+      padding: 1.5rem 1rem;
 
-    .warning-icon {
-      color: #ff4444;
-      font-size: 3rem;
-      margin-bottom: 1rem;
-
-      svg {
-        filter: drop-shadow(0 0 10px rgba(#ff4444, 0.3));
-      }
-    }
-
-    p {
-      color: $silver-primary;
-      font-family: $font-secondary;
-      margin: 0;
-      line-height: 1.5;
-
-      &.warning-text {
-        color: #ff4444;
-        font-size: 0.875rem;
-        margin-top: 0.5rem;
+      .warning-icon {
+        font-size: 2.5rem;
       }
     }
   }
 
   .modal-actions {
-    padding: 1.5rem;
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    border-top: 1px solid $gold-dark;
+    @media (max-width: 768px) {
+      padding: 1rem;
+      flex-direction: column-reverse;
+      gap: 0.5rem;
 
-    button {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 4px;
-      font-family: $font-secondary;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      min-width: 100px;
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      &:not(:disabled):hover {
-        opacity: 0.9;
-      }
-    }
-
-    .btn-delete {
-      background: #ff4444;
-      color: white;
-
-      &:hover:not(:disabled) {
-        background: color.adjust(#ff4444, $lightness: -10%);
-      }
-    }
-
-    .btn-cancel {
-      background: $black-light;
-      color: $silver-primary;
-
-      &:hover {
-        background: color.adjust($black-light, $lightness: 5%);
+      button {
+        width: 100%;
+        min-width: 0;
       }
     }
   }
