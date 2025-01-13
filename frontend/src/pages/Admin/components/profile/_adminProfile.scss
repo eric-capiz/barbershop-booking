@@ -3,6 +3,10 @@
 .admin-profile {
   padding: 2rem;
 
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+
   &__image-container {
     display: flex;
     justify-content: center;
@@ -64,12 +68,22 @@
     font-size: 2rem;
     margin-bottom: 3rem;
     text-align: center;
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+    }
   }
 
   &__content {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
   }
 
   &__section {
@@ -86,6 +100,11 @@
       margin-bottom: 1.5rem;
       border-bottom: 1px solid $gold-dark;
       padding-bottom: 0.5rem;
+
+      @media (max-width: 768px) {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
     }
 
     .info-item {
@@ -97,6 +116,11 @@
         color: $gold-light;
         width: 200px;
         font-family: $font-secondary;
+
+        @media (max-width: 768px) {
+          width: 100%;
+          margin-bottom: 0.25rem;
+        }
       }
 
       span {
@@ -117,6 +141,16 @@
             color: $gold-primary;
             margin-right: 0.5rem;
           }
+        }
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 0.25rem;
+
+        label {
+          width: 100%;
+          margin-bottom: 0.25rem;
         }
       }
     }
@@ -146,6 +180,10 @@
     &:hover {
       opacity: 0.8;
     }
+
+    @media (max-width: 768px) {
+      padding: 0.75rem;
+    }
   }
 }
 
@@ -155,8 +193,16 @@
   border-radius: 8px;
   border: 1px solid $gold-dark;
 
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+
   .form-group {
     margin-bottom: 1rem;
+
+    @media (max-width: 768px) {
+      margin-bottom: 0.75rem;
+    }
 
     label {
       display: block;
@@ -185,6 +231,16 @@
     display: flex;
     gap: 1rem;
     margin-top: 1.5rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 0.5rem;
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
 
     button {
       display: flex;
@@ -252,12 +308,17 @@
         opacity: 0.8;
       }
     }
+
+    @media (max-width: 768px) {
+      padding: 0.75rem;
+    }
   }
 }
 
 .add-specialty {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 
   input {
     flex: 1;
@@ -266,21 +327,22 @@
     border-radius: 4px;
     background: $black-primary;
     color: $silver-light;
-
-    &:focus {
-      outline: none;
-      border-color: $gold-primary;
-    }
+    min-width: 0;
   }
 
   .btn-add {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: $gold-primary;
     color: $black-primary;
     border: none;
     border-radius: 4px;
-    padding: 0 1rem;
     cursor: pointer;
-    transition: opacity 0.3s ease;
+    padding: 0;
 
     &:disabled {
       opacity: 0.5;
@@ -289,6 +351,18 @@
 
     &:not(:disabled):hover {
       opacity: 0.9;
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: row;
+
+    input {
+      flex: 1;
+    }
+
+    .btn-add {
+      width: 40px;
     }
   }
 }
@@ -314,6 +388,10 @@
 
       &::placeholder {
         color: $silver-dark;
+      }
+
+      @media (max-width: 768px) {
+        min-height: 120px;
       }
     }
   }
@@ -379,6 +457,21 @@
 
       &::placeholder {
         color: $silver-dark;
+      }
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+
+      .prefix {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid $gold-dark;
+      }
+
+      input {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
       }
     }
   }
