@@ -1,35 +1,59 @@
-import { NavLink } from "react-router-dom";
-import { FaUser, FaCalendarAlt, FaRegStar } from "react-icons/fa";
+import { useState } from "react";
+import {
+  FaUser,
+  FaCalendarAlt,
+  FaRegStar,
+  FaChevronDown,
+} from "react-icons/fa";
 import "./_userSidebar.scss";
 
-const UserSidebar = () => {
+interface UserSidebarProps {
+  activeSection: string;
+  setActiveSection: (section: string) => void;
+}
+
+const UserSidebar = ({ activeSection, setActiveSection }: UserSidebarProps) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const menuItems = [
+    { id: "profile", label: "Profile", icon: <FaUser /> },
+    { id: "appointments", label: "Appointments", icon: <FaCalendarAlt /> },
+    { id: "reviews", label: "Reviews", icon: <FaRegStar /> },
+  ];
+
+  const handleSectionChange = (sectionId: string) => {
+    setActiveSection(sectionId);
+    setIsMenuOpen(false);
+  };
+
+  const activeItem = menuItems.find((item) => item.id === activeSection);
+
   return (
     <aside className="user-sidebar">
-      <nav className="user-nav">
-        <NavLink
-          to="/profile"
-          className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-          end
-        >
-          <FaUser />
-          <span>Profile</span>
-        </NavLink>
+      <button
+        className="mobile-menu-button"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+      >
+        <span className="current-section">
+          <span className="icon">{activeItem?.icon}</span>
+          <span className="label">{activeItem?.label}</span>
+        </span>
+        <FaChevronDown className={`chevron ${isMenuOpen ? "open" : ""}`} />
+      </button>
 
-        <NavLink
-          to="/profile/appointments"
-          className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-        >
-          <FaCalendarAlt />
-          <span>Appointments</span>
-        </NavLink>
-
-        <NavLink
-          to="/profile/reviews"
-          className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-        >
-          <FaRegStar />
-          <span>Reviews</span>
-        </NavLink>
+      <nav className={isMenuOpen ? "open" : ""}>
+        {menuItems.map((item) => (
+          <button
+            key={item.id}
+            className={`sidebar-item ${
+              activeSection === item.id ? "active" : ""
+            }`}
+            onClick={() => handleSectionChange(item.id)}
+          >
+            <span className="icon">{item.icon}</span>
+            <span className="label">{item.label}</span>
+          </button>
+        ))}
       </nav>
     </aside>
   );
