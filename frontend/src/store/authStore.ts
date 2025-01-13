@@ -13,10 +13,10 @@ interface AuthState {
   setAuthToken: (token: string) => void;
 }
 
-const TOKEN_EXPIRY = 60 * 60 * 1000; // 1 hour in milliseconds
+const TOKEN_EXPIRY = 60 * 60 * 1000;
 
 export const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: false, // Don't check localStorage here, we'll do it in initializeAuth
+  isAuthenticated: false,
   isAdmin: false,
   user: null,
   setIsAuthenticated: (value) => set({ isAuthenticated: value }),

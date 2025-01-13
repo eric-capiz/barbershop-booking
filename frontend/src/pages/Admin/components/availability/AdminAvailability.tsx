@@ -50,7 +50,7 @@ const AdminAvailability = () => {
 
   const handleDayClick = (date: Date) => {
     const startOfSelectedDay = startOfDay(date);
-    // Only prevent selecting past dates
+    // prevent selecting past dates
     if (!isPast(startOfSelectedDay) || isToday(startOfSelectedDay)) {
       setSelectedDay(date);
     }

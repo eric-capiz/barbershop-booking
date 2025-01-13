@@ -14,8 +14,6 @@ export const galleryService = {
       {
         headers: {
           "Content-Type": "multipart/form-data",
-          // Make sure your auth token is being included
-          // If you're using axios interceptors for auth, you can skip this
         },
       }
     );

@@ -12,7 +12,7 @@ const EditBio = ({ profile, onClose }: EditBioProps) => {
   const updateProfile = useUpdateProfile();
   const [bio, setBio] = useState(profile.bio);
   const [charCount, setCharCount] = useState(profile.bio.length);
-  const MAX_CHARS = 500; // You can adjust this limit
+  const MAX_CHARS = 500;
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
