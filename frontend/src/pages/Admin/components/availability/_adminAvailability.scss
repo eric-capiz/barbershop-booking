@@ -192,7 +192,7 @@
           margin-bottom: 0.5rem;
         }
 
-        input[type="time"] {
+        .time-select {
           width: 100%;
           padding: 0.75rem;
           background-color: $black-light;
@@ -200,13 +200,59 @@
           border-radius: 4px;
           color: $silver-primary;
           font-family: $font-secondary;
+          cursor: pointer;
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23B8860B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 0.75rem center;
+          padding-right: 2rem;
+          position: relative;
 
           &:focus {
             outline: none;
             border-color: $gold-primary;
+            box-shadow: 0 0 0 2px rgba($gold-primary, 0.2);
           }
+
+          option {
+            direction: ltr;
+          }
+        }
+
+        select.time-select {
+          position: relative;
+          z-index: 1;
+        }
+
+        select.time-select option {
+          background-color: $black-light;
+          color: $silver-primary;
+          padding: 0.5rem;
+        }
+
+        select.time-select:not([size]):not([multiple]) {
+          background-color: $black-light;
+          transform-origin: top;
+          transform: none !important;
         }
       }
     }
   }
+
+  .modal-content {
+    overflow: visible;
+  }
+}
+
+.modal-overlay {
+  overflow: visible !important;
+}
+
+.modal-content {
+  overflow: visible !important;
+  z-index: 1000;
+}
+
+.availability-form {
+  overflow: visible !important;
 }

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const { format, parse, setMinutes } = require("date-fns");
 
 const BarberAvailability = require("../../model/admin/BarberAvailability");
 
@@ -75,15 +76,44 @@ router.post("/month", async (req, res) => {
 // @access  Private/Admin
 router.put("/day/:date", async (req, res) => {
   try {
-    const { startTime, endTime } = req.body;
+    let { startTime, endTime } = req.body;
     const date = new Date(req.params.date);
+
+    // Validate and round times to nearest half hour
+    if (startTime && endTime) {
+      // Parse the times
+      let start = new Date(startTime);
+      let end = new Date(endTime);
+
+      // Round minutes to nearest 30
+      const startMinutes = start.getMinutes();
+      const endMinutes = end.getMinutes();
+
+      // Round start time
+      if (startMinutes > 0 && startMinutes < 30) {
+        start = setMinutes(start, 30);
+      } else if (startMinutes > 30) {
+        start = setMinutes(start, 0);
+        start.setHours(start.getHours() + 1);
+      }
+
+      // Round end time
+      if (endMinutes > 0 && endMinutes < 30) {
+        end = setMinutes(end, 30);
+      } else if (endMinutes > 30) {
+        end = setMinutes(end, 0);
+        end.setHours(end.getHours() + 1);
+      }
+
+      startTime = start;
+      endTime = end;
+    }
 
     let availability = await BarberAvailability.findOne({
       adminId: req.user.id,
     });
 
     if (!availability) {
-      // If no availability exists, create new document with this day
       availability = new BarberAvailability({
         adminId: req.user.id,
         currentMonth: {
@@ -97,12 +127,12 @@ router.put("/day/:date", async (req, res) => {
             isWorkingDay: startTime && endTime ? true : false,
             workHours:
               startTime && endTime ? { start: startTime, end: endTime } : null,
-            timeSlots: [],
+            timeSlots:
+              startTime && endTime ? generateTimeSlots(startTime, endTime) : [],
           },
         ],
       });
     } else {
-      // Find the day in schedule
       const dayIndex = availability.schedule.findIndex(
         (day) =>
           format(new Date(day.date), "yyyy-MM-dd") ===
@@ -110,16 +140,15 @@ router.put("/day/:date", async (req, res) => {
       );
 
       if (dayIndex === -1) {
-        // If day doesn't exist in schedule, add it
         availability.schedule.push({
           date: date,
           isWorkingDay: startTime && endTime ? true : false,
           workHours:
             startTime && endTime ? { start: startTime, end: endTime } : null,
-          timeSlots: [],
+          timeSlots:
+            startTime && endTime ? generateTimeSlots(startTime, endTime) : [],
         });
       } else {
-        // Update existing day
         if (!startTime || !endTime) {
           availability.schedule[dayIndex].isWorkingDay = false;
           availability.schedule[dayIndex].workHours = null;
@@ -130,7 +159,10 @@ router.put("/day/:date", async (req, res) => {
             start: startTime,
             end: endTime,
           };
-          // You might want to generate timeSlots here if needed
+          availability.schedule[dayIndex].timeSlots = generateTimeSlots(
+            startTime,
+            endTime
+          );
         }
       }
     }

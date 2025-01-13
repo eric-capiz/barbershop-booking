@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { FaTimes, FaClock } from "react-icons/fa";
+import Select from "react-select";
 import { ScheduleDay } from "@/types/availability.types";
 
 interface EditDayModalProps {
@@ -12,6 +13,23 @@ interface EditDayModalProps {
     endTime: string | null;
   }) => Promise<void>;
 }
+
+const generateTimeOptions = () => {
+  const times = [];
+  for (let hour = 0; hour < 24; hour++) {
+    const period = hour < 12 ? "AM" : "PM";
+    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    const hourStr = hour.toString().padStart(2, "0");
+    const displayTime = `${displayHour}:00 ${period}`;
+    const value = `${hourStr}:00`;
+    times.push({ label: displayTime, value });
+
+    const displayTimeHalf = `${displayHour}:30 ${period}`;
+    const valueHalf = `${hourStr}:30`;
+    times.push({ label: displayTimeHalf, value: valueHalf });
+  }
+  return times;
+};
 
 const EditDayModal = ({
   date,
@@ -33,6 +51,44 @@ const EditDayModal = ({
       : "18:00"
   );
   const [isSaving, setIsSaving] = useState(false);
+
+  const timeOptions = generateTimeOptions();
+
+  const customStyles = {
+    control: (base: any) => ({
+      ...base,
+      backgroundColor: "#1a1a1a",
+      borderColor: "#B8860B",
+      "&:hover": {
+        borderColor: "#DAA520",
+      },
+    }),
+    menu: (base: any) => ({
+      ...base,
+      backgroundColor: "#1a1a1a",
+      marginTop: 0,
+    }),
+    option: (base: any, state: any) => ({
+      ...base,
+      backgroundColor: state.isFocused ? "#2a2a2a" : "#1a1a1a",
+      color: state.isFocused ? "#DAA520" : "#C0C0C0",
+      "&:hover": {
+        backgroundColor: "#2a2a2a",
+      },
+    }),
+    singleValue: (base: any) => ({
+      ...base,
+      color: "#C0C0C0",
+    }),
+    dropdownIndicator: (base: any) => ({
+      ...base,
+      color: "#B8860B",
+    }),
+    menuList: (base: any) => ({
+      ...base,
+      maxHeight: "200px",
+    }),
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,23 +139,27 @@ const EditDayModal = ({
             <div className="time-inputs">
               <div className="form-group">
                 <label htmlFor="startTime">Start Time</label>
-                <input
-                  type="time"
+                <Select
                   id="startTime"
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                  required
+                  options={timeOptions}
+                  value={timeOptions.find(
+                    (option) => option.value === startTime
+                  )}
+                  onChange={(option) => option && setStartTime(option.value)}
+                  styles={customStyles}
+                  menuPlacement="bottom"
                 />
               </div>
 
               <div className="form-group">
                 <label htmlFor="endTime">End Time</label>
-                <input
-                  type="time"
+                <Select
                   id="endTime"
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  required
+                  options={timeOptions}
+                  value={timeOptions.find((option) => option.value === endTime)}
+                  onChange={(option) => option && setEndTime(option.value)}
+                  styles={customStyles}
+                  menuPlacement="bottom"
                 />
               </div>
             </div>
