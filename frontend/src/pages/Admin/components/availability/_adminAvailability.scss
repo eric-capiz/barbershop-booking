@@ -1,122 +1,212 @@
 @use "@styles/variables" as *;
 
 .admin-availability {
-  width: 100%;
   padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 
-  &__header {
+  .month-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 2rem;
-
-    .month-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      h2 {
-        font-family: $font-primary;
-        color: $gold-primary;
-        font-size: 2rem;
-      }
-
-      .btn-primary {
-        background: $gradient-gold;
-        color: $black-primary;
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-    }
-  }
-
-  &__content {
-    background: $black-secondary;
-    border: 2px solid $gold-primary;
+    padding: 1rem;
+    background-color: $black-secondary;
     border-radius: 8px;
-    padding: 1.5rem;
-  }
-
-  .days-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.5rem;
-    padding: 1rem;
-  }
-
-  .day-card {
-    background: $black-primary;
     border: 1px solid $gold-dark;
-    padding: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-height: 100px;
 
-    &.working {
-      border-color: $gold-primary;
-      background: rgba($gold-primary, 0.1);
+    h2 {
+      color: $gold-primary;
+      font-family: $font-primary;
+      margin: 0;
     }
 
-    &.non-working {
-      opacity: 0.6;
-    }
+    button {
+      background: none;
+      border: 1px solid $gold-dark;
+      color: $gold-primary;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
 
-    &.selected {
-      background: $gold-primary;
-      color: $black-primary;
-
-      .day-name {
-        color: $black-primary !important;
-      }
-
-      .hours {
-        color: $black-primary !important;
+      &:hover {
+        background-color: $gold-primary;
+        color: $black-primary;
       }
     }
+  }
 
-    .day-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
+  .calendar-grid {
+    background-color: $black-secondary;
+    border-radius: 8px;
+    border: 1px solid $gold-dark;
+    overflow: hidden;
+
+    .weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      background-color: $black-light;
       border-bottom: 1px solid $gold-dark;
-      padding-bottom: 0.5rem;
 
-      .date {
-        font-size: 1.2rem;
+      .weekday {
+        padding: 1rem;
+        text-align: center;
+        color: $gold-primary;
+        font-family: $font-secondary;
         font-weight: bold;
       }
+    }
 
-      .day-name {
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background-color: $black-light;
+
+      .day {
+        aspect-ratio: 1;
+        padding: 0.5rem;
+        background-color: $black-secondary;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        &:not(.past):not(.other-month):not(.future-limit):hover {
+          background-color: #202020;
+        }
+
+        &.working {
+          border: 1px solid $gold-dark;
+
+          .date {
+            color: $gold-primary;
+          }
+        }
+
+        .date {
+          color: $silver-primary;
+          font-family: $font-secondary;
+          font-size: 1.1rem;
+        }
+
+        .hours {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: $silver-light;
+          font-size: 0.8rem;
+
+          svg {
+            color: $gold-primary;
+          }
+        }
+
+        &.other-month {
+          opacity: 0.3;
+          pointer-events: none;
+
+          .date {
+            color: $silver-dark;
+          }
+        }
+
+        &.past {
+          opacity: 0.5;
+          pointer-events: none;
+          background-color: rgba($black-light, 0.5);
+
+          .date {
+            color: $silver-dark;
+          }
+        }
+
+        &.today {
+          border: 2px solid $gold-primary;
+
+          .date {
+            color: $gold-primary;
+            font-weight: bold;
+          }
+        }
+
+        &.future-limit {
+          opacity: 0.3;
+          pointer-events: none;
+          background-color: rgba($black-light, 0.3);
+
+          .date {
+            color: $silver-dark;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Modal styles
+.availability-modal {
+  .modal-header {
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      svg {
+        color: $gold-primary;
+      }
+    }
+  }
+
+  .availability-form {
+    .working-toggle {
+      margin-bottom: 2rem;
+
+      label {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
         color: $silver-primary;
+        cursor: pointer;
+
+        input[type="checkbox"] {
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+        }
       }
     }
 
-    .hours {
-      font-size: 0.9rem;
-      color: $gold-light;
-      display: flex;
-      gap: 0.25rem;
-      justify-content: center;
-      margin-top: 1rem;
+    .time-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+
+      .form-group {
+        label {
+          display: block;
+          color: $gold-light;
+          margin-bottom: 0.5rem;
+        }
+
+        input[type="time"] {
+          width: 100%;
+          padding: 0.75rem;
+          background-color: $black-light;
+          border: 1px solid $gold-dark;
+          border-radius: 4px;
+          color: $silver-primary;
+          font-family: $font-secondary;
+
+          &:focus {
+            outline: none;
+            border-color: $gold-primary;
+          }
+        }
+      }
     }
-  }
-
-  .day-detail {
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 2px solid $gold-dark;
-
-    h3 {
-      color: $gold-primary;
-      margin-bottom: 1rem;
-    }
-  }
-
-  .setup-prompt {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    color: $silver-primary;
-    font-family: $font-secondary;
   }
 }

@@ -83,35 +83,56 @@ router.put("/day/:date", async (req, res) => {
     });
 
     if (!availability) {
-      return res.status(404).json({ message: "No availability found" });
-    }
-
-    // Find the day in schedule
-    const dayIndex = availability.schedule.findIndex(
-      (day) =>
-        day.date.toISOString().split("T")[0] ===
-        date.toISOString().split("T")[0]
-    );
-
-    if (dayIndex === -1) {
-      return res.status(404).json({ message: "Date not found in schedule" });
-    }
-
-    // If startTime and endTime are null, mark as not working
-    if (!startTime || !endTime) {
-      availability.schedule[dayIndex].isWorkingDay = false;
-      availability.schedule[dayIndex].workHours = null;
-      availability.schedule[dayIndex].timeSlots = [];
+      // If no availability exists, create new document with this day
+      availability = new BarberAvailability({
+        adminId: req.user.id,
+        currentMonth: {
+          month: date.getMonth() + 1,
+          year: date.getFullYear(),
+          isSet: true,
+        },
+        schedule: [
+          {
+            date: date,
+            isWorkingDay: startTime && endTime ? true : false,
+            workHours:
+              startTime && endTime ? { start: startTime, end: endTime } : null,
+            timeSlots: [],
+          },
+        ],
+      });
     } else {
-      // Generate 30-minute slots between start and end time
-      const slots = generateTimeSlots(new Date(startTime), new Date(endTime));
+      // Find the day in schedule
+      const dayIndex = availability.schedule.findIndex(
+        (day) =>
+          format(new Date(day.date), "yyyy-MM-dd") ===
+          format(date, "yyyy-MM-dd")
+      );
 
-      availability.schedule[dayIndex].isWorkingDay = true;
-      availability.schedule[dayIndex].workHours = {
-        start: startTime,
-        end: endTime,
-      };
-      availability.schedule[dayIndex].timeSlots = slots;
+      if (dayIndex === -1) {
+        // If day doesn't exist in schedule, add it
+        availability.schedule.push({
+          date: date,
+          isWorkingDay: startTime && endTime ? true : false,
+          workHours:
+            startTime && endTime ? { start: startTime, end: endTime } : null,
+          timeSlots: [],
+        });
+      } else {
+        // Update existing day
+        if (!startTime || !endTime) {
+          availability.schedule[dayIndex].isWorkingDay = false;
+          availability.schedule[dayIndex].workHours = null;
+          availability.schedule[dayIndex].timeSlots = [];
+        } else {
+          availability.schedule[dayIndex].isWorkingDay = true;
+          availability.schedule[dayIndex].workHours = {
+            start: startTime,
+            end: endTime,
+          };
+          // You might want to generate timeSlots here if needed
+        }
+      }
     }
 
     await availability.save();

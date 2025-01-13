@@ -1,86 +1,152 @@
 import { useState } from "react";
-import { useAvailability } from "@hooks/useAvailability";
-import { useAvailabilityStore } from "@/store/availabilityStore";
-import { format } from "date-fns";
+import {
+  useAvailability,
+  useSetupMonth,
+  useUpdateDay,
+} from "@hooks/useAvailability";
+import {
+  format,
+  addMonths,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  startOfWeek,
+  endOfWeek,
+  isSameMonth,
+  isPast,
+  startOfDay,
+  isToday,
+} from "date-fns";
+import { FaChevronLeft, FaChevronRight, FaClock } from "react-icons/fa";
+import EditDayModal from "./EditDayModal";
 import "./_adminAvailability.scss";
 
 const AdminAvailability = () => {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+
   const { data: availability, isLoading } = useAvailability();
-  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const setupMonth = useSetupMonth();
+  const updateDay = useUpdateDay();
+
+  const monthStart = startOfMonth(currentDate);
+  const monthEnd = endOfMonth(currentDate);
+  const calendarStart = startOfWeek(monthStart);
+  const calendarEnd = endOfWeek(monthEnd);
+  const today = startOfDay(new Date());
+
+  const calendarDays = eachDayOfInterval({
+    start: calendarStart,
+    end: calendarEnd,
+  });
+
+  const handlePrevMonth = () => {
+    setCurrentDate((prev) => addMonths(prev, -1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate((prev) => addMonths(prev, 1));
+  };
+
+  const handleDayClick = (date: Date) => {
+    const startOfSelectedDay = startOfDay(date);
+    // Only prevent selecting past dates
+    if (!isPast(startOfSelectedDay) || isToday(startOfSelectedDay)) {
+      setSelectedDay(date);
+    }
+  };
+
+  const getDayAvailability = (date: Date) => {
+    if (!availability?.schedule) return null;
+    return availability.schedule.find(
+      (day) => day.date.split("T")[0] === format(date, "yyyy-MM-dd")
+    );
+  };
 
   if (isLoading) return <div>Loading...</div>;
 
-  const currentMonth = availability?.currentMonth || {
-    month: new Date().getMonth() + 1,
-    year: new Date().getFullYear(),
-    isSet: false,
-  };
-
   return (
     <div className="admin-availability">
-      <div className="admin-availability__header">
-        <div className="month-info">
-          <h2>
-            {format(
-              new Date(currentMonth.year, currentMonth.month - 1),
-              "MMMM yyyy"
-            )}
-          </h2>
-          {!currentMonth.isSet && (
-            <button className="btn-primary">Set Up Month Schedule</button>
-          )}
-        </div>
+      <div className="month-navigation">
+        <button onClick={handlePrevMonth}>
+          <FaChevronLeft />
+        </button>
+        <h2>{format(currentDate, "MMMM yyyy")}</h2>
+        <button onClick={handleNextMonth}>
+          <FaChevronRight />
+        </button>
       </div>
 
-      {currentMonth.isSet ? (
-        <div className="admin-availability__content">
-          <div className="days-grid">
-            {availability?.schedule.map((day) => (
+      <div className="calendar-grid">
+        <div className="weekdays">
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+            <div key={day} className="weekday">
+              {day}
+            </div>
+          ))}
+        </div>
+
+        <div className="days">
+          {calendarDays.map((day) => {
+            const dayAvailability = getDayAvailability(day);
+            const isCurrentMonth = isSameMonth(day, currentDate);
+            const isPastDate = isPast(startOfDay(day)) && !isToday(day);
+
+            return (
               <div
-                key={day.date}
-                className={`day-card ${
-                  day.isWorkingDay ? "working" : "non-working"
-                } ${selectedDay === day.date ? "selected" : ""}`}
-                onClick={() => setSelectedDay(day.date)}
+                key={day.toISOString()}
+                className={`day 
+                  ${dayAvailability?.isWorkingDay ? "working" : ""} 
+                  ${!isCurrentMonth ? "other-month" : ""}
+                  ${isPastDate ? "past" : ""}
+                  ${isToday(day) ? "today" : ""}
+                `}
+                onClick={() => {
+                  if (isCurrentMonth && !isPastDate) {
+                    handleDayClick(day);
+                  }
+                }}
               >
-                <div className="day-header">
-                  <span className="date">
-                    {format(new Date(day.date), "d")}
-                  </span>
-                  <span className="day-name">
-                    {format(new Date(day.date), "EEE")}
-                  </span>
-                </div>
-                {day.isWorkingDay && day.workHours && (
+                <span className="date">{format(day, "d")}</span>
+                {dayAvailability?.workHours && !isPastDate && (
                   <div className="hours">
+                    <FaClock />
                     <span>
-                      {format(new Date(day.workHours.start), "h:mm a")}
+                      {format(
+                        new Date(dayAvailability.workHours.start),
+                        "h:mm a"
+                      )}{" "}
+                      -
+                      {format(
+                        new Date(dayAvailability.workHours.end),
+                        "h:mm a"
+                      )}
                     </span>
-                    <span>-</span>
-                    <span>{format(new Date(day.workHours.end), "h:mm a")}</span>
                   </div>
                 )}
               </div>
-            ))}
-          </div>
+            );
+          })}
+        </div>
+      </div>
 
-          {selectedDay && (
-            <div className="day-detail">
-              <h3>Set Working Hours</h3>
-              {/* Time selection and management will go here */}
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="setup-prompt">
-          <p>
-            Please set up the schedule for{" "}
-            {format(
-              new Date(currentMonth.year, currentMonth.month - 1),
-              "MMMM yyyy"
-            )}
-          </p>
-        </div>
+      {selectedDay && (
+        <EditDayModal
+          date={selectedDay}
+          availability={getDayAvailability(selectedDay)}
+          onClose={() => setSelectedDay(null)}
+          onSave={async (hours) => {
+            try {
+              await updateDay.mutateAsync({
+                date: format(selectedDay, "yyyy-MM-dd"),
+                dayData: hours,
+              });
+              setSelectedDay(null);
+            } catch (error) {
+              console.error("Failed to update availability:", error);
+            }
+          }}
+        />
       )}
     </div>
   );
