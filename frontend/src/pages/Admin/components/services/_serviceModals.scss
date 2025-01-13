@@ -1,0 +1,310 @@
+@use "@styles/variables" as *;
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba($black-primary, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+
+  @media (max-width: 768px) {
+    align-items: flex-end;
+    padding: 0;
+  }
+}
+
+.modal-content {
+  background-color: $black-secondary;
+  border: 1px solid $gold-primary;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 100%;
+    max-height: 85vh;
+    padding: 1.5rem;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &.delete-modal {
+    max-width: 400px;
+
+    @media (max-width: 768px) {
+      max-width: 100%;
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $gold-dark;
+
+    h3 {
+      font-family: $font-primary;
+      color: $gold-primary;
+      margin: 0;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      color: $silver-light;
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: $gold-primary;
+      }
+    }
+
+    @media (max-width: 768px) {
+      margin-bottom: 1rem;
+
+      h3 {
+        font-size: 1.25rem;
+      }
+
+      .close-button {
+        padding: 0.75rem;
+      }
+    }
+  }
+
+  .service-form {
+    .form-group {
+      //   margin-bottom: 1rem;
+
+      //   &:last-of-type {
+      //     margin-bottom: 1rem;
+      //   }
+
+      label {
+        display: block;
+        color: $gold-light;
+        margin-bottom: 0.5rem;
+        font-family: $font-secondary;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: $black-light;
+        border: 1px solid $gold-dark;
+        border-radius: 4px;
+        color: $silver-primary;
+        font-family: $font-secondary;
+
+        &:focus {
+          outline: none;
+          border-color: $gold-primary;
+        }
+
+        @media (max-width: 768px) {
+          font-size: 16px;
+          padding: 0.875rem;
+        }
+      }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+
+        @media (max-width: 768px) {
+          min-height: 80px;
+        }
+      }
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+
+    .form-actions {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      button {
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-family: $font-secondary;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+
+        &.btn-save {
+          background-color: $gold-primary;
+          color: $black-primary;
+          border: none;
+
+          &:hover {
+            background-color: $gold-dark;
+          }
+
+          &:disabled {
+            background-color: $silver-dark;
+            cursor: not-allowed;
+          }
+        }
+
+        &.btn-cancel {
+          width: 100%;
+          background-color: transparent;
+          color: $silver-primary;
+          border: 1px solid $gold-dark;
+          padding: 0.75rem 1.5rem;
+          border-radius: 4px;
+          cursor: pointer;
+          font-family: $font-secondary;
+          transition: all 0.3s ease;
+
+          &:hover {
+            border-color: $gold-primary;
+            color: $gold-primary;
+          }
+        }
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column-reverse;
+        margin-top: 0;
+        gap: 0.75rem;
+      }
+    }
+  }
+
+  .modal-body {
+    text-align: center;
+    padding: 2rem 0;
+
+    @media (max-width: 768px) {
+      padding: 1.5rem 0;
+
+      .warning-icon {
+        font-size: 2.5rem;
+      }
+
+      p {
+        font-size: 0.95rem;
+      }
+    }
+
+    .warning-icon {
+      color: #ff4444;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: $silver-primary;
+      margin-bottom: 1rem;
+      font-family: $font-secondary;
+
+      &.warning-text {
+        color: #ff4444;
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column-reverse;
+      gap: 0.75rem;
+
+      .btn-delete,
+      .btn-cancel {
+        width: 100%;
+        min-width: 0;
+        padding: 1rem 1.5rem;
+      }
+    }
+
+    .btn-delete {
+      background-color: #ff4444;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: $font-secondary;
+      transition: all 0.3s ease;
+      min-width: 100px;
+
+      &:hover {
+        background-color: #cc0000;
+      }
+
+      &:disabled {
+        background-color: #ff8888;
+        cursor: not-allowed;
+      }
+    }
+
+    .btn-cancel {
+      background-color: transparent;
+      color: $silver-primary;
+      border: 1px solid $gold-dark;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: $font-secondary;
+      transition: all 0.3s ease;
+      min-width: 100px;
+
+      &:hover {
+        border-color: $gold-primary;
+        color: $gold-primary;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $black-light;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $gold-dark;
+      border-radius: 2px;
+    }
+  }
+}

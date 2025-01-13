@@ -1,0 +1,144 @@
+@use "@styles/variables" as *;
+
+.about {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  // Profile Section
+  .about-profile {
+    text-align: center;
+    margin-bottom: 4rem;
+
+    .profile-image {
+      width: 300px;
+      height: 300px;
+      margin: 0 auto 2rem;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid $gold-primary;
+      box-shadow: 0 0 20px rgba($gold-primary, 0.2);
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+
+    .profile-content {
+      .bio {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+        color: rgba($silver-primary, 0.9);
+        max-width: 800px;
+        margin: 0 auto 2rem;
+      }
+
+      .experience {
+        color: $gold-primary;
+        font-size: 1.2rem;
+        margin: 2rem 0;
+      }
+
+      .specialties {
+        h3 {
+          color: $gold-primary;
+          margin-bottom: 1.5rem;
+          font-size: 1.5rem;
+        }
+
+        ul {
+          list-style: none;
+          padding: 0;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 1rem;
+
+          li {
+            background: rgba($black-secondary, 0.6);
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            border: 1px solid rgba($gold-primary, 0.3);
+            color: $silver-primary;
+            transition: all 0.3s ease;
+
+            &:hover {
+              border-color: $gold-primary;
+              background: rgba($black-secondary, 0.8);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Services Section
+  .about-services {
+    h2 {
+      color: $gold-primary;
+      margin-bottom: 3rem;
+      text-align: center;
+      font-size: 2rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+
+      .service-card {
+        background: rgba($black-secondary, 0.6);
+        padding: 2rem;
+        border-radius: 8px;
+        border: 1px solid rgba($gold-primary, 0.2);
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+
+        &:hover {
+          border-color: rgba($gold-primary, 0.4);
+          transform: translateY(-2px);
+        }
+
+        h3 {
+          color: $gold-primary;
+          margin-bottom: 1rem;
+          font-size: 1.3rem;
+        }
+
+        p {
+          color: rgba($silver-primary, 0.9);
+          margin-bottom: 1.5rem;
+          line-height: 1.6;
+          flex-grow: 1;
+        }
+
+        .service-details {
+          display: flex;
+          justify-content: space-between;
+          color: $gold-primary;
+          padding-top: 1rem;
+          border-top: 1px solid rgba($gold-primary, 0.2);
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+
+    .services-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}

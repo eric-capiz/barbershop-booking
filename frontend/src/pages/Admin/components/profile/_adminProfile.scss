@@ -1,0 +1,478 @@
+@use "@styles/variables" as *;
+
+.admin-profile {
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+
+  &__image-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+
+    .profile-image {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid $gold-primary;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .profile-image-placeholder {
+        width: 100%;
+        height: 100%;
+        background: $black-secondary;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: $gold-primary;
+        text-transform: uppercase;
+      }
+
+      .image-upload-label {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba($black-primary, 0.8);
+        padding: 0.5rem;
+        display: flex;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        svg {
+          color: $gold-primary;
+          font-size: 1.2rem;
+        }
+
+        &:hover {
+          background: rgba($black-primary, 0.9);
+        }
+      }
+    }
+  }
+
+  h2 {
+    font-family: $font-primary;
+    color: $gold-primary;
+    font-size: 2rem;
+    margin-bottom: 3rem;
+    text-align: center;
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+    }
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  &__section {
+    background-color: $black-secondary;
+    border: 1px solid $gold-primary;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+
+    h3 {
+      font-family: $font-primary;
+      color: $gold-primary;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid $gold-dark;
+      padding-bottom: 0.5rem;
+
+      @media (max-width: 768px) {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+    }
+
+    .info-item {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 1rem;
+
+      label {
+        color: $gold-light;
+        width: 200px;
+        font-family: $font-secondary;
+
+        @media (max-width: 768px) {
+          width: 100%;
+          margin-bottom: 0.25rem;
+        }
+      }
+
+      span {
+        color: $silver-primary;
+        font-family: $font-secondary;
+      }
+
+      ul {
+        list-style: none;
+
+        li {
+          color: $silver-primary;
+          margin-bottom: 0.5rem;
+          font-family: $font-secondary;
+
+          &:before {
+            content: "•";
+            color: $gold-primary;
+            margin-right: 0.5rem;
+          }
+        }
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 0.25rem;
+
+        label {
+          width: 100%;
+          margin-bottom: 0.25rem;
+        }
+      }
+    }
+  }
+
+  p {
+    color: $silver-primary;
+    font-family: $font-secondary;
+    line-height: 1.8;
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  .edit-button {
+    background: none;
+    border: none;
+    color: $gold-primary;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      padding: 0.75rem;
+    }
+  }
+}
+
+.edit-form {
+  background: $black-secondary;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid $gold-dark;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+
+    @media (max-width: 768px) {
+      margin-bottom: 0.75rem;
+    }
+
+    label {
+      display: block;
+      color: $gold-primary;
+      margin-bottom: 0.5rem;
+      font-family: $font-secondary;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid $gold-dark;
+      border-radius: 4px;
+      background: $black-primary;
+      color: $silver-light;
+      font-family: $font-secondary;
+
+      &:focus {
+        outline: none;
+        border-color: $gold-primary;
+      }
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 0.5rem;
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: $font-secondary;
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 0.9;
+      }
+
+      svg {
+        font-size: 1rem;
+      }
+    }
+
+    .btn-save {
+      background: $gradient-gold;
+      color: $black-primary;
+
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+    }
+
+    .btn-cancel {
+      background: $black-light;
+      color: $silver-primary;
+    }
+  }
+}
+
+.specialties-list {
+  margin-bottom: 1rem;
+
+  .specialty-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: $black-primary;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid $gold-dark;
+
+    span {
+      color: $silver-light;
+    }
+
+    .btn-remove {
+      background: none;
+      border: none;
+      color: #f44336;
+      cursor: pointer;
+      padding: 0.25rem;
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    @media (max-width: 768px) {
+      padding: 0.75rem;
+    }
+  }
+}
+
+.add-specialty {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid $gold-dark;
+    border-radius: 4px;
+    background: $black-primary;
+    color: $silver-light;
+    min-width: 0;
+  }
+
+  .btn-add {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $gold-primary;
+    color: $black-primary;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:not(:disabled):hover {
+      opacity: 0.9;
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: row;
+
+    input {
+      flex: 1;
+    }
+
+    .btn-add {
+      width: 40px;
+    }
+  }
+}
+
+.edit-bio {
+  .form-group {
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 0.75rem;
+      border: 1px solid $gold-dark;
+      border-radius: 4px;
+      background: $black-primary;
+      color: $silver-light;
+      font-family: $font-secondary;
+      resize: vertical;
+      line-height: 1.5;
+
+      &:focus {
+        outline: none;
+        border-color: $gold-primary;
+      }
+
+      &::placeholder {
+        color: $silver-dark;
+      }
+
+      @media (max-width: 768px) {
+        min-height: 120px;
+      }
+    }
+  }
+
+  .char-count {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: $silver-primary;
+
+    .limit-reached {
+      color: #f44336;
+    }
+  }
+}
+
+.edit-social {
+  .form-group {
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      svg {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .social-input {
+    display: flex;
+    align-items: center;
+    background: $black-primary;
+    border: 1px solid $gold-dark;
+    border-radius: 4px;
+    overflow: hidden;
+
+    &:focus-within {
+      border-color: $gold-primary;
+    }
+
+    .prefix {
+      padding: 0.75rem;
+      background: $black-light;
+      color: $silver-primary;
+      border-right: 1px solid $gold-dark;
+      font-family: $font-secondary;
+      font-size: 0.9rem;
+    }
+
+    input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 0.75rem;
+      color: $silver-light;
+      font-family: $font-secondary;
+
+      &:focus {
+        outline: none;
+      }
+
+      &::placeholder {
+        color: $silver-dark;
+      }
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+
+      .prefix {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid $gold-dark;
+      }
+
+      input {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+      }
+    }
+  }
+}
