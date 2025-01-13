@@ -27,6 +27,6 @@ export const authService = {
     const { data } = await axios.get(
       isAdmin ? "/api/admin/profile" : "/api/user/profile"
     );
-    return isAdmin ? data.admin : data;
+    return data;
   },
 };

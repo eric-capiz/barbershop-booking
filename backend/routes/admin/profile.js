@@ -16,7 +16,7 @@ const BarberProfile = require("../../model/admin/BarberProfile");
 router.get("/", async (req, res) => {
   try {
     const profile = await BarberProfile.findOne().select(
-      "name email username bio specialties yearsOfExperience profileImage socialMedia"
+      "name email username bio specialties yearsOfExperience profileImage socialMedia role"
     );
 
     if (!profile) {
