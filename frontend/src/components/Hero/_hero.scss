@@ -57,16 +57,17 @@
     .book-button {
       padding: 1rem 2.5rem;
       font-size: 1.2rem;
-      background: $gradient-gold;
+
+      background: $gold-dark;
       color: $black-primary;
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
       font-family: $font-secondary;
 
       &:hover {
-        background: $gold-dark;
+        background: $black-primary;
+        color: $silver-primary;
       }
     }
 
