@@ -13,10 +13,7 @@ interface Service {
 }
 
 interface BookingData {
-  appointmentDateTime: {
-    start: Date;
-    end: Date;
-  } | null;
+  appointmentDateTime: Date | null;
   service: {
     _id: string;
     name: string;
@@ -48,7 +45,7 @@ const BookingPage = () => {
   ) => {
     setBookingData((prev) => ({
       ...prev,
-      appointmentDateTime: timeSlot,
+      appointmentDateTime: timeSlot.start,
     }));
     setCurrentStep(2);
   };

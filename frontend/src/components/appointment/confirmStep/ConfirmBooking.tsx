@@ -26,20 +26,7 @@ const ConfirmBooking = ({
   onConfirm,
   onStepChange,
 }: ConfirmBookingProps) => {
-  console.log("Booking Data in Confirm:", bookingData);
-
   const handleConfirm = () => {
-    console.log("Booking Confirmation Details:", {
-      appointmentDate: format(bookingData.appointmentDateTime, "MMMM d, yyyy"),
-      appointmentTime: format(bookingData.appointmentDateTime, "h:mm a"),
-      service: {
-        id: bookingData.service._id,
-        name: bookingData.service.name,
-        duration: bookingData.service.duration,
-        price: bookingData.service.price,
-      },
-      contactInfo: bookingData.contactInfo,
-    });
     onConfirm();
   };
 
@@ -58,10 +45,13 @@ const ConfirmBooking = ({
           <h3>Date & Time</h3>
           <div className="detail-content">
             <p className="date">
-              {format(bookingData.appointmentDateTime, "MMMM d, yyyy")}
+              {format(
+                new Date(bookingData.appointmentDateTime),
+                "MMMM d, yyyy"
+              )}
             </p>
             <p className="time">
-              {format(bookingData.appointmentDateTime, "h:mm a")}
+              {format(new Date(bookingData.appointmentDateTime), "h:mm a")}
             </p>
           </div>
         </section>
