@@ -2,44 +2,45 @@ import { useState } from "react";
 import DateTimeSelection from "@/components/appointment/dateStep/DateTimeSelection";
 import ServiceSelection from "@/components/appointment/serviceStep/ServiceSelection";
 import ContactInfo from "@/components/appointment/contactStep/ContactInfo";
+import ConfirmBooking from "@/components/appointment/confirmStep/ConfirmBooking";
 import "./_bookingPage.scss";
-import { useUserStore } from "@/store/user/userStore";
 
-interface BookingStep {
-  appointmentDateTime: Date | null;
-  serviceId: string | null;
+interface Service {
+  _id: string;
+  name: string;
+  duration: number;
+  price: number;
+}
+
+interface BookingData {
+  appointmentDateTime: {
+    start: Date;
+    end: Date;
+  } | null;
+  service: {
+    _id: string;
+    name: string;
+    duration: number;
+    price: number;
+  } | null;
   contactInfo: {
     name: string;
     email: string;
     phone: string;
-    preferredContact: "email" | "phone" | null;
-  };
+    preferredContact: "email" | "phone";
+  } | null;
 }
 
-const initialBookingState: BookingStep = {
+const initialBookingState: BookingData = {
   appointmentDateTime: null,
-  serviceId: null,
-  contactInfo: {
-    name: "",
-    email: "",
-    phone: "",
-    preferredContact: null,
-  },
+  service: null,
+  contactInfo: null,
 };
 
 const BookingPage = () => {
-  const [bookingData, setBookingData] =
-    useState<BookingStep>(initialBookingState);
   const [currentStep, setCurrentStep] = useState(1);
-
-  const user = useUserStore((state) => state.user);
-
-  const [contactInfo, setContactInfo] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    phone: user?.phone || "", // Will use user's phone if it exists
-    preferredContact: user?.preferredContact || ("email" as "email" | "phone"),
-  });
+  const [bookingData, setBookingData] =
+    useState<BookingData>(initialBookingState);
 
   const handleDateTimeSelect = (
     date: Date,
@@ -47,39 +48,36 @@ const BookingPage = () => {
   ) => {
     setBookingData((prev) => ({
       ...prev,
-      appointmentDateTime: timeSlot.start,
+      appointmentDateTime: timeSlot,
     }));
-    console.log("Step 1 - Selected Date/Time:", timeSlot.start);
     setCurrentStep(2);
   };
 
-  const handleServiceSelect = (serviceId: string) => {
+  const handleServiceSelect = (selectedService: Service) => {
     setBookingData((prev) => ({
       ...prev,
-      serviceId,
+      service: {
+        _id: selectedService._id,
+        name: selectedService.name,
+        duration: selectedService.duration,
+        price: selectedService.price,
+      },
     }));
-    console.log("Current Booking Data:", {
-      appointmentDateTime: bookingData.appointmentDateTime,
-      serviceId: serviceId,
-    });
     setCurrentStep(3);
   };
 
-  const handleContactInfoSubmit = (contactInfo: {
-    name: string;
-    email: string;
-    phone: string;
-    preferredContact: "email" | "phone";
-  }) => {
+  const handleContactInfoSubmit = (contactInfo: BookingData["contactInfo"]) => {
     setBookingData((prev) => ({
       ...prev,
       contactInfo,
     }));
-    console.log("Current Booking Data:", {
-      ...bookingData,
-      contactInfo,
-    });
     setCurrentStep(4);
+  };
+
+  const handleConfirmBooking = () => {
+    // Here you'll integrate with your booking API
+    console.log("Final Booking Data:", bookingData);
+    // TODO: Add API call
   };
 
   const renderCurrentStep = () => {
@@ -91,7 +89,19 @@ const BookingPage = () => {
       case 3:
         return <ContactInfo onSubmit={handleContactInfoSubmit} />;
       case 4:
-        return <div>Confirm Booking</div>;
+        return bookingData.appointmentDateTime &&
+          bookingData.service &&
+          bookingData.contactInfo ? (
+          <ConfirmBooking
+            bookingData={{
+              appointmentDateTime: bookingData.appointmentDateTime,
+              service: bookingData.service,
+              contactInfo: bookingData.contactInfo,
+            }}
+            onConfirm={handleConfirmBooking}
+            onStepChange={setCurrentStep}
+          />
+        ) : null;
       default:
         return null;
     }
@@ -101,14 +111,6 @@ const BookingPage = () => {
     <div className="booking-page">
       <div className="booking-container">
         <div className="booking-header">
-          {currentStep > 1 && (
-            <button
-              className="back-button"
-              onClick={() => setCurrentStep((prev) => prev - 1)}
-            >
-              ← Back
-            </button>
-          )}
           <h1>Book Your Appointment</h1>
         </div>
 

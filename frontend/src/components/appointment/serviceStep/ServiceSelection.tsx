@@ -3,13 +3,22 @@ import { Service } from "@/types/admin/services.types";
 import "./_serviceSelection.scss";
 
 interface ServiceSelectionProps {
-  onSelect: (serviceId: string) => void;
+  onSelect: (service: {
+    _id: string;
+    name: string;
+    duration: number;
+    price: number;
+  }) => void;
 }
 
 const ServiceSelection = ({ onSelect }: ServiceSelectionProps) => {
   const { data: services, isLoading } = useServices();
 
   if (isLoading) return <div>Loading services...</div>;
+
+  const handleServiceClick = (service: Service) => {
+    onSelect(service);
+  };
 
   return (
     <div className="service-selection">
@@ -18,7 +27,7 @@ const ServiceSelection = ({ onSelect }: ServiceSelectionProps) => {
           <button
             key={service._id}
             className="service-card"
-            onClick={() => onSelect(service._id)}
+            onClick={() => handleServiceClick(service)}
           >
             <h3 className="service-name">{service.name}</h3>
             <div className="service-details">

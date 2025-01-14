@@ -4,7 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useBookingAvailability } from "@/hooks/appointment/useBookingAvailability";
 import type { DateSelectArg } from "@fullcalendar/core";
-import { format, addMinutes } from "date-fns";
+import { format, addMinutes, isBefore, isAfter, startOfDay } from "date-fns";
 import "./_dateTimeSelection.scss";
 
 interface DateTimeSelectionProps {
@@ -38,6 +38,8 @@ const DateTimeSelection = ({ onSelect }: DateTimeSelectionProps) => {
   const getAvailableTimeSlots = (date: Date) => {
     if (!availability) return [];
 
+    const now = new Date();
+
     const scheduleDay = availability.schedule.find((day) => {
       const scheduleDate = new Date(day.date);
       return (
@@ -54,18 +56,68 @@ const DateTimeSelection = ({ onSelect }: DateTimeSelectionProps) => {
     const endTime = new Date(scheduleDay.workHours.end);
 
     while (currentTime <= endTime) {
-      slots.push({
+      const slot = {
         start: new Date(currentTime),
         end: new Date(
           new Date(currentTime).setMinutes(currentTime.getMinutes() + 30)
         ),
-      });
+      };
+
+      // Only add future time slots
+      if (isAfter(slot.start, now)) {
+        slots.push(slot);
+      }
+
       currentTime = new Date(
         currentTime.setMinutes(currentTime.getMinutes() + 30)
       );
     }
 
     return slots;
+  };
+
+  const filterAvailableTimeSlots = (slots: TimeSlot[], selectedDate: Date) => {
+    const now = new Date();
+
+    return slots.filter((slot) => {
+      // Convert slot.start string to Date if it isn't already
+      const slotStartTime = new Date(slot.start);
+
+      // Always filter out any time slots that are in the past
+      return isAfter(slotStartTime, now);
+    });
+  };
+
+  const renderTimeSlots = () => {
+    if (!selectedDate || !availability) return null;
+
+    const availableSlots = filterAvailableTimeSlots(
+      availability.timeSlots,
+      selectedDate
+    );
+
+    return (
+      <div className="time-slots-grid">
+        {availableSlots.map((slot) => (
+          <button
+            key={slot.start.toString()}
+            className={`time-slot-button ${
+              selectedTimeSlot?.start === slot.start ? "selected" : ""
+            }`}
+            onClick={() => handleTimeSelect(slot)}
+          >
+            {format(new Date(slot.start), "h:mm a")}
+          </button>
+        ))}
+        {availableSlots.length === 0 && (
+          <p className="no-slots-message">
+            {isAfter(startOfDay(selectedDate), startOfDay(new Date()))
+              ? "No available time slots for this date."
+              : "This date has passed. Please select a future date."}
+          </p>
+        )}
+      </div>
+    );
   };
 
   if (isLoading) return <div>Loading availability...</div>;
