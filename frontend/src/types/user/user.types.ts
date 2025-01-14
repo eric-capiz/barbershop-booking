@@ -3,6 +3,8 @@ export interface User {
   name: string;
   username: string;
   email: string;
+  phone?: string;
+  preferredContact?: "email" | "phone";
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

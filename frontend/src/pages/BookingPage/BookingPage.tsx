@@ -1,13 +1,15 @@
 import { useState } from "react";
 import DateTimeSelection from "@/components/appointment/dateStep/DateTimeSelection";
 import ServiceSelection from "@/components/appointment/serviceStep/ServiceSelection";
+import ContactInfo from "@/components/appointment/contactStep/ContactInfo";
 import "./_bookingPage.scss";
-import { useServices } from "@/hooks/admin/useService";
+import { useUserStore } from "@/store/user/userStore";
 
 interface BookingStep {
   appointmentDateTime: Date | null;
   serviceId: string | null;
   contactInfo: {
+    name: string;
     email: string;
     phone: string;
     preferredContact: "email" | "phone" | null;
@@ -18,6 +20,7 @@ const initialBookingState: BookingStep = {
   appointmentDateTime: null,
   serviceId: null,
   contactInfo: {
+    name: "",
     email: "",
     phone: "",
     preferredContact: null,
@@ -25,10 +28,18 @@ const initialBookingState: BookingStep = {
 };
 
 const BookingPage = () => {
-  const { data: services } = useServices();
   const [bookingData, setBookingData] =
     useState<BookingStep>(initialBookingState);
   const [currentStep, setCurrentStep] = useState(1);
+
+  const user = useUserStore((state) => state.user);
+
+  const [contactInfo, setContactInfo] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "", // Will use user's phone if it exists
+    preferredContact: user?.preferredContact || ("email" as "email" | "phone"),
+  });
 
   const handleDateTimeSelect = (
     date: Date,
@@ -47,21 +58,28 @@ const BookingPage = () => {
       ...prev,
       serviceId,
     }));
-
-    const selectedService = services?.find(
-      (service) => service._id === serviceId
-    );
     console.log("Current Booking Data:", {
       appointmentDateTime: bookingData.appointmentDateTime,
-      service: {
-        id: serviceId,
-        name: selectedService?.name,
-        duration: selectedService?.duration,
-        price: selectedService?.price,
-      },
+      serviceId: serviceId,
     });
-
     setCurrentStep(3);
+  };
+
+  const handleContactInfoSubmit = (contactInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    preferredContact: "email" | "phone";
+  }) => {
+    setBookingData((prev) => ({
+      ...prev,
+      contactInfo,
+    }));
+    console.log("Current Booking Data:", {
+      ...bookingData,
+      contactInfo,
+    });
+    setCurrentStep(4);
   };
 
   const renderCurrentStep = () => {
@@ -71,7 +89,7 @@ const BookingPage = () => {
       case 2:
         return <ServiceSelection onSelect={handleServiceSelect} />;
       case 3:
-        return <div>Contact Information</div>;
+        return <ContactInfo onSubmit={handleContactInfoSubmit} />;
       case 4:
         return <div>Confirm Booking</div>;
       default:
