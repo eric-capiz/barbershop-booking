@@ -3,11 +3,7 @@ import DateTimeSelection from "@/components/appointment/DateTimeSelection";
 import "./_bookingPage.scss";
 
 interface BookingStep {
-  date: Date | null;
-  timeSlot: {
-    start: Date | null;
-    end: Date | null;
-  };
+  appointmentDateTime: Date | null;
   serviceId: string | null;
   contactInfo: {
     email: string;
@@ -17,11 +13,7 @@ interface BookingStep {
 }
 
 const initialBookingState: BookingStep = {
-  date: null,
-  timeSlot: {
-    start: null,
-    end: null,
-  },
+  appointmentDateTime: null,
   serviceId: null,
   contactInfo: {
     email: "",
@@ -41,10 +33,10 @@ const BookingPage = () => {
   ) => {
     setBookingData((prev) => ({
       ...prev,
-      date,
-      timeSlot,
+      appointmentDateTime: timeSlot.start,
     }));
-    setCurrentStep(2); // Move to next step after selection
+    console.log("Selected booking data:", timeSlot.start);
+    setCurrentStep(2);
   };
 
   const renderCurrentStep = () => {
