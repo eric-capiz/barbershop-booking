@@ -90,36 +90,35 @@
   }
 
   .booking-header {
-    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     margin-bottom: 2rem;
 
+    .back-button {
+      background: $black-secondary;
+      border: 1px solid $gold-dark;
+      color: $gold-primary;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-family: $font-secondary;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: $gradient-gold;
+        color: $black-primary;
+        transform: translateX(-2px);
+      }
+
+      &:active {
+        transform: translateX(0);
+      }
+    }
+
     h1 {
+      flex: 1;
       text-align: center;
-    }
-  }
-
-  .back-button {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    background: $black-secondary;
-    border: 1px solid $gold-dark;
-    color: $gold-primary;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-family: $font-secondary;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background: $gradient-gold;
-      color: $black-primary;
-      transform: translateY(-50%) translateX(-2px);
-    }
-
-    &:active {
-      transform: translateY(-50%) translateX(0);
     }
   }
 }
