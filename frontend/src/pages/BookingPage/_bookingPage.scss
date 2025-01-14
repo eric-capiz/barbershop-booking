@@ -1,50 +1,85 @@
 @use "@styles/variables" as *;
 
 .booking-page {
-  padding: 2rem;
+  padding: 0.5rem;
   max-width: 1200px;
   margin: 0 auto;
 
+  @media (min-width: 768px) {
+    padding: 1.5rem;
+  }
+
   .booking-container {
     background: $black-secondary;
-    padding: 2rem;
+    padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba($black-primary, 0.2);
 
+    @media (min-width: 768px) {
+      padding: 1.5rem;
+    }
+
+    @media (min-width: 992px) {
+      padding: 2rem;
+    }
+
     h1 {
-      text-align: center;
-      margin-bottom: 2rem;
-      color: $gold-primary;
-      font-family: $font-primary;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+
+      @media (min-width: 768px) {
+        font-size: 1.75rem;
+      }
     }
   }
 
   .booking-steps {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-    padding: 0 1rem;
-    border-bottom: 1px solid $silver-dark;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0;
+    border-bottom: none;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 0 1rem;
+      margin: 1rem 0 1.5rem;
+      border-bottom: 1px solid $silver-dark;
+    }
 
     .step {
-      position: relative;
-      padding: 0.5rem 1rem;
-      color: $silver-dark;
-      font-family: $font-secondary;
-      cursor: default;
+      font-size: 0.875rem;
+      padding: 0.5rem;
+      opacity: 0.5;
+
+      @media (min-width: 768px) {
+        font-size: 0.9rem;
+        padding: 0.75rem 0.5rem;
+        position: relative;
+      }
 
       &.active {
-        color: $gold-primary;
+        opacity: 1;
         font-weight: bold;
+        color: $gold-primary;
+        border-left: 2px solid $gold-primary;
+        padding-left: 1rem;
 
-        &:before {
-          content: "";
-          position: absolute;
-          bottom: -1px;
-          left: 0;
-          width: 100%;
-          height: 2px;
-          background-color: $gold-primary;
+        @media (min-width: 768px) {
+          border-left: none;
+          padding-left: 0.5rem;
+
+          &:before {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: $gold-primary;
+          }
         }
       }
     }
