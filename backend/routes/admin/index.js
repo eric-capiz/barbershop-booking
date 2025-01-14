@@ -12,6 +12,5 @@ router.use("/gallery", require("./gallery"));
 router.use(auth);
 router.use(isAdmin);
 router.use("/availability", require("./availability"));
-router.use("/appointments", require("./appointments"));
 
 module.exports = router;

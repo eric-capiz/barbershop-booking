@@ -8,7 +8,7 @@ const {
 } = require("../../cloudinary/cloudinaryUtils");
 
 const Review = require("../../model/review/Review");
-const UserAppointment = require("../../model/user/UserAppointment");
+const Appointment = require("../../model/appointment/Appointment");
 
 // @route   GET /api/user/reviews
 // @desc    Get all active reviews
