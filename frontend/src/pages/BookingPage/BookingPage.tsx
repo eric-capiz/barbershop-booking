@@ -71,12 +71,6 @@ const BookingPage = () => {
     setCurrentStep(4);
   };
 
-  const handleConfirmBooking = () => {
-    // Here you'll integrate with your booking API
-    console.log("Final Booking Data:", bookingData);
-    // TODO: Add API call
-  };
-
   const renderCurrentStep = () => {
     switch (currentStep) {
       case 1:
@@ -95,7 +89,6 @@ const BookingPage = () => {
               service: bookingData.service,
               contactInfo: bookingData.contactInfo,
             }}
-            onConfirm={handleConfirmBooking}
             onStepChange={setCurrentStep}
           />
         ) : null;

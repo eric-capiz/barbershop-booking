@@ -39,11 +39,9 @@ const AppointmentSchema = new mongoose.Schema(
     contactInfo: {
       email: {
         type: String,
-        required: true,
       },
       phone: {
         type: String,
-        required: true,
       },
       preferredContact: {
         type: String,

@@ -1,4 +1,8 @@
+import { useState } from "react";
 import { format } from "date-fns";
+import { useAppointment } from "@/hooks/appointment/useAppointment";
+import { useBookingAvailability } from "@/hooks/appointment/useBookingAvailability";
+import Toast from "@/components/common/Toast";
 import "./_confirmBooking.scss";
 
 interface ConfirmBookingProps {
@@ -26,8 +30,70 @@ const ConfirmBooking = ({
   onConfirm,
   onStepChange,
 }: ConfirmBookingProps) => {
-  const handleConfirm = () => {
-    onConfirm();
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+  const { createAppointment, isCreating } = useAppointment();
+  const { data: availability } = useBookingAvailability();
+
+  const handleConfirm = async () => {
+    try {
+      if (!availability) {
+        setToast({
+          message: "Could not get barber information. Please try again.",
+          type: "error",
+        });
+        return;
+      }
+
+      const appointmentDate = new Date(bookingData.appointmentDateTime);
+      appointmentDate.setHours(0, 0, 0, 0);
+
+      const appointmentData = {
+        adminId: availability.adminId,
+        serviceId: bookingData.service._id,
+        appointmentDate: appointmentDate,
+        timeSlot: {
+          start: bookingData.appointmentDateTime,
+          end: new Date(
+            bookingData.appointmentDateTime.getTime() +
+              bookingData.service.duration * 60000
+          ),
+        },
+        contactInfo: bookingData.contactInfo,
+      };
+
+      console.log("Sending appointment data:", {
+        ...appointmentData,
+        appointmentDate: appointmentDate.toISOString(),
+        timeSlot: {
+          start: appointmentData.timeSlot.start.toISOString(),
+          end: appointmentData.timeSlot.end.toISOString(),
+        },
+      });
+      console.log("Token:", localStorage.getItem("token"));
+
+      await createAppointment.mutateAsync(appointmentData);
+
+      setToast({
+        message:
+          "Appointment request sent! Please check your profile for status updates.",
+        type: "success",
+      });
+      setIsSubmitted(true);
+
+      // Optional: Navigate to profile page after delay
+      setTimeout(() => {
+        onConfirm();
+      }, 3000);
+    } catch (error: any) {
+      setToast({
+        message: error.response?.data?.message || "Failed to book appointment",
+        type: "error",
+      });
+    }
   };
 
   return (
@@ -95,10 +161,26 @@ const ConfirmBooking = ({
           By clicking confirm, you agree to our booking terms and cancellation
           policy.
         </p>
-        <button className="confirm-button" onClick={handleConfirm}>
-          Confirm Booking
+        <button
+          className="confirm-button"
+          onClick={handleConfirm}
+          disabled={isCreating || isSubmitted}
+        >
+          {isCreating
+            ? "Sending request..."
+            : isSubmitted
+            ? "Request Sent!"
+            : "Confirm Booking"}
         </button>
       </div>
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 };

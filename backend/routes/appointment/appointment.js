@@ -37,30 +37,61 @@ router.post("/book", async (req, res) => {
       notes,
     } = req.body;
 
-    // Check if time slot is available
+    // Format the date to match the schedule date format
+    const bookingDate = new Date(appointmentDate);
+    bookingDate.setHours(0, 0, 0, 0);
+
     const availability = await BarberAvailability.findOne({
       adminId,
-      "schedule.date": appointmentDate,
+      "schedule.date": {
+        $gte: bookingDate,
+        $lt: new Date(bookingDate.getTime() + 24 * 60 * 60 * 1000),
+      },
     });
 
     if (!availability) {
-      return res.status(400).json({ message: "Time slot not available" });
+      return res
+        .status(400)
+        .json({ message: "No availability found for this date" });
+    }
+
+    // Find the specific day in the schedule
+    const scheduleDay = availability.schedule.find((day) => {
+      const dayDate = new Date(day.date);
+      dayDate.setHours(0, 0, 0, 0);
+      return dayDate.getTime() === bookingDate.getTime();
+    });
+
+    if (!scheduleDay || !scheduleDay.isWorkingDay) {
+      return res.status(400).json({ message: "Not a working day" });
+    }
+
+    // Check if the requested time slot falls within working hours
+    const requestedStart = new Date(timeSlot.start);
+    const requestedEnd = new Date(timeSlot.end);
+    const workStart = new Date(scheduleDay.workHours.start);
+    const workEnd = new Date(scheduleDay.workHours.end);
+
+    if (requestedStart < workStart || requestedEnd > workEnd) {
+      return res
+        .status(400)
+        .json({ message: "Time slot outside working hours" });
     }
 
     const newAppointment = new Appointment({
       userId: req.user.id,
       adminId,
       serviceId,
-      appointmentDate,
+      appointmentDate: bookingDate,
       timeSlot,
       contactInfo,
-      notes,
       status: "pending",
     });
 
-    const appointment = await newAppointment.save();
+    let appointment = await newAppointment.save();
 
-    await appointment
+    // Changed the populate chain
+    appointment = await Appointment.findById(appointment._id)
       .populate("adminId", "name")
       .populate("serviceId", "name duration price");
 
