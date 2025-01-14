@@ -6,6 +6,7 @@ const authRoutes = require("./routes/auth/auth");
 const adminRoutes = require("./routes/admin");
 const userRoutes = require("./routes/user");
 const appointmentRoutes = require("./routes/appointment/appointment");
+const availabilityRoutes = require("./routes/appointment/availability");
 require("dotenv").config();
 
 const app = express();
@@ -25,6 +26,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/availability", availabilityRoutes);
 
 // Database connection
 mongoose
