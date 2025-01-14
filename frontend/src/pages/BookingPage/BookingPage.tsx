@@ -1,6 +1,8 @@
 import { useState } from "react";
-import DateTimeSelection from "@/components/appointment/DateTimeSelection";
+import DateTimeSelection from "@/components/appointment/dateStep/DateTimeSelection";
+import ServiceSelection from "@/components/appointment/serviceStep/ServiceSelection";
 import "./_bookingPage.scss";
+import { useServices } from "@/hooks/admin/useService";
 
 interface BookingStep {
   appointmentDateTime: Date | null;
@@ -23,6 +25,7 @@ const initialBookingState: BookingStep = {
 };
 
 const BookingPage = () => {
+  const { data: services } = useServices();
   const [bookingData, setBookingData] =
     useState<BookingStep>(initialBookingState);
   const [currentStep, setCurrentStep] = useState(1);
@@ -35,8 +38,30 @@ const BookingPage = () => {
       ...prev,
       appointmentDateTime: timeSlot.start,
     }));
-    console.log("Selected booking data:", timeSlot.start);
+    console.log("Step 1 - Selected Date/Time:", timeSlot.start);
     setCurrentStep(2);
+  };
+
+  const handleServiceSelect = (serviceId: string) => {
+    setBookingData((prev) => ({
+      ...prev,
+      serviceId,
+    }));
+
+    const selectedService = services?.find(
+      (service) => service._id === serviceId
+    );
+    console.log("Current Booking Data:", {
+      appointmentDateTime: bookingData.appointmentDateTime,
+      service: {
+        id: serviceId,
+        name: selectedService?.name,
+        duration: selectedService?.duration,
+        price: selectedService?.price,
+      },
+    });
+
+    setCurrentStep(3);
   };
 
   const renderCurrentStep = () => {
@@ -44,13 +69,10 @@ const BookingPage = () => {
       case 1:
         return <DateTimeSelection onSelect={handleDateTimeSelect} />;
       case 2:
-        // Service selection will go here
-        return <div>Select Service</div>;
+        return <ServiceSelection onSelect={handleServiceSelect} />;
       case 3:
-        // Contact info will go here
         return <div>Contact Information</div>;
       case 4:
-        // Confirmation will go here
         return <div>Confirm Booking</div>;
       default:
         return null;
@@ -60,7 +82,18 @@ const BookingPage = () => {
   return (
     <div className="booking-page">
       <div className="booking-container">
-        <h1>Book Your Appointment</h1>
+        <div className="booking-header">
+          {currentStep > 1 && (
+            <button
+              className="back-button"
+              onClick={() => setCurrentStep((prev) => prev - 1)}
+            >
+              ← Back
+            </button>
+          )}
+          <h1>Book Your Appointment</h1>
+        </div>
+
         <div className="booking-steps">
           <div className={`step ${currentStep === 1 ? "active" : ""}`}>
             1. Select Date & Time
@@ -77,15 +110,6 @@ const BookingPage = () => {
         </div>
 
         <div className="step-content">{renderCurrentStep()}</div>
-
-        {currentStep > 1 && (
-          <button
-            className="back-button"
-            onClick={() => setCurrentStep((prev) => prev - 1)}
-          >
-            Back
-          </button>
-        )}
       </div>
     </div>
   );

@@ -1,0 +1,56 @@
+@use "@styles/variables" as *;
+.service-selection {
+  width: 100%;
+  padding: 1rem;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.service-card {
+  background-color: $black-secondary;
+  border: 1px solid $gold-dark;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $gradient-gold;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba($black-primary, 0.3);
+
+    .service-name,
+    .service-details,
+    .service-description {
+      color: $black-primary;
+    }
+  }
+}
+
+.service-name {
+  font-family: $font-primary;
+  color: $gold-primary;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.service-details {
+  display: flex;
+  justify-content: space-between;
+  color: $silver-primary;
+  font-family: $font-secondary;
+  margin-bottom: 0.75rem;
+}
+
+.service-description {
+  color: $silver-dark;
+  font-family: $font-secondary;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
