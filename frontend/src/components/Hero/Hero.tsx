@@ -1,14 +1,16 @@
 import { useAuthStore } from "@/store/authStore";
+import { useNavigate } from "react-router-dom";
 import HaircutGallery from "../HaircutGallery/HaircutGallery";
 import "./_hero.scss";
 
 const Hero = () => {
   const { isAuthenticated, isAdmin } = useAuthStore();
+  const navigate = useNavigate();
 
   const showBookButton = isAuthenticated && !isAdmin;
 
   const handleBookNow = () => {
-    console.log("Book Now clicked");
+    navigate("/book");
   };
 
   return (

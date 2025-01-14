@@ -9,6 +9,7 @@ import ProtectedAdminRoute from "./components/auth/ProtectedAdminRoute";
 import ProtectedUserRoute from "./components/auth/ProtectedUserRoute";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import UserProfile from "./pages/User/UserProfile/Userprofile";
+import BookingPage from "@/pages/BookingPage/BookingPage";
 
 function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
@@ -54,6 +55,15 @@ function App() {
               <ProtectedAdminRoute>
                 <AdminDashboard />
               </ProtectedAdminRoute>
+            }
+          />
+
+          <Route
+            path="/book"
+            element={
+              <ProtectedUserRoute>
+                <BookingPage />
+              </ProtectedUserRoute>
             }
           />
         </Routes>
