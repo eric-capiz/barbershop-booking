@@ -23,9 +23,16 @@ export const authService = {
   },
 
   getCurrentUser: async () => {
+    const token = localStorage.getItem("token");
     const isAdmin = localStorage.getItem("isAdmin") === "true";
+
     const { data } = await axios.get(
-      isAdmin ? "/api/admin/profile" : "/api/user/profile"
+      isAdmin ? "/api/admin/profile" : "/api/user/profile",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     return data;
   },

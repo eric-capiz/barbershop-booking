@@ -11,6 +11,7 @@ interface AuthState {
   setUser: (user: User | BarberProfile | null) => void;
   initializeAuth: () => Promise<void>;
   setAuthToken: (token: string) => void;
+  clearAuth: () => void;
 }
 
 const TOKEN_EXPIRY = 60 * 60 * 1000;
@@ -31,6 +32,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
   setUser: (user) => set({ user }),
+  clearAuth: () =>
+    set({
+      isAuthenticated: false,
+      isAdmin: false,
+      user: null,
+    }),
   setAuthToken: (token) => {
     localStorage.setItem("token", token);
     localStorage.setItem("tokenExpiry", String(Date.now() + TOKEN_EXPIRY));

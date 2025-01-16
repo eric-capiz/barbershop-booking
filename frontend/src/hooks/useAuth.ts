@@ -6,15 +6,25 @@ import { useNavigate } from "react-router-dom";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
-  const { setIsAuthenticated, setIsAdmin, setAuthToken } = useAuthStore();
+  const { setIsAuthenticated, setIsAdmin, setAuthToken, setUser } =
+    useAuthStore();
 
   return useMutation({
     mutationFn: (credentials: LoginCredentials) =>
       authService.login(credentials),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       setAuthToken(data.token);
       setIsAuthenticated(true);
       setIsAdmin(!!data.isAdmin);
+
+      // Fetch and set user data immediately after login
+      try {
+        const userData = await authService.getCurrentUser();
+        setUser(userData);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+
       queryClient.invalidateQueries({
         queryKey: [data.isAdmin ? "admin" : "user"],
       });
@@ -38,7 +48,7 @@ export const useRegister = () => {
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
-  const { setIsAuthenticated, setIsAdmin } = useAuthStore();
+  const { clearAuth } = useAuthStore(); // Use clearAuth instead
   const navigate = useNavigate();
 
   return () => {
@@ -46,9 +56,8 @@ export const useLogout = () => {
     localStorage.removeItem("tokenExpiry");
     localStorage.removeItem("isAdmin");
     localStorage.removeItem("adminExpiry");
+    clearAuth();
 
-    setIsAuthenticated(false);
-    setIsAdmin(false);
     queryClient.removeQueries();
     navigate("/");
   };
