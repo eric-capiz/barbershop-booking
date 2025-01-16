@@ -15,6 +15,8 @@ export const useAppointment = () => {
     onSuccess: () => {
       // Invalidate and refetch appointments after creating new one
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      // Add this line to invalidate booking availability
+      queryClient.invalidateQueries({ queryKey: ["booking-availability"] });
     },
   });
 

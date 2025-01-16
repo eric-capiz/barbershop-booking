@@ -1,8 +1,5 @@
 import { create } from "zustand";
-import {
-  BarberAvailability,
-  ScheduleDay,
-} from "@/types/admin/availability.types";
+import { ScheduleDay } from "@/types/admin/availability.types";
 
 interface AvailabilityState {
   currentMonth: {

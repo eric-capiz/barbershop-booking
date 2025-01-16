@@ -11,9 +11,6 @@ export const useBookingAvailability = () => {
           publicAvailabilityService.getBookedSlots(),
         ]);
 
-        console.log("Fetched availability:", availability);
-        console.log("Fetched booked slots:", bookedSlots);
-
         return {
           ...availability,
           bookedSlots: bookedSlots.bookedSlots,

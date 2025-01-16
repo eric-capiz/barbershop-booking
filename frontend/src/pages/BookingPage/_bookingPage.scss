@@ -53,6 +53,11 @@
       font-size: 0.875rem;
       padding: 0.5rem;
       opacity: 0.5;
+      background: none;
+      border: none;
+      text-align: left;
+      width: 100%;
+      color: inherit;
 
       @media (min-width: 768px) {
         font-size: 0.9rem;
@@ -81,6 +86,20 @@
             background-color: $gold-primary;
           }
         }
+      }
+
+      &.clickable {
+        cursor: pointer;
+        opacity: 0.8;
+
+        &:hover {
+          opacity: 1;
+          background: rgba($gold-primary, 0.1);
+        }
+      }
+
+      &:disabled {
+        cursor: default;
       }
     }
   }
