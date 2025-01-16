@@ -8,7 +8,6 @@ interface ContactInfoProps {
     name: string;
     email: string;
     phone: string;
-    preferredContact: "email" | "phone";
   }) => void;
 }
 
@@ -20,7 +19,6 @@ const ContactInfo = ({ onSubmit }: ContactInfoProps) => {
     name: "",
     email: "",
     phone: "",
-    preferredContact: "email" as "email" | "phone",
   });
 
   const [errors, setErrors] = useState({
@@ -39,26 +37,18 @@ const ContactInfo = ({ onSubmit }: ContactInfoProps) => {
 
   const validatePhone = (phone: string) => {
     const cleanPhone = phone.replace(/\D/g, "");
-
-    if (contactInfo.preferredContact === "phone" && !cleanPhone) {
-      return "Phone number is required when phone is selected as preferred contact";
-    }
-
     if (cleanPhone && cleanPhone.length !== 10) {
       return "Please enter a valid 10-digit phone number";
     }
-
     return "";
   };
 
   const formatPhone = (phone: string) => {
     const cleaned = phone.replace(/\D/g, "");
     const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-
     if (match) {
       return `(${match[1]}) ${match[2]}-${match[3]}`;
     }
-
     return phone;
   };
 
@@ -68,23 +58,13 @@ const ContactInfo = ({ onSubmit }: ContactInfoProps) => {
     setContactInfo((prev) => ({ ...prev, phone: formattedValue }));
   };
 
-  const handlePreferredContactChange = (value: "email" | "phone") => {
-    setContactInfo((prev) => ({ ...prev, preferredContact: value }));
-    setErrors((prev) => ({ ...prev, phone: "" })); // Clear any existing errors
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Only validate phone if it's the preferred contact method
-    if (contactInfo.preferredContact === "phone") {
-      const phoneError = validatePhone(contactInfo.phone);
-      if (phoneError) {
-        setErrors((prev) => ({ ...prev, phone: phoneError }));
-        return;
-      }
+    const phoneError = validatePhone(contactInfo.phone);
+    if (phoneError) {
+      setErrors((prev) => ({ ...prev, phone: phoneError }));
+      return;
     }
-
     onSubmit(contactInfo);
   };
 
@@ -137,43 +117,6 @@ const ContactInfo = ({ onSubmit }: ContactInfoProps) => {
           {errors.phone && (
             <span className="error-message">{errors.phone}</span>
           )}
-          <span className="helper-text">
-            Optional unless choosing phone as preferred contact
-          </span>
-        </div>
-
-        <div className="form-group">
-          <label>Preferred Contact Method</label>
-          <div className="contact-method">
-            <label className="radio-label">
-              <input
-                type="radio"
-                name="preferredContact"
-                value="email"
-                checked={contactInfo.preferredContact === "email"}
-                onChange={(e) =>
-                  handlePreferredContactChange(
-                    e.target.value as "email" | "phone"
-                  )
-                }
-              />
-              Email
-            </label>
-            <label className="radio-label">
-              <input
-                type="radio"
-                name="preferredContact"
-                value="phone"
-                checked={contactInfo.preferredContact === "phone"}
-                onChange={(e) =>
-                  handlePreferredContactChange(
-                    e.target.value as "email" | "phone"
-                  )
-                }
-              />
-              Phone
-            </label>
-          </div>
         </div>
 
         <button type="submit" className="submit-button">

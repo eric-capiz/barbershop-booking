@@ -18,7 +18,6 @@ interface ConfirmBookingProps {
       name: string;
       email: string;
       phone: string;
-      preferredContact: "email" | "phone";
     };
   };
   onConfirm: () => void;
@@ -131,16 +130,11 @@ const ConfirmBooking = ({
           <h3>Contact Information</h3>
           <div className="detail-content">
             <p className="contact-name">{bookingData.contactInfo.name}</p>
-            <p className="contact-method">
-              Preferred Contact:{" "}
-              {bookingData.contactInfo.preferredContact === "email"
-                ? "Email"
-                : "Phone"}
+            <p className="contact-detail">
+              Email: {bookingData.contactInfo.email}
             </p>
             <p className="contact-detail">
-              {bookingData.contactInfo.preferredContact === "email"
-                ? bookingData.contactInfo.email
-                : bookingData.contactInfo.phone}
+              Phone: {bookingData.contactInfo.phone}
             </p>
           </div>
         </section>

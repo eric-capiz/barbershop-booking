@@ -18,7 +18,16 @@ router.get("/", async (req, res) => {
       return res.status(404).json({ message: "No availability found" });
     }
 
-    res.json(availability);
+    // Filter out booked slots before sending
+    const processedSchedule = availability.schedule.map((day) => ({
+      ...day.toObject(),
+      timeSlots: day.timeSlots.filter((slot) => !slot.isBooked),
+    }));
+
+    res.json({
+      ...availability.toObject(),
+      schedule: processedSchedule,
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Server error" });

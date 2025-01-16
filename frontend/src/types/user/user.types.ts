@@ -4,7 +4,6 @@ export interface User {
   username: string;
   email: string;
   phone?: string;
-  preferredContact?: "email" | "phone";
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

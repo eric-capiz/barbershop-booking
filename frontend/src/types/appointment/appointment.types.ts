@@ -1,7 +1,6 @@
 export interface AppointmentContactInfo {
   email: string;
   phone: string;
-  preferredContact: "email" | "phone";
 }
 
 export interface AppointmentTimeSlot {

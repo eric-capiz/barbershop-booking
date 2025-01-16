@@ -24,7 +24,6 @@ interface BookingData {
     name: string;
     email: string;
     phone: string;
-    preferredContact: "email" | "phone";
   } | null;
 }
 

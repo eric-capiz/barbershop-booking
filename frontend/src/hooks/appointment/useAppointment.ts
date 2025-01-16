@@ -20,16 +20,18 @@ export const useAppointment = () => {
 
   // Get User Appointments Query
   const getUserAppointments = useQuery({
-    queryKey: ["appointments", "user"],
+    queryKey: ["appointments", "user", user?.id],
     queryFn: appointmentService.getUserAppointments,
-    enabled: !isAdmin && !!user, // Only fetch if user is logged in and not admin
+    enabled: !isAdmin && !!user?.id, // Add user.id check
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   // Get Admin Appointments Query
   const getAdminAppointments = useQuery({
-    queryKey: ["appointments", "admin"],
+    queryKey: ["appointments", "admin", user?.id],
     queryFn: appointmentService.getAdminAppointments,
-    enabled: isAdmin && !!user, // Only fetch if user is admin and logged in
+    enabled: isAdmin && !!user?.id, // Add user.id check
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   return {
@@ -40,12 +42,12 @@ export const useAppointment = () => {
 
     // User Appointments
     userAppointments: getUserAppointments.data,
-    isLoadingUserAppointments: getUserAppointments.isLoading,
+    isLoadingUserAppointments: getUserAppointments.isLoading || !user?.id,
     userAppointmentsError: getUserAppointments.error,
 
     // Admin Appointments
     adminAppointments: getAdminAppointments.data,
-    isLoadingAdminAppointments: getAdminAppointments.isLoading,
+    isLoadingAdminAppointments: getAdminAppointments.isLoading || !user?.id,
     adminAppointmentsError: getAdminAppointments.error,
   };
 };

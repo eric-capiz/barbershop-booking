@@ -43,11 +43,6 @@ const AppointmentSchema = new mongoose.Schema(
       phone: {
         type: String,
       },
-      preferredContact: {
-        type: String,
-        enum: ["email", "phone"],
-        required: true,
-      },
     },
     notes: {
       type: String,
