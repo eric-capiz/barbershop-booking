@@ -39,6 +39,11 @@ const DateTimeSelection = ({ onSelect }: DateTimeSelectionProps) => {
     if (!availability) return [];
 
     const now = new Date();
+    const selectedDateStart = startOfDay(date);
+    const isToday =
+      selectedDateStart.getDate() === now.getDate() &&
+      selectedDateStart.getMonth() === now.getMonth() &&
+      selectedDateStart.getFullYear() === now.getFullYear();
 
     const scheduleDay = availability.schedule.find((day) => {
       const scheduleDate = new Date(day.date);
@@ -51,26 +56,27 @@ const DateTimeSelection = ({ onSelect }: DateTimeSelectionProps) => {
 
     if (!scheduleDay?.isWorkingDay || !scheduleDay.workHours) return [];
 
-    const slots = [];
-    let currentTime = new Date(scheduleDay.workHours.start);
-    const endTime = new Date(scheduleDay.workHours.end);
+    const workStart = new Date(scheduleDay.workHours.start);
+    const workEnd = new Date(scheduleDay.workHours.end);
 
-    while (currentTime <= endTime) {
+    // Set the work hours to today's date for proper comparison
+    workStart.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+    workEnd.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+
+    const slots = [];
+    let currentTime = new Date(workStart);
+
+    while (currentTime <= workEnd) {
       const slot = {
         start: new Date(currentTime),
-        end: new Date(
-          new Date(currentTime).setMinutes(currentTime.getMinutes() + 30)
-        ),
+        end: new Date(currentTime.getTime() + 30 * 60000), // Add 30 minutes in milliseconds
       };
 
-      // Only add future time slots
-      if (isAfter(slot.start, now)) {
+      if (!isToday || isAfter(slot.start, now)) {
         slots.push(slot);
       }
 
-      currentTime = new Date(
-        currentTime.setMinutes(currentTime.getMinutes() + 30)
-      );
+      currentTime = new Date(currentTime.getTime() + 30 * 60000);
     }
 
     return slots;

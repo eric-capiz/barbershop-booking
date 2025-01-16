@@ -39,14 +39,21 @@ router.post("/book", async (req, res) => {
 
     // Format the date to match the schedule date format
     const bookingDate = new Date(appointmentDate);
-    bookingDate.setHours(0, 0, 0, 0);
+    bookingDate.setUTCHours(0, 0, 0, 0);
+
+    console.log("Debug booking request:", {
+      receivedDate: appointmentDate,
+      bookingDate: bookingDate.toISOString(),
+      timeSlot,
+    });
 
     const availability = await BarberAvailability.findOne({
       adminId,
-      "schedule.date": {
-        $gte: bookingDate,
-        $lt: new Date(bookingDate.getTime() + 24 * 60 * 60 * 1000),
-      },
+    });
+
+    console.log("Found availability:", {
+      found: !!availability,
+      scheduleCount: availability?.schedule?.length,
     });
 
     if (!availability) {
@@ -55,15 +62,40 @@ router.post("/book", async (req, res) => {
         .json({ message: "No availability found for this date" });
     }
 
+    // Log all schedule dates for comparison
+    console.log(
+      "All schedule dates:",
+      availability.schedule.map((day) => ({
+        date: new Date(day.date).toISOString(),
+        isWorkingDay: day.isWorkingDay,
+        matches:
+          new Date(day.date).setUTCHours(0, 0, 0, 0) === bookingDate.getTime(),
+      }))
+    );
+
     // Find the specific day in the schedule
     const scheduleDay = availability.schedule.find((day) => {
-      const dayDate = new Date(day.date);
-      dayDate.setHours(0, 0, 0, 0);
-      return dayDate.getTime() === bookingDate.getTime();
+      const scheduleDate = new Date(day.date);
+      scheduleDate.setUTCHours(0, 0, 0, 0);
+      const matches = scheduleDate.getTime() === bookingDate.getTime();
+      console.log("Comparing dates:", {
+        scheduleDate: scheduleDate.toISOString(),
+        bookingDate: bookingDate.toISOString(),
+        matches,
+      });
+      return matches;
     });
 
+    console.log("Schedule day found:", scheduleDay);
+
     if (!scheduleDay || !scheduleDay.isWorkingDay) {
-      return res.status(400).json({ message: "Not a working day" });
+      return res.status(400).json({
+        message: "Not a working day",
+        debug: {
+          scheduleDay,
+          bookingDate: bookingDate.toISOString(),
+        },
+      });
     }
 
     // Check if the requested time slot falls within working hours
@@ -72,10 +104,35 @@ router.post("/book", async (req, res) => {
     const workStart = new Date(scheduleDay.workHours.start);
     const workEnd = new Date(scheduleDay.workHours.end);
 
+    // Set work hours to the same date as the booking
+    workStart.setFullYear(
+      requestedStart.getFullYear(),
+      requestedStart.getMonth(),
+      requestedStart.getDate()
+    );
+    workEnd.setFullYear(
+      requestedStart.getFullYear(),
+      requestedStart.getMonth(),
+      requestedStart.getDate()
+    );
+
+    console.log("Time comparison:", {
+      requestedStart: requestedStart.toISOString(),
+      requestedEnd: requestedEnd.toISOString(),
+      workStart: workStart.toISOString(),
+      workEnd: workEnd.toISOString(),
+    });
+
     if (requestedStart < workStart || requestedEnd > workEnd) {
-      return res
-        .status(400)
-        .json({ message: "Time slot outside working hours" });
+      return res.status(400).json({
+        message: "Time slot outside working hours",
+        debug: {
+          requestedStart: requestedStart.toISOString(),
+          requestedEnd: requestedEnd.toISOString(),
+          workStart: workStart.toISOString(),
+          workEnd: workEnd.toISOString(),
+        },
+      });
     }
 
     const newAppointment = new Appointment({

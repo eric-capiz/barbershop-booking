@@ -19,17 +19,37 @@ export const appointmentService = {
   createAppointment: async (
     appointmentData: CreateAppointmentDTO
   ): Promise<AppointmentResponse> => {
-    const { data } = await axios.post<AppointmentResponse>(
-      `${APPOINTMENT_URL}/book`,
-      appointmentData,
-      {
-        headers: {
-          ...getAuthHeader(),
-          "Content-Type": "application/json",
+    try {
+      console.log("Attempting to book appointment:", {
+        ...appointmentData,
+        appointmentDate: new Date(
+          appointmentData.appointmentDate
+        ).toISOString(),
+        timeSlot: {
+          start: new Date(appointmentData.timeSlot.start).toISOString(),
+          end: new Date(appointmentData.timeSlot.end).toISOString(),
         },
-      }
-    );
-    return data;
+      });
+
+      const { data } = await axios.post<AppointmentResponse>(
+        `${APPOINTMENT_URL}/book`,
+        appointmentData,
+        {
+          headers: {
+            ...getAuthHeader(),
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return data;
+    } catch (error) {
+      console.error("Booking error details:", {
+        message: error.response?.data?.message,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+      throw error;
+    }
   },
 
   // Get user's appointments

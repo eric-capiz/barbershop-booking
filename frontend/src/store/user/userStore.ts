@@ -3,7 +3,7 @@ import { create } from "zustand";
 interface User {
   id: string;
   role: "user" | "admin";
-  // ... other user properties
+  username: string;
 }
 
 interface UserState {
@@ -20,6 +20,7 @@ export const useUserStore = create<UserState>((set) => ({
   initializeFromStorage: () => {
     const isAdmin = localStorage.getItem("isAdmin") === "true";
     const token = localStorage.getItem("token");
+    const username = localStorage.getItem("username");
 
     if (token) {
       // Decode the JWT token to get user info
@@ -27,6 +28,7 @@ export const useUserStore = create<UserState>((set) => ({
       const user = {
         id: tokenData.user.id,
         role: tokenData.user.role,
+        username: tokenData.user.username || username,
       };
       set({ user });
     }
