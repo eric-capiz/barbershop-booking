@@ -48,7 +48,10 @@ const AdminAppointments = () => {
                 <td data-label="Client">{appointment.userId.name}</td>
                 <td data-label="Service">{appointment.serviceId.name}</td>
                 <td data-label="Date">
-                  {format(new Date(appointment.appointmentDate), "MMM d, yyyy")}
+                  {new Date(appointment.appointmentDate).toLocaleDateString(
+                    "en-US",
+                    { timeZone: "UTC" }
+                  )}
                 </td>
                 <td data-label="Time">
                   {format(new Date(appointment.timeSlot.start), "h:mm a")}
