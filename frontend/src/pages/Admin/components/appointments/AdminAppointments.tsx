@@ -1,123 +1,86 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { FaCalendarAlt } from "react-icons/fa";
+import { useAppointment } from "@/hooks/appointment/useAppointment";
 import "./_adminAppointments.scss";
-
-// Temporary mock data
-const mockAppointments = {
-  pending: [
-    {
-      id: 1,
-      name: "John Doe",
-      service: "Haircut & Beard",
-      date: "2024-01-25",
-      time: "10:00 AM",
-      status: "pending",
-    },
-    {
-      id: 2,
-      name: "Mike Smith",
-      service: "Fade",
-      date: "2024-01-26",
-      time: "2:30 PM",
-      status: "pending",
-    },
-  ],
-  upcoming: [
-    {
-      id: 3,
-      name: "Alex Johnson",
-      service: "Beard Trim",
-      date: "2024-01-27",
-      time: "11:00 AM",
-      status: "confirmed",
-    },
-    {
-      id: 4,
-      name: "Chris Wilson",
-      service: "Full Service",
-      date: "2024-01-28",
-      time: "3:00 PM",
-      status: "confirmed",
-    },
-  ],
-  past: [
-    {
-      id: 5,
-      name: "Tom Brown",
-      service: "Haircut",
-      date: "2024-01-20",
-      time: "9:00 AM",
-      status: "completed",
-    },
-    {
-      id: 6,
-      name: "James Lee",
-      service: "Fade & Beard",
-      date: "2024-01-21",
-      time: "4:00 PM",
-      status: "completed",
-    },
-  ],
-};
 
 type TabType = "pending" | "upcoming" | "past";
 
 const AdminAppointments = () => {
   const [activeTab, setActiveTab] = useState<TabType>("pending");
+  const { adminAppointments, isLoadingAdminAppointments } = useAppointment();
 
-  const handleReschedule = (appointmentId: number) => {
+  const filteredAppointments = {
+    pending: adminAppointments?.filter((apt) => apt.status === "pending") || [],
+    upcoming:
+      adminAppointments?.filter((apt) => apt.status === "confirmed") || [],
+    past:
+      adminAppointments?.filter(
+        (apt) => apt.status === "completed" || apt.status === "cancelled"
+      ) || [],
+  };
+  const handleReschedule = (appointmentId: string) => {
     // This will be implemented later with actual functionality
     console.log("Reschedule appointment:", appointmentId);
   };
 
-  const renderAppointmentsTable = (
-    appointments: (typeof mockAppointments)[TabType]
-  ) => (
-    <div className="appointments-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Client</th>
-            <th>Service</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Status</th>
-            {activeTab === "pending" && <th>Actions</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {appointments.map((appointment) => (
-            <tr key={appointment.id}>
-              <td data-label="Client">{appointment.name}</td>
-              <td data-label="Service">{appointment.service}</td>
-              <td data-label="Date">
-                {format(new Date(appointment.date), "MMM d, yyyy")}
-              </td>
-              <td data-label="Time">{appointment.time}</td>
-              <td data-label="Status">
-                <span className={`status-badge ${appointment.status}`}>
-                  {appointment.status}
-                </span>
-              </td>
-              {activeTab === "pending" && (
-                <td data-label="Actions" className="actions">
-                  <button className="btn-confirm">Confirm</button>
-                  <button
-                    className="btn-reschedule"
-                    onClick={() => handleReschedule(appointment.id)}
-                  >
-                    <FaCalendarAlt /> Reschedule
-                  </button>
-                  <button className="btn-cancel">Cancel</button>
-                </td>
-              )}
+  const renderAppointmentsTable = (appointments: typeof adminAppointments) => {
+    if (!appointments?.length) {
+      return <div className="no-appointments">No appointments found</div>;
+    }
+
+    return (
+      <div className="appointments-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Service</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status</th>
+              {activeTab === "pending" && <th>Actions</th>}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+          </thead>
+          <tbody>
+            {appointments.map((appointment) => (
+              <tr key={appointment._id}>
+                <td data-label="Client">{appointment.userId.name}</td>
+                <td data-label="Service">{appointment.serviceId.name}</td>
+                <td data-label="Date">
+                  {format(new Date(appointment.appointmentDate), "MMM d, yyyy")}
+                </td>
+                <td data-label="Time">
+                  {format(new Date(appointment.timeSlot.start), "h:mm a")}
+                </td>
+                <td data-label="Status">
+                  <span className={`status-badge ${appointment.status}`}>
+                    {appointment.status}
+                  </span>
+                </td>
+                {activeTab === "pending" && (
+                  <td data-label="Actions" className="actions">
+                    <button className="btn-confirm">Confirm</button>
+                    <button
+                      className="btn-reschedule"
+                      onClick={() => handleReschedule(appointment._id)}
+                    >
+                      <FaCalendarAlt /> Reschedule
+                    </button>
+                    <button className="btn-cancel">Cancel</button>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  if (isLoadingAdminAppointments) {
+    return <div className="loading-message">Loading appointments...</div>;
+  }
 
   return (
     <div className="admin-appointments">
@@ -130,23 +93,23 @@ const AdminAppointments = () => {
           className={`tab ${activeTab === "pending" ? "active" : ""}`}
           onClick={() => setActiveTab("pending")}
         >
-          Pending ({mockAppointments.pending.length})
+          Pending ({filteredAppointments.pending.length})
         </button>
         <button
           className={`tab ${activeTab === "upcoming" ? "active" : ""}`}
           onClick={() => setActiveTab("upcoming")}
         >
-          Upcoming ({mockAppointments.upcoming.length})
+          Upcoming ({filteredAppointments.upcoming.length})
         </button>
         <button
           className={`tab ${activeTab === "past" ? "active" : ""}`}
           onClick={() => setActiveTab("past")}
         >
-          Past ({mockAppointments.past.length})
+          Past ({filteredAppointments.past.length})
         </button>
       </div>
 
-      {renderAppointmentsTable(mockAppointments[activeTab])}
+      {renderAppointmentsTable(filteredAppointments[activeTab])}
     </div>
   );
 };

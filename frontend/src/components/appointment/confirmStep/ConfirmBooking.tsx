@@ -65,16 +65,6 @@ const ConfirmBooking = ({
         contactInfo: bookingData.contactInfo,
       };
 
-      console.log("Sending appointment data:", {
-        ...appointmentData,
-        appointmentDate: appointmentDate.toISOString(),
-        timeSlot: {
-          start: appointmentData.timeSlot.start.toISOString(),
-          end: appointmentData.timeSlot.end.toISOString(),
-        },
-      });
-      console.log("Token:", localStorage.getItem("token"));
-
       await createAppointment.mutateAsync(appointmentData);
 
       setToast({

@@ -1,17 +1,37 @@
 import { create } from "zustand";
-import { User } from "@/types/user/user.types";
 
-interface UserStore {
-  user: User | null;
-  setUser: (user: User | null) => void;
-  updateUser: (userData: Partial<User>) => void;
+interface User {
+  id: string;
+  role: "user" | "admin";
+  // ... other user properties
 }
 
-export const useUserStore = create<UserStore>((set) => ({
+interface UserState {
+  user: User | null;
+  setUser: (user: User | null) => void;
+  clearUser: () => void;
+  initializeFromStorage: () => void;
+}
+
+export const useUserStore = create<UserState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
-  updateUser: (userData) =>
-    set((state) => ({
-      user: state.user ? { ...state.user, ...userData } : null,
-    })),
+  clearUser: () => set({ user: null }),
+  initializeFromStorage: () => {
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      // Decode the JWT token to get user info
+      const tokenData = JSON.parse(atob(token.split(".")[1]));
+      const user = {
+        id: tokenData.user.id,
+        role: tokenData.user.role,
+      };
+      set({ user });
+    }
+  },
 }));
+
+// Initialize the store when the file is loaded
+useUserStore.getState().initializeFromStorage();

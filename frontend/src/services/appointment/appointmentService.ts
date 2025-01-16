@@ -44,14 +44,19 @@ export const appointmentService = {
 
   // Get admin's appointments
   getAdminAppointments: async (): Promise<Appointment[]> => {
-    const { data } = await axios.get<Appointment[]>(
-      `${APPOINTMENT_URL}/admin`,
-      {
-        headers: {
-          ...getAuthHeader(),
-        },
-      }
-    );
-    return data;
+    try {
+      const { data } = await axios.get<Appointment[]>(
+        `${APPOINTMENT_URL}/admin`,
+        {
+          headers: {
+            ...getAuthHeader(),
+          },
+        }
+      );
+      return data;
+    } catch (error) {
+      console.error("Error fetching admin appointments:", error);
+      throw error;
+    }
   },
 };

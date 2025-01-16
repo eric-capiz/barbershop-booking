@@ -10,12 +10,17 @@ import ProtectedUserRoute from "./components/auth/ProtectedUserRoute";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import UserProfile from "./pages/User/UserProfile/Userprofile";
 import BookingPage from "@/pages/BookingPage/BookingPage";
+import { useUserStore } from "@/store/user/userStore";
 
 function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
 
   useEffect(() => {
     initializeAuth();
+  }, []);
+
+  useEffect(() => {
+    useUserStore.getState().initializeFromStorage();
   }, []);
 
   return (

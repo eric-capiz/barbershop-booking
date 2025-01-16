@@ -196,6 +196,10 @@
         background: rgba($silver-primary, 0.2);
         color: $silver-primary;
       }
+      &.cancelled {
+        background-color: #e2e8f0;
+        color: #64748b;
+      }
     }
 
     .actions {
@@ -234,4 +238,11 @@
       }
     }
   }
+}
+
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #666;
 }
