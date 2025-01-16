@@ -20,17 +20,6 @@ export const appointmentService = {
     appointmentData: CreateAppointmentDTO
   ): Promise<AppointmentResponse> => {
     try {
-      console.log("Attempting to book appointment:", {
-        ...appointmentData,
-        appointmentDate: new Date(
-          appointmentData.appointmentDate
-        ).toISOString(),
-        timeSlot: {
-          start: new Date(appointmentData.timeSlot.start).toISOString(),
-          end: new Date(appointmentData.timeSlot.end).toISOString(),
-        },
-      });
-
       const { data } = await axios.post<AppointmentResponse>(
         `${APPOINTMENT_URL}/book`,
         appointmentData,

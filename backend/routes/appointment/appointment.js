@@ -41,19 +41,8 @@ router.post("/book", async (req, res) => {
     const bookingDate = new Date(appointmentDate);
     bookingDate.setUTCHours(0, 0, 0, 0);
 
-    console.log("Debug booking request:", {
-      receivedDate: appointmentDate,
-      bookingDate: bookingDate.toISOString(),
-      timeSlot,
-    });
-
     const availability = await BarberAvailability.findOne({
       adminId,
-    });
-
-    console.log("Found availability:", {
-      found: !!availability,
-      scheduleCount: availability?.schedule?.length,
     });
 
     if (!availability) {
@@ -62,31 +51,14 @@ router.post("/book", async (req, res) => {
         .json({ message: "No availability found for this date" });
     }
 
-    // Log all schedule dates for comparison
-    console.log(
-      "All schedule dates:",
-      availability.schedule.map((day) => ({
-        date: new Date(day.date).toISOString(),
-        isWorkingDay: day.isWorkingDay,
-        matches:
-          new Date(day.date).setUTCHours(0, 0, 0, 0) === bookingDate.getTime(),
-      }))
-    );
-
     // Find the specific day in the schedule
     const scheduleDay = availability.schedule.find((day) => {
       const scheduleDate = new Date(day.date);
       scheduleDate.setUTCHours(0, 0, 0, 0);
       const matches = scheduleDate.getTime() === bookingDate.getTime();
-      console.log("Comparing dates:", {
-        scheduleDate: scheduleDate.toISOString(),
-        bookingDate: bookingDate.toISOString(),
-        matches,
-      });
+
       return matches;
     });
-
-    console.log("Schedule day found:", scheduleDay);
 
     if (!scheduleDay || !scheduleDay.isWorkingDay) {
       return res.status(400).json({
@@ -115,13 +87,6 @@ router.post("/book", async (req, res) => {
       requestedStart.getMonth(),
       requestedStart.getDate()
     );
-
-    console.log("Time comparison:", {
-      requestedStart: requestedStart.toISOString(),
-      requestedEnd: requestedEnd.toISOString(),
-      workStart: workStart.toISOString(),
-      workEnd: workEnd.toISOString(),
-    });
 
     if (requestedStart < workStart || requestedEnd > workEnd) {
       return res.status(400).json({
