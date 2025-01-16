@@ -6,4 +6,9 @@ export const publicAvailabilityService = {
     const { data } = await axios.get<BarberAvailability>(`/api/availability`);
     return data;
   },
+
+  getBookedSlots: async () => {
+    const { data } = await axios.get("/api/availability/booked-slots");
+    return data;
+  },
 };

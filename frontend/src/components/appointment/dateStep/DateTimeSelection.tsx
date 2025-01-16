@@ -6,6 +6,8 @@ import { useBookingAvailability } from "@/hooks/appointment/useBookingAvailabili
 import type { DateSelectArg } from "@fullcalendar/core";
 import { format, addMinutes, isBefore, isAfter, startOfDay } from "date-fns";
 import "./_dateTimeSelection.scss";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 interface DateTimeSelectionProps {
   onSelect: (date: Date, timeSlot: { start: Date; end: Date }) => void;
@@ -14,6 +16,14 @@ interface DateTimeSelectionProps {
 const DateTimeSelection = ({ onSelect }: DateTimeSelectionProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const { data: availability, isLoading } = useBookingAvailability();
+
+  const { data: bookedSlots } = useQuery({
+    queryKey: ["bookedSlots"],
+    queryFn: async () => {
+      const { data } = await axios.get("/api/availability/booked-slots");
+      return data;
+    },
+  });
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     setSelectedDate(selectInfo.start);
@@ -36,7 +46,9 @@ const DateTimeSelection = ({ onSelect }: DateTimeSelectionProps) => {
   };
 
   const getAvailableTimeSlots = (date: Date) => {
-    if (!availability) return [];
+    if (!availability) {
+      return [];
+    }
 
     const now = new Date();
     const selectedDateStart = startOfDay(date);
@@ -54,7 +66,9 @@ const DateTimeSelection = ({ onSelect }: DateTimeSelectionProps) => {
       );
     });
 
-    if (!scheduleDay?.isWorkingDay || !scheduleDay.workHours) return [];
+    if (!scheduleDay?.isWorkingDay || !scheduleDay.workHours) {
+      return [];
+    }
 
     const workStart = new Date(scheduleDay.workHours.start);
     const workEnd = new Date(scheduleDay.workHours.end);
@@ -69,7 +83,7 @@ const DateTimeSelection = ({ onSelect }: DateTimeSelectionProps) => {
     while (currentTime <= workEnd) {
       const slot = {
         start: new Date(currentTime),
-        end: new Date(currentTime.getTime() + 30 * 60000), // Add 30 minutes in milliseconds
+        end: new Date(currentTime.getTime() + 30 * 60000),
       };
 
       if (!isToday || isAfter(slot.start, now)) {
@@ -126,6 +140,20 @@ const DateTimeSelection = ({ onSelect }: DateTimeSelectionProps) => {
     );
   };
 
+  const isTimeSlotBooked = (
+    selectedSlot: { start: Date },
+    bookedSlots: any[]
+  ) => {
+    // Convert selected slot to UTC ISO string
+    const selectedTimeUTC = selectedSlot.start.toISOString();
+
+    const isBooked = bookedSlots.some(
+      (bookedSlot) => bookedSlot.date === selectedTimeUTC
+    );
+
+    return isBooked;
+  };
+
   if (isLoading) return <div>Loading availability...</div>;
 
   return (
@@ -164,7 +192,11 @@ const DateTimeSelection = ({ onSelect }: DateTimeSelectionProps) => {
               getAvailableTimeSlots(selectedDate).map((slot, index) => (
                 <button
                   key={index}
-                  onClick={() => onSelect(selectedDate, slot)}
+                  onClick={() => {
+                    isTimeSlotBooked(slot, availability.bookedSlots);
+
+                    onSelect(selectedDate, slot);
+                  }}
                   className="time-slot-button"
                 >
                   {format(slot.start, "h:mm a")}
