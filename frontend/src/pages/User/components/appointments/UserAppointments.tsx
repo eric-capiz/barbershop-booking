@@ -8,7 +8,23 @@ type TabType = "pending" | "upcoming" | "past";
 
 const UserAppointments = () => {
   const [activeTab, setActiveTab] = useState<TabType>("pending");
-  const { userAppointments, isLoadingUserAppointments } = useAppointment();
+  const {
+    userAppointments,
+    isLoadingUserAppointments,
+    updateAppointmentStatus,
+  } = useAppointment();
+
+  const handleCancel = (appointmentId: string) => {
+    updateAppointmentStatus.mutate({
+      appointmentId,
+      status: "cancelled",
+    });
+  };
+
+  const handleReschedule = (appointmentId: string) => {
+    // This will be implemented later
+    console.log("Reschedule appointment:", appointmentId);
+  };
 
   const filteredAppointments = {
     pending: userAppointments?.filter((apt) => apt.status === "pending") || [],
@@ -34,7 +50,9 @@ const UserAppointments = () => {
               <th>Date</th>
               <th>Time</th>
               <th>Status</th>
-              {activeTab === "pending" && <th>Actions</th>}
+              {(activeTab === "pending" || activeTab === "upcoming") && (
+                <th>Actions</th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -55,10 +73,21 @@ const UserAppointments = () => {
                     {appointment.status}
                   </span>
                 </td>
-                {activeTab === "pending" && (
+                {(activeTab === "pending" || activeTab === "upcoming") && (
                   <td data-label="Actions" className="actions">
-                    <button className="btn-cancel">Cancel</button>
-                    <button className="btn-reschedule">
+                    <button
+                      className="btn-cancel"
+                      onClick={() => handleCancel(appointment._id)}
+                      disabled={updateAppointmentStatus.isPending}
+                    >
+                      {updateAppointmentStatus.isPending
+                        ? "Cancelling..."
+                        : "Cancel"}
+                    </button>
+                    <button
+                      className="btn-reschedule"
+                      onClick={() => handleReschedule(appointment._id)}
+                    >
                       <FaCalendarAlt /> Reschedule
                     </button>
                   </td>

@@ -76,7 +76,6 @@ export const appointmentService = {
   ): Promise<Appointment> => {
     try {
       const headers = getAuthHeader();
-      console.log("Auth headers:", headers); // Debug log
 
       const { data } = await axios.put<Appointment>(
         `${APPOINTMENT_URL}/${appointmentId}/status`,

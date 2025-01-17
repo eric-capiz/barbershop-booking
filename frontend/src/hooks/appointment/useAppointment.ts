@@ -37,10 +37,12 @@ export const useAppointment = () => {
       return response;
     },
     onSuccess: () => {
-      // Invalidate both admin and user appointment queries
+      // Invalidate all relevant queries to refresh the lists
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
       queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
       queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
+      // Also invalidate booking availability since a slot might have opened up
+      queryClient.invalidateQueries({ queryKey: ["booking-availability"] });
     },
   });
 
