@@ -25,6 +25,10 @@ export const useLogin = () => {
         console.error("Failed to fetch user data:", error);
       }
 
+      // Invalidate all relevant queries after login
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
       queryClient.invalidateQueries({
         queryKey: [data.isAdmin ? "admin" : "user"],
       });

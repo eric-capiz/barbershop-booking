@@ -48,16 +48,24 @@ export const useAppointment = () => {
   const getUserAppointments = useQuery({
     queryKey: ["appointments", "user", user?.id],
     queryFn: appointmentService.getUserAppointments,
-    enabled: !isAdmin && !!user?.id,
-    staleTime: 1000 * 60 * 5,
+    enabled: !!user?.id,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   // Get Admin Appointments Query
   const getAdminAppointments = useQuery({
     queryKey: ["appointments", "admin", user?.id],
     queryFn: appointmentService.getAdminAppointments,
-    enabled: isAdmin && !!user?.id,
-    staleTime: 1000 * 60 * 5,
+    enabled: !!user?.id && user?.role === "admin",
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    retry: false,
+    onError: () => {
+      return;
+    },
   });
 
   return {
