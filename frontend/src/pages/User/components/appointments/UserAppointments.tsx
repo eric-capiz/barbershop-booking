@@ -93,6 +93,7 @@ const UserAppointments = () => {
   const getDisplayDate = (appointment) => {
     if (
       appointment.rescheduleRequest &&
+      appointment.status === "reschedule-confirmed" &&
       appointment.rescheduleRequest.proposedDate
     ) {
       return new Date(
@@ -107,6 +108,7 @@ const UserAppointments = () => {
   const getDisplayTime = (appointment) => {
     if (
       appointment.rescheduleRequest &&
+      appointment.status === "reschedule-confirmed" &&
       appointment.rescheduleRequest.proposedTimeSlot
     ) {
       return format(
