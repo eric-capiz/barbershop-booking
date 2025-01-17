@@ -1,6 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { appointmentService } from "@/services/appointment/appointmentService";
-import { CreateAppointmentDTO } from "@/types/appointment/appointment.types";
+import {
+  CreateAppointmentDTO,
+  RescheduleRequest,
+} from "@/types/appointment/appointment.types";
 import { useUserStore } from "@/store/user/userStore";
 
 export const useAppointment = () => {
@@ -70,6 +73,41 @@ export const useAppointment = () => {
     },
   });
 
+  // Reschedule Appointment Mutation
+  const rescheduleAppointment = useMutation({
+    mutationFn: ({
+      appointmentId,
+      rescheduleData,
+    }: {
+      appointmentId: string;
+      rescheduleData: RescheduleRequest;
+    }) =>
+      appointmentService.rescheduleAppointment(appointmentId, rescheduleData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
+      queryClient.invalidateQueries({ queryKey: ["booking-availability"] });
+    },
+  });
+
+  // Respond to Reschedule Mutation
+  const respondToReschedule = useMutation({
+    mutationFn: ({
+      appointmentId,
+      status,
+    }: {
+      appointmentId: string;
+      status: "confirm" | "reject";
+    }) => appointmentService.respondToReschedule(appointmentId, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
+      queryClient.invalidateQueries({ queryKey: ["booking-availability"] });
+    },
+  });
+
   return {
     // Mutations
     createAppointment,
@@ -88,5 +126,9 @@ export const useAppointment = () => {
     adminAppointments: getAdminAppointments.data,
     isLoadingAdminAppointments: getAdminAppointments.isLoading || !user?.id,
     adminAppointmentsError: getAdminAppointments.error,
+
+    // Reschedule Appointment
+    rescheduleAppointment,
+    respondToReschedule,
   };
 };

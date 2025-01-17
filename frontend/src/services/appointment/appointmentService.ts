@@ -3,6 +3,7 @@ import {
   Appointment,
   CreateAppointmentDTO,
   AppointmentResponse,
+  RescheduleRequest,
 } from "@/types/appointment/appointment.types";
 
 const BASE_URL = "http://localhost:5000";
@@ -94,6 +95,50 @@ export const appointmentService = {
         status: error.response?.status,
         data: error.response?.data,
       });
+      throw error;
+    }
+  },
+
+  rescheduleAppointment: async (
+    appointmentId: string,
+    rescheduleData: RescheduleRequest
+  ): Promise<Appointment> => {
+    try {
+      const { data } = await axios.put<Appointment>(
+        `${APPOINTMENT_URL}/${appointmentId}/reschedule`,
+        rescheduleData,
+        {
+          headers: {
+            ...getAuthHeader(),
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return data;
+    } catch (error) {
+      console.error("Reschedule error details:", error);
+      throw error;
+    }
+  },
+
+  respondToReschedule: async (
+    appointmentId: string,
+    status: "confirm" | "reject"
+  ): Promise<Appointment> => {
+    try {
+      const { data } = await axios.put<Appointment>(
+        `${APPOINTMENT_URL}/${appointmentId}/reschedule-response`,
+        { status },
+        {
+          headers: {
+            ...getAuthHeader(),
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return data;
+    } catch (error) {
+      console.error("Reschedule response error:", error);
       throw error;
     }
   },

@@ -199,13 +199,28 @@ router.put("/:id/reschedule", async (req, res) => {
       return res.status(404).json({ message: "Appointment not found" });
     }
 
-    // Users can only reschedule their own appointments
-    if (!req.user.isAdmin && appointment.userId.toString() !== req.user.id) {
+    // Only allow reschedule for pending or confirmed appointments
+    if (!["pending", "confirmed"].includes(appointment.status)) {
+      return res.status(400).json({
+        message: "Only pending or confirmed appointments can be rescheduled",
+      });
+    }
+
+    // Only allow users to reschedule their own appointments
+    if (appointment.userId.toString() !== req.user.id) {
       return res.status(401).json({ message: "Not authorized" });
     }
 
+    // Check if already rescheduled
+    if (appointment.rescheduleRequest) {
+      return res.status(400).json({
+        message: "Appointment has already been rescheduled once",
+      });
+    }
+
+    appointment.status = "reschedule-pending";
     appointment.rescheduleRequest = {
-      requestedBy: req.user.isAdmin ? "admin" : "user",
+      requestedBy: "user",
       proposedDate,
       proposedTimeSlot,
       status: "pending",
@@ -213,7 +228,44 @@ router.put("/:id/reschedule", async (req, res) => {
 
     await appointment.save();
 
-    await appointment
+    appointment = await Appointment.findById(appointment._id)
+      .populate("adminId", "name")
+      .populate("userId", "name email")
+      .populate("serviceId", "name duration price")
+      .populate("review");
+
+    res.json(appointment);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Add admin response route (after isAdmin middleware)
+router.put("/:id/reschedule-response", async (req, res) => {
+  try {
+    const { status } = req.body; // status can be 'confirm' or 'reject'
+    let appointment = await Appointment.findById(req.params.id);
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    if (appointment.status !== "reschedule-pending") {
+      return res.status(400).json({ message: "No pending reschedule request" });
+    }
+
+    if (status === "confirm") {
+      appointment.status = "reschedule-confirmed";
+      appointment.appointmentDate = appointment.rescheduleRequest.proposedDate;
+      appointment.timeSlot = appointment.rescheduleRequest.proposedTimeSlot;
+    } else {
+      appointment.status = "reschedule-rejected";
+    }
+
+    await appointment.save();
+
+    appointment = await Appointment.findById(appointment._id)
       .populate("adminId", "name")
       .populate("userId", "name email")
       .populate("serviceId", "name duration price")

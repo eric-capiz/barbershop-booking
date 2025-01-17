@@ -9,11 +9,23 @@ export interface AppointmentTimeSlot {
 }
 
 export interface RescheduleRequest {
-  requestedBy: "admin" | "user" | null;
-  proposedDate?: Date;
-  proposedTimeSlot?: AppointmentTimeSlot;
-  status: "pending" | "accepted" | "rejected" | null;
+  proposedDate: Date;
+  proposedTimeSlot: {
+    start: Date;
+    end: Date;
+  };
 }
+
+export type AppointmentStatus =
+  | "pending"
+  | "confirmed"
+  | "completed"
+  | "cancelled"
+  | "no-show"
+  | "rejected"
+  | "reschedule-pending"
+  | "reschedule-confirmed"
+  | "reschedule-rejected";
 
 export interface Appointment {
   _id: string;

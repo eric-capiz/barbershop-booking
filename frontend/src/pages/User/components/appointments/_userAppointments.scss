@@ -253,3 +253,51 @@
   color: $silver-primary;
   font-family: $font-secondary;
 }
+
+.reschedule-modal {
+  position: relative;
+  padding: 1rem;
+
+  .reschedule-notice {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: rgba($gold-primary, 0.1);
+    border: 1px solid $gold-dark;
+    border-radius: 4px;
+    color: $gold-light;
+    font-family: $font-secondary;
+  }
+
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba($black-primary, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: $gold-primary;
+    font-family: $font-secondary;
+  }
+}
+
+// Update status badge colors
+.status-badge {
+  &.reschedule-pending {
+    background: rgba($gold-primary, 0.2);
+    color: $gold-light;
+  }
+
+  &.reschedule-confirmed {
+    background: rgba($silver-primary, 0.2);
+    color: $silver-light;
+  }
+
+  &.reschedule-rejected {
+    background: rgba(#f44336, 0.2);
+    color: #f44336;
+  }
+}

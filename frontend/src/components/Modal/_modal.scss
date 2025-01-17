@@ -1,0 +1,57 @@
+@use "@styles/variables" as *;
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba($black-primary, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: $black-secondary;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid $gold-dark;
+}
+
+.modal-header {
+  padding: 1rem;
+  border-bottom: 1px solid $gold-dark;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    color: $gold-primary;
+    font-family: $font-primary;
+    margin: 0;
+  }
+
+  .close-button {
+    background: none;
+    border: none;
+    color: $silver-primary;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: $gold-primary;
+    }
+  }
+}
+
+.modal-body {
+  padding: 1rem;
+}

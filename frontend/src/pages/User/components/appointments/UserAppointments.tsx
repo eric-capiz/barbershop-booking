@@ -2,16 +2,24 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { FaCalendarAlt } from "react-icons/fa";
 import { useAppointment } from "@/hooks/appointment/useAppointment";
+import Modal from "@/components/Modal/Modal";
+import DateTimeSelection from "@/components/appointment/dateStep/DateTimeSelection";
 import "./_userAppointments.scss";
 
 type TabType = "pending" | "upcoming" | "past";
 
 const UserAppointments = () => {
   const [activeTab, setActiveTab] = useState<TabType>("pending");
+  const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<
+    string | null
+  >(null);
+
   const {
     userAppointments,
     isLoadingUserAppointments,
     updateAppointmentStatus,
+    rescheduleAppointment,
   } = useAppointment();
 
   const handleCancel = (appointmentId: string) => {
@@ -21,18 +29,45 @@ const UserAppointments = () => {
     });
   };
 
-  const handleReschedule = (appointmentId: string) => {
-    // This will be implemented later
-    console.log("Reschedule appointment:", appointmentId);
+  const handleRescheduleClick = (appointmentId: string) => {
+    setSelectedAppointmentId(appointmentId);
+    setIsRescheduleModalOpen(true);
+  };
+
+  const handleRescheduleSubmit = (
+    date: Date,
+    timeSlot: { start: Date; end: Date }
+  ) => {
+    if (!selectedAppointmentId) return;
+
+    rescheduleAppointment.mutate(
+      {
+        appointmentId: selectedAppointmentId,
+        rescheduleData: {
+          proposedDate: date,
+          proposedTimeSlot: timeSlot,
+        },
+      },
+      {
+        onSuccess: () => {
+          setIsRescheduleModalOpen(false);
+          setSelectedAppointmentId(null);
+        },
+      }
+    );
   };
 
   const filteredAppointments = {
-    pending: userAppointments?.filter((apt) => apt.status === "pending") || [],
+    pending:
+      userAppointments?.filter(
+        (apt) =>
+          apt.status === "pending" || apt.status === "reschedule-rejected"
+      ) || [],
     upcoming:
       userAppointments?.filter((apt) => apt.status === "confirmed") || [],
     past:
-      userAppointments?.filter(
-        (apt) => apt.status === "completed" || apt.status === "cancelled"
+      userAppointments?.filter((apt) =>
+        ["completed", "cancelled", "reschedule-confirmed"].includes(apt.status)
       ) || [],
   };
 
@@ -86,7 +121,7 @@ const UserAppointments = () => {
                     </button>
                     <button
                       className="btn-reschedule"
-                      onClick={() => handleReschedule(appointment._id)}
+                      onClick={() => handleRescheduleClick(appointment._id)}
                     >
                       <FaCalendarAlt /> Reschedule
                     </button>
@@ -132,6 +167,26 @@ const UserAppointments = () => {
       </div>
 
       {renderAppointmentsTable(filteredAppointments[activeTab])}
+
+      <Modal
+        isOpen={isRescheduleModalOpen}
+        onClose={() => {
+          setIsRescheduleModalOpen(false);
+          setSelectedAppointmentId(null);
+        }}
+        title="Reschedule Appointment"
+      >
+        <div className="reschedule-modal">
+          <p className="reschedule-notice">
+            Note: You can only reschedule an appointment once. If you need to
+            make further changes, please cancel and book a new appointment.
+          </p>
+          <DateTimeSelection onSelect={handleRescheduleSubmit} />
+          {rescheduleAppointment.isPending && (
+            <div className="loading-overlay">Submitting request...</div>
+          )}
+        </div>
+      </Modal>
     </div>
   );
 };
