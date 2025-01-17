@@ -220,10 +220,22 @@ const UserAppointments = () => {
             Note: You can only reschedule an appointment once. If you need to
             make further changes, please cancel and book a new appointment.
           </p>
+
           <DateTimeSelection
             onSelect={handleDateTimeSelect}
             isReschedule={true}
           />
+
+          {selectedDateTime && (
+            <div className="selected-time">
+              <h4>Selected Time</h4>
+              <p>
+                {format(selectedDateTime.date, "MMMM d, yyyy")} at{" "}
+                {format(selectedDateTime.timeSlot.start, "h:mm a")}
+              </p>
+            </div>
+          )}
+
           <div className="reschedule-actions">
             <button
               className="btn-confirm"
