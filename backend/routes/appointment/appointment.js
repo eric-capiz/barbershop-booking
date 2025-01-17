@@ -37,7 +37,6 @@ router.post("/book", async (req, res) => {
       notes,
     } = req.body;
 
-    // Format the date to match the schedule date format
     const bookingDate = new Date(appointmentDate);
     bookingDate.setUTCHours(0, 0, 0, 0);
 
@@ -51,13 +50,10 @@ router.post("/book", async (req, res) => {
         .json({ message: "No availability found for this date" });
     }
 
-    // Find the specific day in the schedule
     const scheduleDay = availability.schedule.find((day) => {
       const scheduleDate = new Date(day.date);
       scheduleDate.setUTCHours(0, 0, 0, 0);
-      const matches = scheduleDate.getTime() === bookingDate.getTime();
-
-      return matches;
+      return scheduleDate.getTime() === bookingDate.getTime();
     });
 
     if (!scheduleDay || !scheduleDay.isWorkingDay) {
@@ -70,13 +66,11 @@ router.post("/book", async (req, res) => {
       });
     }
 
-    // Check if the requested time slot falls within working hours
     const requestedStart = new Date(timeSlot.start);
     const requestedEnd = new Date(timeSlot.end);
     const workStart = new Date(scheduleDay.workHours.start);
     const workEnd = new Date(scheduleDay.workHours.end);
 
-    // Set work hours to the same date as the booking
     workStart.setFullYear(
       requestedStart.getFullYear(),
       requestedStart.getMonth(),
@@ -111,8 +105,6 @@ router.post("/book", async (req, res) => {
     });
 
     let appointment = await newAppointment.save();
-
-    // Changed the populate chain
     appointment = await Appointment.findById(appointment._id)
       .populate("adminId", "name")
       .populate("serviceId", "name duration price");
@@ -124,39 +116,32 @@ router.post("/book", async (req, res) => {
   }
 });
 
-// Move reschedule route here, before isAdmin middleware
 router.put("/:id/reschedule", async (req, res) => {
   try {
     const { proposedDate, proposedTimeSlot } = req.body;
-    console.log("Received reschedule request:", {
-      appointmentId: req.params.id,
-      proposedDate,
-      proposedTimeSlot,
-    });
-
     let appointment = await Appointment.findById(req.params.id);
-    console.log("Found appointment:", appointment);
 
     if (!appointment) {
       return res.status(404).json({ message: "Appointment not found" });
     }
 
-    // Only allow reschedule for pending or confirmed appointments
     if (!["pending", "confirmed"].includes(appointment.status)) {
       return res.status(400).json({
         message: "Only pending or confirmed appointments can be rescheduled",
       });
     }
 
-    // Users can only reschedule their own appointments
     if (appointment.userId.toString() !== req.user.id) {
       return res.status(401).json({ message: "Not authorized" });
     }
 
-    // Update these fields
+    // Store current status before updating to reschedule-pending
+    const currentStatus = appointment.status;
+
     appointment.status = "reschedule-pending";
     appointment.rescheduleRequest = {
       requestedBy: "user",
+      previousStatus: currentStatus,
       proposedDate: new Date(proposedDate),
       proposedTimeSlot: {
         start: new Date(proposedTimeSlot.start),
@@ -165,18 +150,14 @@ router.put("/:id/reschedule", async (req, res) => {
       status: "pending",
     };
 
-    console.log("Updated appointment before save:", appointment);
     await appointment.save();
-    console.log("Appointment saved successfully");
 
-    // Fetch updated appointment with populated fields
     appointment = await Appointment.findById(appointment._id)
       .populate("adminId", "name")
       .populate("userId", "name email")
       .populate("serviceId", "name duration price")
       .populate("review");
 
-    console.log("Final appointment:", appointment);
     res.json(appointment);
   } catch (err) {
     console.error("Reschedule error:", err);
@@ -184,7 +165,6 @@ router.put("/:id/reschedule", async (req, res) => {
   }
 });
 
-// Shared routes with role checks
 router.put("/:id/status", async (req, res) => {
   try {
     const { status, rejectionDetails } = req.body;
@@ -194,36 +174,51 @@ router.put("/:id/status", async (req, res) => {
       return res.status(404).json({ message: "Appointment not found" });
     }
 
-    // Only allow rejections for pending or reschedule-pending
-    if (
-      (status === "rejected" || status === "reschedule-rejected") &&
-      !["pending", "reschedule-pending"].includes(appointment.status)
-    ) {
-      return res.status(400).json({
-        message: "Only pending appointments can be rejected",
-      });
-    }
+    // Store the previous status before any reschedule request
+    const previousStatus =
+      appointment.status === "reschedule-pending"
+        ? appointment.rescheduleRequest?.previousStatus || "pending"
+        : appointment.status;
 
+    // Handle reschedule rejection differently
+    if (status === "reschedule-rejected") {
+      // Revert to previous status
+      appointment.status = previousStatus;
+      appointment.rejectionDetails = {
+        note: rejectionDetails?.note || "",
+        rejectedAt: new Date(),
+      };
+      // Keep reschedule request for history but mark as rejected
+      appointment.rescheduleRequest = {
+        ...appointment.rescheduleRequest,
+        status: "rejected",
+      };
+    }
+    // Handle regular rejection
+    else if (status === "rejected") {
+      appointment.status = status;
+      appointment.rejectionDetails = {
+        note: rejectionDetails?.note || "",
+        rejectedAt: new Date(),
+      };
+    }
     // Handle reschedule confirmation
-    if (status === "confirmed" && appointment.status === "reschedule-pending") {
+    else if (
+      status === "confirmed" &&
+      appointment.status === "reschedule-pending"
+    ) {
       appointment.status = "reschedule-confirmed";
       appointment.appointmentDate = appointment.rescheduleRequest.proposedDate;
       appointment.timeSlot = appointment.rescheduleRequest.proposedTimeSlot;
+      appointment.rescheduleRequest.status = "confirmed";
     }
-    // Handle rejection
-    else if (status === "rejected" || status === "reschedule-rejected") {
-      appointment.status = status;
-      appointment.rejectionDetails = {
-        note: rejectionDetails.note,
-        rejectedAt: new Date(),
-      };
-    } else {
+    // Handle other status updates
+    else {
       appointment.status = status;
     }
 
     await appointment.save();
 
-    // Fetch updated appointment with populated fields
     appointment = await Appointment.findById(appointment._id)
       .populate("adminId", "name")
       .populate("userId", "name email")
@@ -257,10 +252,9 @@ router.get("/admin", async (req, res) => {
   }
 });
 
-// Add admin response route (after isAdmin middleware)
 router.put("/:id/reschedule-response", async (req, res) => {
   try {
-    const { status } = req.body; // status can be 'confirm' or 'reject'
+    const { status } = req.body;
     let appointment = await Appointment.findById(req.params.id);
 
     if (!appointment) {
@@ -275,8 +269,16 @@ router.put("/:id/reschedule-response", async (req, res) => {
       appointment.status = "reschedule-confirmed";
       appointment.appointmentDate = appointment.rescheduleRequest.proposedDate;
       appointment.timeSlot = appointment.rescheduleRequest.proposedTimeSlot;
+      appointment.rescheduleRequest.status = "confirmed";
     } else {
-      appointment.status = "reschedule-rejected";
+      // Revert to previous status when rejecting
+      appointment.status =
+        appointment.rescheduleRequest.previousStatus || "pending";
+      appointment.rescheduleRequest.status = "rejected";
+      appointment.rejectionDetails = {
+        note: req.body.rejectionDetails?.note || "",
+        rejectedAt: new Date(),
+      };
     }
 
     await appointment.save();

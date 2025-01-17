@@ -138,12 +138,18 @@ export const appointmentService = {
 
   respondToReschedule: async (
     appointmentId: string,
-    status: "confirm" | "reject"
+    status: "confirm" | "reject",
+    rejectionDetails?: {
+      note: string;
+    }
   ): Promise<Appointment> => {
     try {
       const { data } = await axios.put<Appointment>(
         `${APPOINTMENT_URL}/${appointmentId}/reschedule-response`,
-        { status },
+        {
+          status,
+          rejectionDetails,
+        },
         {
           headers: {
             ...getAuthHeader(),

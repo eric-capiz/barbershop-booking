@@ -40,8 +40,11 @@ const UserAppointments = () => {
     setSelectedDateTime({ date, timeSlot });
   };
 
-  const handleRescheduleClick = (appointmentId: string) => {
-    setSelectedAppointmentId(appointmentId);
+  const handleRescheduleClick = (appointment: Appointment) => {
+    if (appointment.rescheduleRequest) {
+      return;
+    }
+    setSelectedAppointmentId(appointment._id);
     setIsRescheduleModalOpen(true);
   };
 
@@ -161,10 +164,10 @@ const UserAppointments = () => {
                         ? "Cancelling..."
                         : "Cancel"}
                     </button>
-                    {!appointment.status.includes("reschedule") && (
+                    {appointment.status.includes("reschedule") && (
                       <button
                         className="btn-reschedule"
-                        onClick={() => handleRescheduleClick(appointment._id)}
+                        onClick={() => handleRescheduleClick(appointment)}
                       >
                         <FaCalendarAlt /> Reschedule
                       </button>

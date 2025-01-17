@@ -38,20 +38,29 @@ router.get("/booked-slots", async (req, res) => {
       },
     });
 
-    const bookedSlots = activeAppointments.map((appointment) => {
-      // If appointment is being rescheduled, use the proposed time
+    const bookedSlots = activeAppointments.flatMap((appointment) => {
+      const slots = [];
+
+      // Add the original time slot if it's not a confirmed reschedule
+      if (!["reschedule-confirmed"].includes(appointment.status)) {
+        slots.push({
+          date: appointment.timeSlot.start,
+        });
+      }
+
+      // Add the proposed time slot if it's a reschedule request
       if (
-        appointment.status.includes("reschedule") &&
+        ["reschedule-pending", "reschedule-confirmed"].includes(
+          appointment.status
+        ) &&
         appointment.rescheduleRequest
       ) {
-        return {
+        slots.push({
           date: appointment.rescheduleRequest.proposedTimeSlot.start,
-        };
+        });
       }
-      // Otherwise use the original time
-      return {
-        date: appointment.timeSlot.start,
-      };
+
+      return slots;
     });
 
     res.json({ bookedSlots });

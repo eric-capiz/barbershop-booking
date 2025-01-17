@@ -88,10 +88,19 @@ export const useAppointment = () => {
     mutationFn: ({
       appointmentId,
       status,
+      rejectionDetails,
     }: {
       appointmentId: string;
       status: "confirm" | "reject";
-    }) => appointmentService.respondToReschedule(appointmentId, status),
+      rejectionDetails?: {
+        note: string;
+      };
+    }) =>
+      appointmentService.respondToReschedule(
+        appointmentId,
+        status,
+        rejectionDetails
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
       queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });

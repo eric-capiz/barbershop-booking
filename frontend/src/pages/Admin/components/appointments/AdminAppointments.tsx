@@ -15,6 +15,7 @@ const AdminAppointments = () => {
     adminAppointments,
     isLoadingAdminAppointments,
     updateAppointmentStatus,
+    respondToReschedule,
   } = useAppointment();
 
   const filteredAppointments = {
@@ -65,11 +66,18 @@ const AdminAppointments = () => {
     return format(new Date(appointment.timeSlot.start), "h:mm a");
   };
 
-  const handleConfirm = (appointmentId: string) => {
-    updateAppointmentStatus.mutate({
-      appointmentId,
-      status: "confirmed",
-    });
+  const handleConfirm = (appointment: Appointment) => {
+    if (appointment.status === "reschedule-pending") {
+      respondToReschedule.mutate({
+        appointmentId: appointment._id,
+        status: "confirm",
+      });
+    } else {
+      updateAppointmentStatus.mutate({
+        appointmentId: appointment._id,
+        status: "confirmed",
+      });
+    }
   };
 
   const handleReject = (appointment: Appointment) => {
@@ -80,25 +88,27 @@ const AdminAppointments = () => {
   const handleRejectionConfirm = async (note: string) => {
     if (!selectedAppointment?._id) return;
 
-    updateAppointmentStatus.mutate(
-      {
+    if (selectedAppointment.status === "reschedule-pending") {
+      respondToReschedule.mutate({
         appointmentId: selectedAppointment._id,
-        status:
-          selectedAppointment.status === "reschedule-pending"
-            ? "reschedule-rejected"
-            : "rejected",
+        status: "reject",
+        rejectionDetails: {
+          note,
+        },
+      });
+    } else {
+      updateAppointmentStatus.mutate({
+        appointmentId: selectedAppointment._id,
+        status: "rejected",
         rejectionDetails: {
           note,
           rejectedAt: new Date().toISOString(),
         },
-      },
-      {
-        onSuccess: () => {
-          setIsRejectionModalOpen(false);
-          setSelectedAppointment(null);
-        },
-      }
-    );
+      });
+    }
+
+    setIsRejectionModalOpen(false);
+    setSelectedAppointment(null);
   };
 
   const renderAppointmentsTable = (appointments: typeof adminAppointments) => {
@@ -157,24 +167,27 @@ const AdminAppointments = () => {
     );
   };
 
-  const renderActions = (appointment: any) => {
+  const renderActions = (appointment: Appointment) => {
     if (!["pending", "reschedule-pending"].includes(appointment.status)) {
       return null;
     }
+
+    const isProcessing =
+      updateAppointmentStatus.isPending || respondToReschedule.isPending;
 
     return (
       <td data-label="Actions" className="actions">
         <button
           className="btn-confirm"
-          onClick={() => handleConfirm(appointment._id)}
-          disabled={updateAppointmentStatus.isPending}
+          onClick={() => handleConfirm(appointment)}
+          disabled={isProcessing}
         >
-          {updateAppointmentStatus.isPending ? "Confirming..." : "Confirm"}
+          {isProcessing ? "Processing..." : "Confirm"}
         </button>
         <button
           className="btn-reject"
           onClick={() => handleReject(appointment)}
-          disabled={updateAppointmentStatus.isPending}
+          disabled={isProcessing}
         >
           <span className="reject-icon">✕</span> Reject
         </button>

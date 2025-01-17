@@ -73,15 +73,21 @@ const AppointmentSchema = new mongoose.Schema(
         enum: ["admin", "user", null],
         default: null,
       },
-      proposedDate: Date,
+      previousStatus: {
+        type: String,
+      },
+      proposedDate: {
+        type: Date,
+        required: true,
+      },
       proposedTimeSlot: {
-        start: Date,
-        end: Date,
+        start: { type: Date, required: true },
+        end: { type: Date, required: true },
       },
       status: {
         type: String,
-        enum: ["pending", "accepted", "rejected", null],
-        default: null,
+        enum: ["pending", "confirmed", "rejected"],
+        default: "pending",
       },
     },
     review: {

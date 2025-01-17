@@ -9,11 +9,14 @@ export interface AppointmentTimeSlot {
 }
 
 export interface RescheduleRequest {
+  requestedBy: "admin" | "user" | null;
+  previousStatus?: string;
   proposedDate: Date;
   proposedTimeSlot: {
     start: Date;
     end: Date;
   };
+  status: "pending" | "confirmed" | "rejected";
 }
 
 export type AppointmentStatus =
@@ -50,12 +53,13 @@ export interface Appointment {
   rejectionDetails?: RejectionDetails;
   rescheduleRequest?: {
     requestedBy: "admin" | "user" | null;
+    previousStatus?: string;
     proposedDate: Date;
     proposedTimeSlot: {
       start: Date;
       end: Date;
     };
-    status: "pending" | "accepted" | "rejected" | null;
+    status: "pending" | "confirmed" | "rejected";
   };
   review: Review | null;
   hasReview: boolean;
