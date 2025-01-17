@@ -82,7 +82,7 @@ router.post("/book", async (req, res) => {
       requestedStart.getDate()
     );
 
-    if (requestedStart < workStart || requestedEnd > workEnd) {
+    if (requestedStart < workStart || requestedStart > workEnd) {
       return res.status(400).json({
         message: "Time slot outside working hours",
         debug: {
