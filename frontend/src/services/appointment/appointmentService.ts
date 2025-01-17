@@ -68,4 +68,34 @@ export const appointmentService = {
       throw error;
     }
   },
+
+  // Update appointment status
+  updateAppointmentStatus: async (
+    appointmentId: string,
+    status: string
+  ): Promise<Appointment> => {
+    try {
+      const headers = getAuthHeader();
+      console.log("Auth headers:", headers); // Debug log
+
+      const { data } = await axios.put<Appointment>(
+        `${APPOINTMENT_URL}/${appointmentId}/status`,
+        { status },
+        {
+          headers: {
+            ...headers,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return data;
+    } catch (error) {
+      console.error("Status update error details:", {
+        message: error.response?.data?.message,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+      throw error;
+    }
+  },
 };

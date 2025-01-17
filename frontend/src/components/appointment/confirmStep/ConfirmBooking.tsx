@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { useAppointment } from "@/hooks/appointment/useAppointment";
 import { useBookingAvailability } from "@/hooks/appointment/useBookingAvailability";
@@ -20,16 +21,13 @@ interface ConfirmBookingProps {
       phone: string;
     };
   };
-  onConfirm: () => void;
+
   onStepChange: (step: number) => void;
 }
 
-const ConfirmBooking = ({
-  bookingData,
-  onConfirm,
-  onStepChange,
-}: ConfirmBookingProps) => {
+const ConfirmBooking = ({ bookingData, onStepChange }: ConfirmBookingProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const navigate = useNavigate();
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error";
@@ -75,7 +73,7 @@ const ConfirmBooking = ({
 
       // Optional: Navigate to profile page after delay
       setTimeout(() => {
-        onConfirm();
+        navigate("/profile");
       }, 3000);
     } catch (error: any) {
       setToast({

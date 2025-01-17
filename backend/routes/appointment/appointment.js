@@ -147,6 +147,7 @@ router.get("/admin", async (req, res) => {
 // Shared routes with role checks
 router.put("/:id/status", async (req, res) => {
   try {
+    console.log("req.user:", req.user);
     const { status } = req.body;
     let appointment = await Appointment.findById(req.params.id);
 
@@ -154,24 +155,30 @@ router.put("/:id/status", async (req, res) => {
       return res.status(404).json({ message: "Appointment not found" });
     }
 
-    // Only admin can confirm or mark no-show
-    if ((status === "confirmed" || status === "no-show") && !req.user.isAdmin) {
+    if (
+      (status === "confirmed" || status === "no-show") &&
+      req.user.role !== "admin"
+    ) {
       return res.status(401).json({ message: "Not authorized" });
     }
 
-    // Users can only cancel their own appointments
-    if (!req.user.isAdmin && appointment.userId.toString() !== req.user.id) {
+    if (
+      req.user.role !== "admin" &&
+      appointment.userId.toString() !== req.user.id
+    ) {
       return res.status(401).json({ message: "Not authorized" });
     }
 
     appointment.status = status;
     await appointment.save();
 
-    await appointment
+    // Update the populate chain to use findById
+    appointment = await Appointment.findById(appointment._id)
       .populate("adminId", "name")
       .populate("userId", "name email")
       .populate("serviceId", "name duration price")
-      .populate("review");
+      .populate("review")
+      .exec();
 
     res.json(appointment);
   } catch (err) {

@@ -13,10 +13,34 @@ export const useAppointment = () => {
     mutationFn: (appointmentData: CreateAppointmentDTO) =>
       appointmentService.createAppointment(appointmentData),
     onSuccess: () => {
-      // Invalidate and refetch appointments after creating new one
+      // Invalidate all relevant queries
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      // Add this line to invalidate booking availability
+      queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
       queryClient.invalidateQueries({ queryKey: ["booking-availability"] });
+    },
+  });
+
+  // Update Appointment Status Mutation
+  const updateAppointmentStatus = useMutation({
+    mutationFn: async ({
+      appointmentId,
+      status,
+    }: {
+      appointmentId: string;
+      status: string;
+    }) => {
+      const response = await appointmentService.updateAppointmentStatus(
+        appointmentId,
+        status
+      );
+      return response;
+    },
+    onSuccess: () => {
+      // Invalidate both admin and user appointment queries
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
     },
   });
 
@@ -24,23 +48,26 @@ export const useAppointment = () => {
   const getUserAppointments = useQuery({
     queryKey: ["appointments", "user", user?.id],
     queryFn: appointmentService.getUserAppointments,
-    enabled: !isAdmin && !!user?.id, // Add user.id check
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    enabled: !isAdmin && !!user?.id,
+    staleTime: 1000 * 60 * 5,
   });
 
   // Get Admin Appointments Query
   const getAdminAppointments = useQuery({
     queryKey: ["appointments", "admin", user?.id],
     queryFn: appointmentService.getAdminAppointments,
-    enabled: isAdmin && !!user?.id, // Add user.id check
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    enabled: isAdmin && !!user?.id,
+    staleTime: 1000 * 60 * 5,
   });
 
   return {
     // Mutations
     createAppointment,
+    updateAppointmentStatus,
     isCreating: createAppointment.isPending,
+    isUpdating: updateAppointmentStatus.isPending,
     createError: createAppointment.error,
+    updateError: updateAppointmentStatus.error,
 
     // User Appointments
     userAppointments: getUserAppointments.data,

@@ -8,7 +8,11 @@ type TabType = "pending" | "upcoming" | "past";
 
 const AdminAppointments = () => {
   const [activeTab, setActiveTab] = useState<TabType>("pending");
-  const { adminAppointments, isLoadingAdminAppointments } = useAppointment();
+  const {
+    adminAppointments,
+    isLoadingAdminAppointments,
+    updateAppointmentStatus,
+  } = useAppointment();
 
   const filteredAppointments = {
     pending: adminAppointments?.filter((apt) => apt.status === "pending") || [],
@@ -22,6 +26,13 @@ const AdminAppointments = () => {
   const handleReschedule = (appointmentId: string) => {
     // This will be implemented later with actual functionality
     console.log("Reschedule appointment:", appointmentId);
+  };
+
+  const handleConfirm = (appointmentId: string) => {
+    updateAppointmentStatus.mutate({
+      appointmentId,
+      status: "confirmed",
+    });
   };
 
   const renderAppointmentsTable = (appointments: typeof adminAppointments) => {
@@ -63,7 +74,15 @@ const AdminAppointments = () => {
                 </td>
                 {activeTab === "pending" && (
                   <td data-label="Actions" className="actions">
-                    <button className="btn-confirm">Confirm</button>
+                    <button
+                      className="btn-confirm"
+                      onClick={() => handleConfirm(appointment._id)}
+                      disabled={updateAppointmentStatus.isPending}
+                    >
+                      {updateAppointmentStatus.isPending
+                        ? "Confirming..."
+                        : "Confirm"}
+                    </button>
                     <button
                       className="btn-reschedule"
                       onClick={() => handleReschedule(appointment._id)}
