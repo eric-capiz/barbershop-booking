@@ -164,14 +164,15 @@ const UserAppointments = () => {
                         ? "Cancelling..."
                         : "Cancel"}
                     </button>
-                    {appointment.status.includes("reschedule") && (
-                      <button
-                        className="btn-reschedule"
-                        onClick={() => handleRescheduleClick(appointment)}
-                      >
-                        <FaCalendarAlt /> Reschedule
-                      </button>
-                    )}
+                    {!appointment.rescheduleRequest &&
+                      ["pending", "confirmed"].includes(appointment.status) && (
+                        <button
+                          className="btn-reschedule"
+                          onClick={() => handleRescheduleClick(appointment)}
+                        >
+                          <FaCalendarAlt /> Reschedule
+                        </button>
+                      )}
                   </td>
                 )}
                 {activeTab === "past" &&
@@ -238,10 +239,24 @@ const UserAppointments = () => {
             Note: You can only reschedule an appointment once. If you need to
             make further changes, please cancel and book a new appointment.
           </p>
+
+          {selectedDateTime && (
+            <div className="selected-time">
+              <h4>New Appointment Time:</h4>
+              <p>
+                Date: {new Date(selectedDateTime.date).toLocaleDateString()}
+                <br />
+                Time:{" "}
+                {format(new Date(selectedDateTime.timeSlot.start), "h:mm a")}
+              </p>
+            </div>
+          )}
+
           <DateTimeSelection
             onSelect={handleDateTimeSelect}
             isReschedule={true}
           />
+
           <div className="reschedule-actions">
             <button
               className="btn-confirm"

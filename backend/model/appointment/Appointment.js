@@ -1,5 +1,33 @@
 const mongoose = require("mongoose");
 
+const rescheduleRequestSchema = new mongoose.Schema(
+  {
+    requestedBy: {
+      type: String,
+      enum: ["admin", "user", null],
+      default: null,
+    },
+    previousStatus: {
+      type: String,
+      required: true,
+    },
+    proposedDate: {
+      type: Date,
+      required: true,
+    },
+    proposedTimeSlot: {
+      start: { type: Date, required: true },
+      end: { type: Date, required: true },
+    },
+    status: {
+      type: String,
+      enum: ["pending", "confirmed", "rejected"],
+      default: "pending",
+    },
+  },
+  { _id: false }
+);
+
 const AppointmentSchema = new mongoose.Schema(
   {
     adminId: {
@@ -68,27 +96,8 @@ const AppointmentSchema = new mongoose.Schema(
       type: String,
     },
     rescheduleRequest: {
-      requestedBy: {
-        type: String,
-        enum: ["admin", "user", null],
-        default: null,
-      },
-      previousStatus: {
-        type: String,
-      },
-      proposedDate: {
-        type: Date,
-        required: true,
-      },
-      proposedTimeSlot: {
-        start: { type: Date, required: true },
-        end: { type: Date, required: true },
-      },
-      status: {
-        type: String,
-        enum: ["pending", "confirmed", "rejected"],
-        default: "pending",
-      },
+      type: rescheduleRequestSchema,
+      required: false,
     },
     review: {
       type: mongoose.Schema.Types.ObjectId,
