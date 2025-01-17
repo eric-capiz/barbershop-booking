@@ -46,6 +46,7 @@ const AdminAppointments = () => {
           <thead>
             <tr>
               <th>Client</th>
+              <th>Contact Info</th>
               <th>Service</th>
               <th>Date</th>
               <th>Time</th>
@@ -57,6 +58,12 @@ const AdminAppointments = () => {
             {appointments.map((appointment) => (
               <tr key={appointment._id}>
                 <td data-label="Client">{appointment.userId.name}</td>
+                <td data-label="Contact Info">
+                  <div>
+                    <div>📧 {appointment.contactInfo.email}</div>
+                    <div>📱 {appointment.contactInfo.phone}</div>
+                  </div>
+                </td>
                 <td data-label="Service">{appointment.serviceId.name}</td>
                 <td data-label="Date">
                   {new Date(appointment.appointmentDate).toLocaleDateString(
@@ -89,7 +96,6 @@ const AdminAppointments = () => {
                     >
                       <FaCalendarAlt /> Reschedule
                     </button>
-                    <button className="btn-cancel">Cancel</button>
                   </td>
                 )}
               </tr>
