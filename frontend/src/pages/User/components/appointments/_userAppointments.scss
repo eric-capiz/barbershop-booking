@@ -238,6 +238,49 @@
       }
     }
   }
+
+  .rejection-note {
+    max-width: 300px;
+    color: #ff4d4d;
+    font-style: italic;
+
+    &::before {
+      content: '"';
+    }
+
+    &::after {
+      content: '"';
+    }
+  }
+
+  @media (max-width: 768px) {
+    .rejection-note {
+      &::before {
+        content: 'Reason: "';
+        font-weight: bold;
+        color: #c0c0c0;
+      }
+    }
+  }
+
+  // Match the rejected status badge styling from admin
+  .status-badge {
+    &.rejected,
+    &.reschedule-rejected {
+      background: rgba(#ff4d4d, 0.1);
+      color: #ff4d4d;
+      border: 1px solid #ff4d4d;
+      font-weight: 500;
+
+      &::before {
+        content: "✕";
+        margin-right: 4px;
+        font-size: 0.9em;
+      }
+
+      animation: fadeIn 0.3s ease-in-out;
+    }
+  }
 }
 
 .no-appointments {
@@ -354,5 +397,16 @@
   &.reschedule-rejected {
     background: rgba(#f44336, 0.2);
     color: #f44336;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

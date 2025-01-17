@@ -70,8 +70,6 @@ const ConfirmBooking = ({ bookingData, onStepChange }: ConfirmBookingProps) => {
         type: "success",
       });
       setIsSubmitted(true);
-
-      // Optional: Navigate to profile page after delay
       setTimeout(() => {
         navigate("/profile");
       }, 3000);

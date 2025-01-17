@@ -67,7 +67,6 @@ const AdminAppointments = () => {
   };
 
   const handleReschedule = (appointmentId: string) => {
-    // This will be implemented later with actual functionality
     console.log("Reschedule appointment:", appointmentId);
   };
 
@@ -78,23 +77,21 @@ const AdminAppointments = () => {
     });
   };
 
-  const handleReject = (appointment: any) => {
+  const handleReject = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setIsRejectionModalOpen(true);
   };
 
   const handleRejectionConfirm = async (note: string) => {
-    if (!selectedAppointment) return;
-
-    const status =
-      selectedAppointment.status === "reschedule-pending"
-        ? "reschedule-rejected"
-        : "rejected";
+    if (!selectedAppointment?._id) return;
 
     updateAppointmentStatus.mutate(
       {
         appointmentId: selectedAppointment._id,
-        status,
+        status:
+          selectedAppointment.status === "reschedule-pending"
+            ? "reschedule-rejected"
+            : "rejected",
         rejectionDetails: {
           note,
           rejectedAt: new Date().toISOString(),
@@ -126,6 +123,7 @@ const AdminAppointments = () => {
               <th>Time</th>
               <th>Status</th>
               {activeTab === "pending" && <th>Actions</th>}
+              {activeTab === "past" && <th>Rejection Note</th>}
             </tr>
           </thead>
           <tbody>
@@ -146,25 +144,14 @@ const AdminAppointments = () => {
                     {appointment.status}
                   </span>
                 </td>
-                {activeTab === "pending" && (
-                  <td data-label="Actions" className="actions">
-                    <button
-                      className="btn-confirm"
-                      onClick={() => handleConfirm(appointment._id)}
-                      disabled={updateAppointmentStatus.isPending}
-                    >
-                      {updateAppointmentStatus.isPending
-                        ? "Confirming..."
-                        : "Confirm"}
-                    </button>
-                    {!appointment.status.includes("reschedule") && (
-                      <button
-                        className="btn-reschedule"
-                        onClick={() => handleReschedule(appointment._id)}
-                      >
-                        <FaCalendarAlt /> Reschedule
-                      </button>
-                    )}
+                {activeTab === "pending" && renderActions(appointment)}
+                {activeTab === "past" && (
+                  <td data-label="Rejection Note" className="rejection-note">
+                    {["rejected", "reschedule-rejected"].includes(
+                      appointment.status
+                    )
+                      ? appointment.rejectionDetails?.note || "No note provided"
+                      : "-"}
                   </td>
                 )}
               </tr>
@@ -194,7 +181,7 @@ const AdminAppointments = () => {
           onClick={() => handleReject(appointment)}
           disabled={updateAppointmentStatus.isPending}
         >
-          Reject
+          <span className="reject-icon">✕</span> Reject
         </button>
       </td>
     );

@@ -124,18 +124,19 @@ const UserAppointments = () => {
         <table>
           <thead>
             <tr>
+              <th>Barber</th>
               <th>Service</th>
               <th>Date</th>
               <th>Time</th>
               <th>Status</th>
-              {(activeTab === "pending" || activeTab === "upcoming") && (
-                <th>Actions</th>
-              )}
+              {activeTab === "pending" && <th>Actions</th>}
+              {activeTab === "past" && <th>Notes</th>}
             </tr>
           </thead>
           <tbody>
             {appointments.map((appointment) => (
               <tr key={appointment._id}>
+                <td data-label="Barber">{appointment.adminId.name}</td>
                 <td data-label="Service">{appointment.serviceId.name}</td>
                 <td data-label="Date">{getDisplayDate(appointment)}</td>
                 <td data-label="Time">{getDisplayTime(appointment)}</td>
@@ -144,25 +145,15 @@ const UserAppointments = () => {
                     {appointment.status}
                   </span>
                 </td>
-                {(activeTab === "pending" || activeTab === "upcoming") && (
-                  <td data-label="Actions" className="actions">
-                    <button
-                      className="btn-cancel"
-                      onClick={() => handleCancel(appointment._id)}
-                      disabled={updateAppointmentStatus.isPending}
-                    >
-                      {updateAppointmentStatus.isPending
-                        ? "Cancelling..."
-                        : "Cancel"}
-                    </button>
-                    {!appointment.status.includes("reschedule") && (
-                      <button
-                        className="btn-reschedule"
-                        onClick={() => handleRescheduleClick(appointment._id)}
-                      >
-                        <FaCalendarAlt /> Reschedule
-                      </button>
-                    )}
+                {activeTab === "pending" && renderActions(appointment)}
+                {activeTab === "past" && (
+                  <td data-label="Notes" className="rejection-note">
+                    {["rejected", "reschedule-rejected"].includes(
+                      appointment.status
+                    )
+                      ? appointment.rejectionDetails?.note ||
+                        "No reason provided"
+                      : "-"}
                   </td>
                 )}
               </tr>

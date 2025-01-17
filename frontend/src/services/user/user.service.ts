@@ -12,14 +12,11 @@ export const userService = {
     return data;
   },
 
-  // add these later when we implement the backend
   getAppointments: async () => {
-    // TODO: Implement when backend is ready
     return Promise.resolve([]);
   },
 
   getReviews: async () => {
-    // TODO: Implement when backend is ready
     return Promise.resolve([]);
   },
 };

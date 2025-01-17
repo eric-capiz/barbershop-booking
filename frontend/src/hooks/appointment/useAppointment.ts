@@ -26,26 +26,17 @@ export const useAppointment = () => {
 
   // Update Appointment Status Mutation
   const updateAppointmentStatus = useMutation({
-    mutationFn: async ({
-      appointmentId,
-      status,
-    }: {
+    mutationFn: (params: {
       appointmentId: string;
-      status: string;
-    }) => {
-      const response = await appointmentService.updateAppointmentStatus(
-        appointmentId,
-        status
-      );
-      return response;
-    },
+      status: AppointmentStatus;
+      rejectionDetails?: {
+        note: string;
+        rejectedAt?: string;
+      };
+    }) => appointmentService.updateAppointmentStatus(params),
     onSuccess: () => {
-      // Invalidate all relevant queries to refresh the lists
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
-      queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
-      // Also invalidate booking availability since a slot might have opened up
-      queryClient.invalidateQueries({ queryKey: ["booking-availability"] });
+      queryClient.invalidateQueries({ queryKey: ["adminAppointments"] });
     },
   });
 

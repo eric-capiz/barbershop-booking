@@ -27,29 +27,37 @@ export type AppointmentStatus =
   | "reschedule-confirmed"
   | "reschedule-rejected";
 
+export interface RejectionDetails {
+  note: string;
+  rejectedAt: Date | null;
+}
+
 export interface Appointment {
   _id: string;
-  adminId: {
-    _id: string;
-    name: string;
-  };
-  userId: {
-    _id: string;
-    name: string;
-    email: string;
-  };
-  serviceId: {
-    _id: string;
-    name: string;
-    duration: number;
-    price: number;
-  };
+  adminId: AdminProfile;
+  userId: User;
+  serviceId: Service;
   appointmentDate: Date;
-  timeSlot: AppointmentTimeSlot;
-  status: "pending" | "confirmed" | "completed" | "cancelled" | "no-show";
-  contactInfo: AppointmentContactInfo;
-  rescheduleRequest: RescheduleRequest;
-  review?: string | null;
+  timeSlot: {
+    start: Date;
+    end: Date;
+  };
+  status: AppointmentStatus;
+  contactInfo: {
+    email: string;
+    phone: string;
+  };
+  rejectionDetails?: RejectionDetails;
+  rescheduleRequest?: {
+    requestedBy: "admin" | "user" | null;
+    proposedDate: Date;
+    proposedTimeSlot: {
+      start: Date;
+      end: Date;
+    };
+    status: "pending" | "accepted" | "rejected" | null;
+  };
+  review: Review | null;
   hasReview: boolean;
   createdAt: Date;
   updatedAt: Date;

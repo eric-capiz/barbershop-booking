@@ -187,19 +187,36 @@ router.put("/:id/reschedule", async (req, res) => {
 // Shared routes with role checks
 router.put("/:id/status", async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, rejectionDetails } = req.body;
     let appointment = await Appointment.findById(req.params.id);
 
     if (!appointment) {
       return res.status(404).json({ message: "Appointment not found" });
     }
 
+    // Only allow rejections for pending or reschedule-pending
+    if (
+      (status === "rejected" || status === "reschedule-rejected") &&
+      !["pending", "reschedule-pending"].includes(appointment.status)
+    ) {
+      return res.status(400).json({
+        message: "Only pending appointments can be rejected",
+      });
+    }
+
     // Handle reschedule confirmation
     if (status === "confirmed" && appointment.status === "reschedule-pending") {
-      // Update main appointment with the rescheduled times
       appointment.status = "reschedule-confirmed";
       appointment.appointmentDate = appointment.rescheduleRequest.proposedDate;
       appointment.timeSlot = appointment.rescheduleRequest.proposedTimeSlot;
+    }
+    // Handle rejection
+    else if (status === "rejected" || status === "reschedule-rejected") {
+      appointment.status = status;
+      appointment.rejectionDetails = {
+        note: rejectionDetails.note,
+        rejectedAt: new Date(),
+      };
     } else {
       appointment.status = status;
     }

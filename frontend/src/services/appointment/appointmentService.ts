@@ -15,6 +15,15 @@ const getAuthHeader = () => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
+interface UpdateStatusParams {
+  appointmentId: string;
+  status: AppointmentStatus;
+  rejectionDetails?: {
+    note: string;
+    rejectedAt?: string;
+  };
+}
+
 export const appointmentService = {
   // Create new appointment
   createAppointment: async (
@@ -71,16 +80,22 @@ export const appointmentService = {
   },
 
   // Update appointment status
-  updateAppointmentStatus: async (
-    appointmentId: string,
-    status: string
-  ): Promise<Appointment> => {
+  updateAppointmentStatus: async ({
+    appointmentId,
+    status,
+    rejectionDetails,
+  }: UpdateStatusParams): Promise<Appointment> => {
     try {
       const headers = getAuthHeader();
 
+      const requestBody = {
+        status,
+        ...(rejectionDetails && { rejectionDetails }),
+      };
+
       const { data } = await axios.put<Appointment>(
         `${APPOINTMENT_URL}/${appointmentId}/status`,
-        { status },
+        requestBody,
         {
           headers: {
             ...headers,
