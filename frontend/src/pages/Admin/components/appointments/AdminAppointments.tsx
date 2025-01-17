@@ -15,14 +15,53 @@ const AdminAppointments = () => {
   } = useAppointment();
 
   const filteredAppointments = {
-    pending: adminAppointments?.filter((apt) => apt.status === "pending") || [],
+    pending:
+      adminAppointments?.filter((apt) =>
+        ["pending", "reschedule-pending"].includes(apt.status)
+      ) || [],
     upcoming:
-      adminAppointments?.filter((apt) => apt.status === "confirmed") || [],
+      adminAppointments?.filter((apt) =>
+        ["confirmed", "reschedule-confirmed"].includes(apt.status)
+      ) || [],
     past:
-      adminAppointments?.filter(
-        (apt) => apt.status === "completed" || apt.status === "cancelled"
+      adminAppointments?.filter((apt) =>
+        [
+          "completed",
+          "cancelled",
+          "no-show",
+          "rejected",
+          "reschedule-rejected",
+        ].includes(apt.status)
       ) || [],
   };
+
+  const getDisplayDate = (appointment) => {
+    if (
+      appointment.status.includes("reschedule") &&
+      appointment.rescheduleRequest
+    ) {
+      return new Date(
+        appointment.rescheduleRequest.proposedDate
+      ).toLocaleDateString("en-US", { timeZone: "UTC" });
+    }
+    return new Date(appointment.appointmentDate).toLocaleDateString("en-US", {
+      timeZone: "UTC",
+    });
+  };
+
+  const getDisplayTime = (appointment) => {
+    if (
+      appointment.status.includes("reschedule") &&
+      appointment.rescheduleRequest
+    ) {
+      return format(
+        new Date(appointment.rescheduleRequest.proposedTimeSlot.start),
+        "h:mm a"
+      );
+    }
+    return format(new Date(appointment.timeSlot.start), "h:mm a");
+  };
+
   const handleReschedule = (appointmentId: string) => {
     // This will be implemented later with actual functionality
     console.log("Reschedule appointment:", appointmentId);
@@ -65,15 +104,8 @@ const AdminAppointments = () => {
                   </div>
                 </td>
                 <td data-label="Service">{appointment.serviceId.name}</td>
-                <td data-label="Date">
-                  {new Date(appointment.appointmentDate).toLocaleDateString(
-                    "en-US",
-                    { timeZone: "UTC" }
-                  )}
-                </td>
-                <td data-label="Time">
-                  {format(new Date(appointment.timeSlot.start), "h:mm a")}
-                </td>
+                <td data-label="Date">{getDisplayDate(appointment)}</td>
+                <td data-label="Time">{getDisplayTime(appointment)}</td>
                 <td data-label="Status">
                   <span className={`status-badge ${appointment.status}`}>
                     {appointment.status}
@@ -90,12 +122,14 @@ const AdminAppointments = () => {
                         ? "Confirming..."
                         : "Confirm"}
                     </button>
-                    <button
-                      className="btn-reschedule"
-                      onClick={() => handleReschedule(appointment._id)}
-                    >
-                      <FaCalendarAlt /> Reschedule
-                    </button>
+                    {!appointment.status.includes("reschedule") && (
+                      <button
+                        className="btn-reschedule"
+                        onClick={() => handleReschedule(appointment._id)}
+                      >
+                        <FaCalendarAlt /> Reschedule
+                      </button>
+                    )}
                   </td>
                 )}
               </tr>

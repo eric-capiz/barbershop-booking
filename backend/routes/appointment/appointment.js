@@ -194,34 +194,24 @@ router.put("/:id/status", async (req, res) => {
       return res.status(404).json({ message: "Appointment not found" });
     }
 
-    // Only admin can confirm or mark no-show
-    if (
-      (status === "confirmed" || status === "no-show") &&
-      req.user.role !== "admin"
-    ) {
-      return res.status(401).json({ message: "Not authorized" });
+    // Handle reschedule confirmation
+    if (status === "confirmed" && appointment.status === "reschedule-pending") {
+      // Update main appointment with the rescheduled times
+      appointment.status = "reschedule-confirmed";
+      appointment.appointmentDate = appointment.rescheduleRequest.proposedDate;
+      appointment.timeSlot = appointment.rescheduleRequest.proposedTimeSlot;
+    } else {
+      appointment.status = status;
     }
 
-    // Users can only cancel their own appointments
-    if (status === "cancelled") {
-      // Check if user is admin OR if it's their own appointment
-      if (
-        req.user.role !== "admin" &&
-        appointment.userId.toString() !== req.user.id
-      ) {
-        return res.status(401).json({ message: "Not authorized" });
-      }
-    }
-
-    appointment.status = status;
     await appointment.save();
 
+    // Fetch updated appointment with populated fields
     appointment = await Appointment.findById(appointment._id)
       .populate("adminId", "name")
       .populate("userId", "name email")
       .populate("serviceId", "name duration price")
-      .populate("review")
-      .exec();
+      .populate("review");
 
     res.json(appointment);
   } catch (err) {
