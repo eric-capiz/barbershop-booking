@@ -5,8 +5,8 @@
     color: $silver-light;
     margin-bottom: 1rem;
     padding: 0.75rem;
-    background: rgba($red-primary, 0.1);
-    border: 1px solid $red-dark;
+    background: rgba(#dc3545, 0.1);
+    border: 1px solid #dc3545;
     border-radius: 4px;
   }
 
@@ -46,6 +46,7 @@
         background: transparent;
         border: 1px solid $gold-dark;
         color: $gold-primary;
+        // margin-right: 1rem;
 
         &:hover {
           background: rgba($gold-primary, 0.1);
@@ -53,12 +54,12 @@
       }
 
       &.btn-reject {
-        background: $red-primary;
+        background: #dc3545;
         border: none;
-        color: $white;
+        color: #ffffff;
 
         &:hover:not(:disabled) {
-          background: $red-light;
+          background: #ff4d4d;
         }
 
         &:disabled {

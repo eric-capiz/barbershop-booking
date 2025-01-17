@@ -37,6 +37,7 @@ export const useAppointment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
       queryClient.invalidateQueries({ queryKey: ["adminAppointments"] });
+      queryClient.invalidateQueries({ queryKey: ["booking-availability"] });
     },
   });
 
