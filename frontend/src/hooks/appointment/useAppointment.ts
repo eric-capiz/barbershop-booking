@@ -46,9 +46,13 @@ export const useAppointment = () => {
     queryKey: ["appointments", "user", user?.id],
     queryFn: appointmentService.getUserAppointments,
     enabled: !!user?.id,
-    staleTime: 0,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
+    staleTime: 30000,
+    retry: 2,
+    retryDelay: 1000,
+    refetchOnMount: "always",
+    onError: (error) => {
+      console.error("Error fetching user appointments:", error);
+    },
   });
 
   // Get Admin Appointments Query
@@ -56,12 +60,12 @@ export const useAppointment = () => {
     queryKey: ["appointments", "admin", user?.id],
     queryFn: appointmentService.getAdminAppointments,
     enabled: !!user?.id && user?.role === "admin",
-    staleTime: 0,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-    retry: false,
-    onError: () => {
-      return;
+    staleTime: 30000,
+    retry: 2,
+    retryDelay: 1000,
+    refetchOnMount: "always",
+    onError: (error) => {
+      console.error("Error fetching admin appointments:", error);
     },
   });
 

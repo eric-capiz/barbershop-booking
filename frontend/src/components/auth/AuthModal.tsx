@@ -92,8 +92,8 @@ const AuthModal = ({ isOpen, onClose, initialView }: AuthModalProps) => {
   return (
     <>
       <div className="auth-modal">
-        <div className="modal-content">
-          <button className="close-button" onClick={handleClose}>
+        <div className="auth-modal__content">
+          <button className="auth-modal__close-button" onClick={handleClose}>
             &times;
           </button>
           <h2>{isLogin ? "Login" : "Sign Up"}</h2>
@@ -162,7 +162,7 @@ const AuthModal = ({ isOpen, onClose, initialView }: AuthModalProps) => {
           <p>
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <button
-              className="toggle-auth"
+              className="auth-modal__toggle-button"
               onClick={toggleAuthMode}
               disabled={isLoading}
             >
