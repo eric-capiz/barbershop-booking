@@ -27,17 +27,32 @@ router.get("/", async (req, res) => {
 // @access  Public
 router.get("/booked-slots", async (req, res) => {
   try {
-    // First, let's see all appointments regardless of status
-    const allAppointments = await Appointment.find({});
-
-    // Then check non-cancelled ones
     const activeAppointments = await Appointment.find({
-      status: { $ne: "cancelled" },
+      status: {
+        $in: [
+          "pending",
+          "confirmed",
+          "reschedule-pending",
+          "reschedule-confirmed",
+        ],
+      },
     });
 
-    const bookedSlots = activeAppointments.map((appointment) => ({
-      date: appointment.timeSlot.start,
-    }));
+    const bookedSlots = activeAppointments.map((appointment) => {
+      // If appointment is being rescheduled, use the proposed time
+      if (
+        appointment.status.includes("reschedule") &&
+        appointment.rescheduleRequest
+      ) {
+        return {
+          date: appointment.rescheduleRequest.proposedTimeSlot.start,
+        };
+      }
+      // Otherwise use the original time
+      return {
+        date: appointment.timeSlot.start,
+      };
+    });
 
     res.json({ bookedSlots });
   } catch (err) {
