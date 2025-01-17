@@ -3,11 +3,15 @@ import { format } from "date-fns";
 import { FaCalendarAlt } from "react-icons/fa";
 import { useAppointment } from "@/hooks/appointment/useAppointment";
 import "./_adminAppointments.scss";
+import RejectionModal from "@/components/Modal/RejectionModal";
 
 type TabType = "pending" | "upcoming" | "past";
 
 const AdminAppointments = () => {
   const [activeTab, setActiveTab] = useState<TabType>("pending");
+  const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
+
   const {
     adminAppointments,
     isLoadingAdminAppointments,
@@ -72,6 +76,37 @@ const AdminAppointments = () => {
       appointmentId,
       status: "confirmed",
     });
+  };
+
+  const handleReject = (appointment: any) => {
+    setSelectedAppointment(appointment);
+    setIsRejectionModalOpen(true);
+  };
+
+  const handleRejectionConfirm = async (note: string) => {
+    if (!selectedAppointment) return;
+
+    const status =
+      selectedAppointment.status === "reschedule-pending"
+        ? "reschedule-rejected"
+        : "rejected";
+
+    updateAppointmentStatus.mutate(
+      {
+        appointmentId: selectedAppointment._id,
+        status,
+        rejectionDetails: {
+          note,
+          rejectedAt: new Date().toISOString(),
+        },
+      },
+      {
+        onSuccess: () => {
+          setIsRejectionModalOpen(false);
+          setSelectedAppointment(null);
+        },
+      }
+    );
   };
 
   const renderAppointmentsTable = (appointments: typeof adminAppointments) => {
@@ -140,6 +175,46 @@ const AdminAppointments = () => {
     );
   };
 
+  const renderActions = (appointment: any) => {
+    if (!["pending", "reschedule-pending"].includes(appointment.status)) {
+      return null;
+    }
+
+    return (
+      <td data-label="Actions" className="actions">
+        <button
+          className="btn-confirm"
+          onClick={() => handleConfirm(appointment._id)}
+          disabled={updateAppointmentStatus.isPending}
+        >
+          {updateAppointmentStatus.isPending ? "Confirming..." : "Confirm"}
+        </button>
+        <button
+          className="btn-reject"
+          onClick={() => handleReject(appointment)}
+          disabled={updateAppointmentStatus.isPending}
+        >
+          Reject
+        </button>
+      </td>
+    );
+  };
+
+  const renderRejectionNote = (appointment: any) => {
+    if (
+      activeTab === "past" &&
+      ["rejected", "reschedule-rejected"].includes(appointment.status) &&
+      appointment.rejectionDetails?.note
+    ) {
+      return (
+        <td data-label="Rejection Reason" className="rejection-note">
+          {appointment.rejectionDetails.note}
+        </td>
+      );
+    }
+    return null;
+  };
+
   if (isLoadingAdminAppointments) {
     return <div className="loading-message">Loading appointments...</div>;
   }
@@ -172,6 +247,16 @@ const AdminAppointments = () => {
       </div>
 
       {renderAppointmentsTable(filteredAppointments[activeTab])}
+
+      <RejectionModal
+        isOpen={isRejectionModalOpen}
+        onClose={() => {
+          setIsRejectionModalOpen(false);
+          setSelectedAppointment(null);
+        }}
+        onConfirm={handleRejectionConfirm}
+        appointmentType={selectedAppointment?.status || "pending"}
+      />
     </div>
   );
 };

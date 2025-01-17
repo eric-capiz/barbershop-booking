@@ -46,6 +46,16 @@ const AppointmentSchema = new mongoose.Schema(
       ],
       default: "pending",
     },
+    rejectionDetails: {
+      note: {
+        type: String,
+        default: null,
+      },
+      rejectedAt: {
+        type: Date,
+        default: null,
+      },
+    },
     contactInfo: {
       email: {
         type: String,
