@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { FaCalendarAlt } from "react-icons/fa";
 import { useAppointment } from "@/hooks/appointment/useAppointment";
 import "./_adminAppointments.scss";
 import RejectionModal from "@/components/Modal/RejectionModal";
@@ -64,10 +63,6 @@ const AdminAppointments = () => {
       );
     }
     return format(new Date(appointment.timeSlot.start), "h:mm a");
-  };
-
-  const handleReschedule = (appointmentId: string) => {
-    console.log("Reschedule appointment:", appointmentId);
   };
 
   const handleConfirm = (appointmentId: string) => {
