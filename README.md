@@ -44,7 +44,6 @@ A full-stack web application for managing a barber shop's appointments, services
 - Real-time availability updates
 - Responsive design for mobile and desktop
 - Intuitive booking interface
-- Automated email notifications
 - User-friendly dashboard interfaces
 
 ## Technology Stack
