@@ -14,6 +14,10 @@ const UserAppointments = () => {
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<
     string | null
   >(null);
+  const [selectedDateTime, setSelectedDateTime] = useState<{
+    date: Date;
+    timeSlot: { start: Date; end: Date };
+  } | null>(null);
 
   const {
     userAppointments,
@@ -29,29 +33,34 @@ const UserAppointments = () => {
     });
   };
 
+  const handleDateTimeSelect = (
+    date: Date,
+    timeSlot: { start: Date; end: Date }
+  ) => {
+    setSelectedDateTime({ date, timeSlot });
+  };
+
   const handleRescheduleClick = (appointmentId: string) => {
     setSelectedAppointmentId(appointmentId);
     setIsRescheduleModalOpen(true);
   };
 
-  const handleRescheduleSubmit = (
-    date: Date,
-    timeSlot: { start: Date; end: Date }
-  ) => {
-    if (!selectedAppointmentId) return;
+  const handleConfirmReschedule = () => {
+    if (!selectedAppointmentId || !selectedDateTime) return;
 
     rescheduleAppointment.mutate(
       {
         appointmentId: selectedAppointmentId,
         rescheduleData: {
-          proposedDate: date,
-          proposedTimeSlot: timeSlot,
+          proposedDate: selectedDateTime.date,
+          proposedTimeSlot: selectedDateTime.timeSlot,
         },
       },
       {
         onSuccess: () => {
           setIsRescheduleModalOpen(false);
           setSelectedAppointmentId(null);
+          setSelectedDateTime(null);
         },
       }
     );
@@ -173,6 +182,7 @@ const UserAppointments = () => {
         onClose={() => {
           setIsRescheduleModalOpen(false);
           setSelectedAppointmentId(null);
+          setSelectedDateTime(null);
         }}
         title="Reschedule Appointment"
       >
@@ -181,10 +191,21 @@ const UserAppointments = () => {
             Note: You can only reschedule an appointment once. If you need to
             make further changes, please cancel and book a new appointment.
           </p>
-          <DateTimeSelection onSelect={handleRescheduleSubmit} />
-          {rescheduleAppointment.isPending && (
-            <div className="loading-overlay">Submitting request...</div>
-          )}
+          <DateTimeSelection
+            onSelect={handleDateTimeSelect}
+            isReschedule={true}
+          />
+          <div className="reschedule-actions">
+            <button
+              className="btn-confirm"
+              onClick={handleConfirmReschedule}
+              disabled={!selectedDateTime || rescheduleAppointment.isPending}
+            >
+              {rescheduleAppointment.isPending
+                ? "Submitting..."
+                : "Confirm Reschedule"}
+            </button>
+          </div>
         </div>
       </Modal>
     </div>

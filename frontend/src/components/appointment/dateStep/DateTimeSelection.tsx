@@ -9,14 +9,22 @@ import "./_dateTimeSelection.scss";
 
 interface DateTimeSelectionProps {
   onSelect: (date: Date, timeSlot: { start: Date; end: Date }) => void;
+  isReschedule?: boolean;
 }
 
 interface BookedSlot {
   date: string;
 }
 
-const DateTimeSelection = ({ onSelect }: DateTimeSelectionProps) => {
+const DateTimeSelection = ({
+  onSelect,
+  isReschedule = false,
+}: DateTimeSelectionProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedSlot, setSelectedSlot] = useState<{
+    start: Date;
+    end: Date;
+  } | null>(null);
   const { data: availability, isLoading } = useBookingAvailability();
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
@@ -123,8 +131,17 @@ const DateTimeSelection = ({ onSelect }: DateTimeSelectionProps) => {
               getAvailableTimeSlots(selectedDate).map((slot, index) => (
                 <button
                   key={index}
-                  onClick={() => onSelect(selectedDate, slot)}
-                  className="time-slot-button"
+                  onClick={() => {
+                    if (isReschedule) {
+                      setSelectedSlot(slot);
+                      onSelect(selectedDate, slot);
+                    } else {
+                      onSelect(selectedDate, slot);
+                    }
+                  }}
+                  className={`time-slot-button ${
+                    isReschedule && selectedSlot === slot ? "selected" : ""
+                  }`}
                 >
                   {format(slot.start, "h:mm a")}
                 </button>
