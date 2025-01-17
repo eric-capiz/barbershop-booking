@@ -28,6 +28,11 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  const handleCloseAuthModal = () => {
+    setIsAuthModalOpen(false);
+    setAuthType("login");
+  };
+
   return (
     <>
       <header className="header">
@@ -124,8 +129,9 @@ const Header = () => {
 
       <AuthModal
         isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
+        onClose={handleCloseAuthModal}
         initialView={authType}
+        key={`${isAuthModalOpen}-${authType}`}
       />
     </>
   );

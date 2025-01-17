@@ -14,7 +14,7 @@ const AuthModal = ({ isOpen, onClose, initialView }: AuthModalProps) => {
 
   useEffect(() => {
     setIsLogin(initialView === "login");
-  }, [initialView]);
+  }, [initialView, isOpen]);
 
   const login = useLogin();
   const register = useRegister();
@@ -40,11 +40,6 @@ const AuthModal = ({ isOpen, onClose, initialView }: AuthModalProps) => {
     }
   }, [isOpen]);
 
-  // Update isLogin when initialView changes
-  useEffect(() => {
-    setIsLogin(initialView === "login");
-  }, [initialView]);
-
   const resetForm = () => {
     setFormData(initialFormData);
     setToast(null);
@@ -52,6 +47,7 @@ const AuthModal = ({ isOpen, onClose, initialView }: AuthModalProps) => {
 
   const handleClose = () => {
     resetForm();
+    setIsLogin(initialView === "login");
     onClose();
   };
 
