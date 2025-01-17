@@ -1,52 +1,86 @@
-# API Endpoints
+# Sanchez Barber Shop Management System
 
-## Auth Routes
+## Overview
 
-| Method | Endpoint             | Description       |
-| ------ | -------------------- | ----------------- |
-| POST   | `/api/auth/register` | Register new user |
-| POST   | `/api/auth/login`    | Login user/admin  |
+A full-stack web application for managing a barber shop's appointments, services, and customer interactions. The system provides a seamless experience for both customers and administrators, featuring a modern, responsive design with a gold and black theme.
 
-## Public Routes (No Auth Required)
+## Key Features
 
-| Method | Endpoint              | Description                  |
-| ------ | --------------------- | ---------------------------- |
-| GET    | `/api/admin/services` | Get all active services      |
-| GET    | `/api/admin/gallery`  | Get all active gallery items |
-| GET    | `/api/user/reviews`   | Get all active reviews       |
+### User Features
 
-## User Routes (Auth Required)
+- **Authentication**: Secure user registration and login system
+- **Appointment Management**:
+  - Book new appointments with preferred time slots
+  - View upcoming and past appointments
+  - Reschedule or cancel existing appointments
+  - Receive status updates on appointments
+- **Reviews & Feedback**:
+  - Submit reviews for completed services
+  - View other customers' reviews
+  - Edit or remove own reviews
 
-| Method | Endpoint                                        | Description               |
-| ------ | ----------------------------------------------- | ------------------------- |
-| GET    | `/api/user/profile`                             | Get user profile          |
-| PUT    | `/api/user/profile`                             | Update user profile       |
-| POST   | `/api/user/reviews`                             | Create new review         |
-| PUT    | `/api/user/reviews/:id`                         | Update own review         |
-| DELETE | `/api/user/reviews/:id`                         | Delete own review         |
-| GET    | `/api/user/appointments`                        | Get upcoming appointments |
-| POST   | `/api/user/appointments`                        | Book new appointment      |
-| PUT    | `/api/user/appointments/:id/reschedule`         | Request reschedule        |
-| PUT    | `/api/user/appointments/:id/respond-reschedule` | Respond to reschedule     |
-| PUT    | `/api/user/appointments/:id/cancel`             | Cancel appointment        |
+### Admin/Barber Features
 
-## Admin Routes (Auth + Admin Required)
+- **Appointment Control**:
+  - View and manage all appointments
+  - Accept or reject appointment requests
+  - Handle reschedule requests
+  - Mark appointments as completed
+- **Schedule Management**:
+  - Set daily availability
+  - Block off dates/times
+  - Manage working hours
+- **Service Management**:
+  - Add/edit available services
+  - Set pricing and duration
+  - Enable/disable services
+- **Gallery Management**:
+  - Upload work samples
+  - Manage portfolio images
+  - Showcase haircut styles
 
-| Method | Endpoint                                 | Description               |
-| ------ | ---------------------------------------- | ------------------------- |
-| GET    | `/api/admin/profile`                     | Get admin profile         |
-| PUT    | `/api/admin/profile`                     | Update admin profile      |
-| PUT    | `/api/admin/profile/image`               | Update profile image      |
-| POST   | `/api/admin/services`                    | Create service            |
-| PUT    | `/api/admin/services/:id`                | Update service            |
-| DELETE | `/api/admin/services/:id`                | Delete service            |
-| POST   | `/api/admin/gallery`                     | Add gallery item          |
-| PUT    | `/api/admin/gallery/:id`                 | Update gallery item       |
-| DELETE | `/api/admin/gallery/:id`                 | Delete gallery item       |
-| GET    | `/api/admin/availability`                | Get availability          |
-| POST   | `/api/admin/availability/month`          | Set monthly schedule      |
-| PUT    | `/api/admin/availability/day/:date`      | Update specific day       |
-| GET    | `/api/admin/appointments`                | Get upcoming appointments |
-| GET    | `/api/admin/appointments/history`        | Get past appointments     |
-| PUT    | `/api/admin/appointments/:id/status`     | Update appointment status |
-| PUT    | `/api/admin/appointments/:id/reschedule` | Request reschedule        |
+### Additional Features
+
+- Real-time availability updates
+- Responsive design for mobile and desktop
+- Intuitive booking interface
+- Automated email notifications
+- User-friendly dashboard interfaces
+
+## Technology Stack
+
+### Frontend
+
+- React 18 with TypeScript
+- Vite for build tooling
+- State Management:
+  - Zustand for global state
+  - TanStack Query (React Query) for server state
+- Routing: React Router DOM
+- UI Components:
+  - FullCalendar for scheduling
+  - React Select for enhanced dropdowns
+  - React Icons
+- Styling: SASS/SCSS
+- HTTP Client: Axios
+- Date Management:
+  - Date-fns
+  - Day.js
+
+### Backend
+
+- Node.js with Express
+- MongoDB with Mongoose ODM
+- Authentication:
+  - JWT (jsonwebtoken)
+  - bcryptjs for password hashing
+- Image Upload:
+  - Cloudinary
+  - Multer
+- Validation: Express Validator
+- Development Tools:
+  - Morgan for logging
+  - CORS for cross-origin requests
+  - dotenv for environment variables
+
+This application streamlines the barber shop management process while providing a professional and user-friendly experience for both customers and administrators.
