@@ -219,6 +219,11 @@
 
         animation: fadeIn 0.3s ease-in-out;
       }
+
+      &.reschedule-confirmed {
+        background: rgba(#4caf50, 0.2);
+        color: #4caf50;
+      }
     }
 
     .actions {
@@ -255,6 +260,27 @@
         background: #f44336;
         color: white;
       }
+
+      .btn-complete {
+        background: $gold-primary;
+        color: $black-primary;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        margin: auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 100px;
+
+        &:hover {
+          background: $gold-light;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
     }
   }
 
@@ -262,14 +288,6 @@
     max-width: 300px;
     color: #ff4d4d;
     font-style: italic;
-
-    &::before {
-      content: '"';
-    }
-
-    &::after {
-      content: '"';
-    }
   }
 
   @media (max-width: 768px) {

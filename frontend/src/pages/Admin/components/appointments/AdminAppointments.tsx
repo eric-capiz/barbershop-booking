@@ -111,6 +111,13 @@ const AdminAppointments = () => {
     setSelectedAppointment(null);
   };
 
+  const handleComplete = (appointment: Appointment) => {
+    updateAppointmentStatus.mutate({
+      appointmentId: appointment._id,
+      status: "completed",
+    });
+  };
+
   const renderAppointmentsTable = (appointments: typeof adminAppointments) => {
     if (!appointments?.length) {
       return <div className="no-appointments">No appointments found</div>;
@@ -127,7 +134,9 @@ const AdminAppointments = () => {
               <th>Date</th>
               <th>Time</th>
               <th>Status</th>
-              {activeTab === "pending" && <th>Actions</th>}
+              {(activeTab === "pending" || activeTab === "upcoming") && (
+                <th>Actions</th>
+              )}
               {activeTab === "past" && <th>Rejection Note</th>}
             </tr>
           </thead>
@@ -150,13 +159,17 @@ const AdminAppointments = () => {
                   </span>
                 </td>
                 {activeTab === "pending" && renderActions(appointment)}
+                {activeTab === "upcoming" && renderUpcomingActions(appointment)}
                 {activeTab === "past" && (
                   <td data-label="Rejection Note" className="rejection-note">
                     {["rejected", "reschedule-rejected"].includes(
                       appointment.status
-                    )
-                      ? appointment.rejectionDetails?.note || "No note provided"
-                      : "-"}
+                    ) &&
+                    appointment.rejectionDetails?.note &&
+                    typeof appointment.rejectionDetails.note === "string" &&
+                    appointment.rejectionDetails.note.length > 0
+                      ? appointment.rejectionDetails.note
+                      : null}
                   </td>
                 )}
               </tr>
@@ -190,6 +203,24 @@ const AdminAppointments = () => {
           disabled={isProcessing}
         >
           <span className="reject-icon">✕</span> Reject
+        </button>
+      </td>
+    );
+  };
+
+  const renderUpcomingActions = (appointment: Appointment) => {
+    if (!["confirmed", "reschedule-confirmed"].includes(appointment.status)) {
+      return null;
+    }
+
+    return (
+      <td data-label="Actions" className="actions">
+        <button
+          className="btn-complete"
+          onClick={() => handleComplete(appointment)}
+          disabled={updateAppointmentStatus.isPending}
+        >
+          {updateAppointmentStatus.isPending ? "Processing..." : "Complete"}
         </button>
       </td>
     );

@@ -185,7 +185,7 @@ router.put("/:id/status", async (req, res) => {
       // Revert to previous status
       appointment.status = previousStatus;
       appointment.rejectionDetails = {
-        note: rejectionDetails?.note || "",
+        note: rejectionDetails?.note || null,
         rejectedAt: new Date(),
       };
       // Keep reschedule request for history but mark as rejected
@@ -198,7 +198,7 @@ router.put("/:id/status", async (req, res) => {
     else if (status === "rejected") {
       appointment.status = status;
       appointment.rejectionDetails = {
-        note: rejectionDetails?.note || "",
+        note: rejectionDetails?.note || null,
         rejectedAt: new Date(),
       };
     }
@@ -276,7 +276,7 @@ router.put("/:id/reschedule-response", async (req, res) => {
         appointment.rescheduleRequest.previousStatus || "pending";
       appointment.rescheduleRequest.status = "rejected";
       appointment.rejectionDetails = {
-        note: req.body.rejectionDetails?.note || "",
+        note: req.body.rejectionDetails?.note || null,
         rejectedAt: new Date(),
       };
     }

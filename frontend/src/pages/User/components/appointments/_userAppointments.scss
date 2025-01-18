@@ -243,14 +243,6 @@
     max-width: 300px;
     color: #ff4d4d;
     font-style: italic;
-
-    &::before {
-      content: '"';
-    }
-
-    &::after {
-      content: '"';
-    }
   }
 
   @media (max-width: 768px) {
