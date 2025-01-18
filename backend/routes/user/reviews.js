@@ -70,14 +70,6 @@ router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { appointmentId, rating, feedback } = req.body;
 
-    console.log("Review Request:", {
-      appointmentId,
-      rating,
-      feedback,
-      userId: req.user.id,
-      file: req.file,
-    });
-
     // Start a session for transaction
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -164,10 +156,10 @@ router.post("/", upload.single("image"), async (req, res) => {
   }
 });
 
-// @route   PUT /api/user/reviews/:id
+// @route   PATCH /api/user/reviews/:id
 // @desc    Update a review
 // @access  Private
-router.put("/:id", upload.single("image"), async (req, res) => {
+router.patch("/:id", upload.single("image"), async (req, res) => {
   try {
     const { rating, feedback } = req.body;
 
