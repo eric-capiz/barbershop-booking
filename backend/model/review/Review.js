@@ -8,7 +8,7 @@ const ReviewSchema = new mongoose.Schema(
     },
     appointmentId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "UserAppointment",
+      ref: "Appointment",
     },
     rating: {
       type: Number,
