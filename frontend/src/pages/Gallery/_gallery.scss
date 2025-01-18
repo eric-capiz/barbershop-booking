@@ -103,11 +103,14 @@
       border-radius: 8px;
       padding: 1.5rem;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      height: fit-content;
 
       .review-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
         margin-bottom: 1rem;
 
         h3 {
@@ -131,8 +134,8 @@
 
       .review-text {
         color: $silver-primary;
-        margin-bottom: 1rem;
         line-height: 1.5;
+        margin-bottom: 1rem;
       }
 
       .review-image {
@@ -150,6 +153,7 @@
         color: rgba($silver-primary, 0.6);
         font-size: 0.9rem;
         text-align: right;
+        margin-top: 1rem;
       }
     }
   }

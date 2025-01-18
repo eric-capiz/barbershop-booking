@@ -18,7 +18,7 @@ const UserSidebar = ({ activeSection, setActiveSection }: UserSidebarProps) => {
   const menuItems = [
     { id: "profile", label: "Profile", icon: <FaUser /> },
     { id: "appointments", label: "Appointments", icon: <FaCalendarAlt /> },
-    { id: "reviews", label: "Reviews", icon: <FaRegStar /> },
+    { id: "reviews", label: "My Reviews", icon: <FaRegStar /> },
   ];
 
   const handleSectionChange = (sectionId: string) => {

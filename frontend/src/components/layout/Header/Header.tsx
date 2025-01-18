@@ -71,13 +71,6 @@ const Header = () => {
             >
               My Work
             </Link>
-            <Link
-              to="/contact"
-              onClick={() => setIsMenuOpen(false)}
-              className="nav-link"
-            >
-              Contact
-            </Link>
             <div className="auth-links">
               {isAuthenticated ? (
                 <>

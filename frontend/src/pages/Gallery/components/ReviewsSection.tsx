@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import { useReviews } from "@/hooks/useReviews";
+import { usePublicReviews } from "@/hooks/useReviews";
 import { useReviewsStore } from "@/store/reviewsStore";
 import { FaStar } from "react-icons/fa";
+import { format } from "date-fns";
 
 const ReviewsSection = () => {
-  const { data: reviewsData, isLoading } = useReviews();
+  const { data: reviewsData, isLoading } = usePublicReviews();
   const { reviews, setReviews } = useReviewsStore();
 
   useEffect(() => {
@@ -13,7 +14,18 @@ const ReviewsSection = () => {
     }
   }, [reviewsData, setReviews]);
 
-  if (isLoading) return <div>Loading reviews...</div>;
+  if (isLoading) return <div className="loading">Loading reviews...</div>;
+
+  if (!reviews?.length) {
+    return (
+      <section className="reviews-section">
+        <h2>Client Reviews</h2>
+        <div className="no-reviews">
+          <p>No reviews yet. Be the first to leave a review!</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="reviews-section">
@@ -41,7 +53,7 @@ const ReviewsSection = () => {
               </div>
             )}
             <div className="review-date">
-              {new Date(review.createdAt).toLocaleDateString()}
+              {format(new Date(review.createdAt), "MMMM d, yyyy")}
             </div>
           </div>
         ))}
