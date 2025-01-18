@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import Modal from "./Modal";
-import "./ReviewModal.scss";
+import "./_reviewModal.scss";
 
 interface ReviewModalProps {
   isOpen: boolean;

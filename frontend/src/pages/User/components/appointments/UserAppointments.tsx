@@ -5,7 +5,9 @@ import { useAppointment } from "@/hooks/appointment/useAppointment";
 import Modal from "@/components/Modal/Modal";
 import DateTimeSelection from "@/components/appointment/dateStep/DateTimeSelection";
 import ReviewModal from "@/components/Modal/ReviewModal";
+import Toast from "@/components/common/Toast";
 import "./_userAppointments.scss";
+import { useQueryClient } from "@tanstack/react-query";
 
 type TabType = "pending" | "upcoming" | "past";
 
@@ -22,6 +24,10 @@ const UserAppointments = () => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedAppointmentForReview, setSelectedAppointmentForReview] =
     useState<Appointment | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
 
   const {
     userAppointments,
@@ -30,6 +36,8 @@ const UserAppointments = () => {
     rescheduleAppointment,
     createReview,
   } = useAppointment();
+
+  const queryClient = useQueryClient();
 
   const handleCancel = (appointmentId: string) => {
     updateAppointmentStatus.mutate({
@@ -87,12 +95,34 @@ const UserAppointments = () => {
         ...reviewData,
       });
 
+      const updatedAppointments = userAppointments?.map((apt) => {
+        if (apt._id === selectedAppointmentForReview._id) {
+          return {
+            ...apt,
+            hasReview: true,
+            review: {
+              rating: reviewData.rating,
+              feedback: reviewData.feedback,
+            },
+          };
+        }
+        return apt;
+      });
+
+      if (updatedAppointments) {
+        queryClient.setQueryData(["userAppointments"], updatedAppointments);
+      }
+
       setIsReviewModalOpen(false);
       setSelectedAppointmentForReview(null);
+      setToast({
+        message: "Review submitted successfully!",
+        type: "success",
+      });
     } catch (error) {
-      console.error("Failed to submit review:", {
-        message: error.response?.data?.message,
-        details: error.response?.data?.details,
+      setToast({
+        message: error.response?.data?.message || "Failed to submit review",
+        type: "error",
       });
     }
   };
@@ -147,27 +177,6 @@ const UserAppointments = () => {
     return format(new Date(appointment.timeSlot.start), "h:mm a");
   };
 
-  const renderPastActions = (appointment: Appointment) => {
-    if (appointment.status !== "completed" || appointment.hasReview) {
-      return null;
-    }
-
-    return (
-      <td data-label="Actions" className="actions">
-        <button
-          className="btn-review"
-          onClick={() => {
-            setSelectedAppointmentForReview(appointment);
-            setIsReviewModalOpen(true);
-          }}
-        >
-          <span className="star-icon">⭐</span>
-          Add Review
-        </button>
-      </td>
-    );
-  };
-
   const renderAppointmentsTable = (appointments: typeof userAppointments) => {
     if (!appointments?.length) {
       return <div className="no-appointments">No appointments found</div>;
@@ -202,12 +211,7 @@ const UserAppointments = () => {
                     {appointment.status}
                   </span>
                 </td>
-                {(activeTab === "pending" ||
-                  activeTab === "upcoming" ||
-                  (activeTab === "past" &&
-                    appointments.some(
-                      (apt) => apt.status === "completed" && !apt.hasReview
-                    ))) && (
+                {activeTab !== "past" && (
                   <td data-label="Actions" className="actions">
                     <button
                       className="btn-cancel"
@@ -229,7 +233,27 @@ const UserAppointments = () => {
                       )}
                   </td>
                 )}
-                {activeTab === "past" && renderPastActions(appointment)}
+                {activeTab === "past" &&
+                  appointment.status === "completed" &&
+                  !appointment.hasReview && (
+                    <td data-label="Actions" className="actions">
+                      <button
+                        className="btn-review"
+                        onClick={() => {
+                          setSelectedAppointmentForReview(appointment);
+                          setIsReviewModalOpen(true);
+                        }}
+                      >
+                        <span className="star-icon">⭐</span>
+                        Add Review
+                      </button>
+                    </td>
+                  )}
+
+                {activeTab === "past" && appointment.status !== "completed" && (
+                  <td data-label="Actions">-</td>
+                )}
+                {activeTab === "past" && <td data-label="Notes">-</td>}
               </tr>
             ))}
           </tbody>
@@ -326,6 +350,14 @@ const UserAppointments = () => {
         onSubmit={handleReviewSubmit}
         isSubmitting={createReview.isPending}
       />
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 };
