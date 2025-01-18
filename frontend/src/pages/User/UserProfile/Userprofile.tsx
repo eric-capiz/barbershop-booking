@@ -3,6 +3,7 @@ import { FaSave, FaTimes, FaEdit } from "react-icons/fa";
 import UserSidebar from "../components/UserSidebar/UserSidebar";
 import { useUser, useUpdateUser } from "@/hooks/user/useUser";
 import UserAppointments from "../components/appointments/UserAppointments";
+import UserReviews from "../components/reviews/UserReviews";
 import "./_userProfile.scss";
 
 const UserProfile = () => {
@@ -163,7 +164,7 @@ const UserProfile = () => {
       case "appointments":
         return <UserAppointments />;
       case "reviews":
-        return <div>Reviews Content Here</div>;
+        return <UserReviews />;
       default:
         return renderProfile();
     }

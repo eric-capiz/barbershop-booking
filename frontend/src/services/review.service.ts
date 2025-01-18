@@ -7,8 +7,15 @@ const getAuthHeader = () => {
 };
 
 export const reviewService = {
-  getReviews: async (): Promise<Review[]> => {
-    const { data } = await axios.get<Review[]>("/api/user/reviews");
+  getPublicReviews: async (): Promise<Review[]> => {
+    const { data } = await axios.get<Review[]>("/api/user/reviews/public");
+    return data;
+  },
+
+  getUserReviews: async (): Promise<Review[]> => {
+    const { data } = await axios.get<Review[]>("/api/user/reviews/my-reviews", {
+      headers: getAuthHeader(),
+    });
     return data;
   },
 
@@ -41,5 +48,38 @@ export const reviewService = {
       });
       throw error;
     }
+  },
+
+  deleteReview: async (reviewId: string): Promise<void> => {
+    await axios.delete(`/api/user/reviews/${reviewId}`, {
+      headers: getAuthHeader(),
+    });
+  },
+
+  updateReview: async (
+    reviewId: string,
+    reviewData: {
+      rating?: number;
+      feedback?: string;
+      image?: File;
+    }
+  ): Promise<Review> => {
+    const formData = new FormData();
+    if (reviewData.rating)
+      formData.append("rating", reviewData.rating.toString());
+    if (reviewData.feedback) formData.append("feedback", reviewData.feedback);
+    if (reviewData.image) formData.append("image", reviewData.image);
+
+    const { data } = await axios.patch(
+      `/api/user/reviews/${reviewId}`,
+      formData,
+      {
+        headers: {
+          ...getAuthHeader(),
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return data;
   },
 };

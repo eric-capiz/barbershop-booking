@@ -11,13 +11,46 @@ const mongoose = require("mongoose");
 const Review = require("../../model/review/Review");
 const Appointment = require("../../model/appointment/Appointment");
 
-// @route   GET /api/user/reviews
-// @desc    Get all active reviews
+// @route   GET /api/user/reviews/public
+// @desc    Get all active reviews (public view)
 // @access  Public
-router.get("/", async (req, res) => {
+router.get("/public", async (req, res) => {
   try {
     const reviews = await Review.find({ isActive: true })
       .populate("userId", "name")
+      .populate({
+        path: "appointmentId",
+        populate: {
+          path: "serviceId",
+          select: "name",
+        },
+      })
+      .sort({ createdAt: -1 });
+
+    res.json(reviews);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// @route   GET /api/user/reviews/my-reviews
+// @desc    Get logged-in user's reviews
+// @access  Private
+router.get("/my-reviews", auth, async (req, res) => {
+  try {
+    const reviews = await Review.find({
+      isActive: true,
+      userId: req.user.id,
+    })
+      .populate("userId", "name")
+      .populate({
+        path: "appointmentId",
+        populate: {
+          path: "serviceId",
+          select: "name",
+        },
+      })
       .sort({ createdAt: -1 });
 
     res.json(reviews);
@@ -185,17 +218,23 @@ router.put("/:id", upload.single("image"), async (req, res) => {
 });
 
 // @route   DELETE /api/user/reviews/:id
-// @desc    Soft delete a review and remove image
+// @desc    Delete a review and update appointment
 // @access  Private
 router.delete("/:id", async (req, res) => {
+  // Start a session for transaction
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    let review = await Review.findById(req.params.id);
+    const review = await Review.findById(req.params.id).session(session);
 
     if (!review) {
+      await session.abortTransaction();
       return res.status(404).json({ message: "Review not found" });
     }
 
     if (review.userId.toString() !== req.user.id) {
+      await session.abortTransaction();
       return res.status(401).json({ message: "Not authorized" });
     }
 
@@ -203,19 +242,32 @@ router.delete("/:id", async (req, res) => {
     if (review.image && review.image.publicId) {
       try {
         await deleteFromCloudinary(review.image.publicId);
-        review.image = {}; // Clear image data
       } catch (error) {
         console.error("Failed to delete image from Cloudinary:", error);
       }
     }
 
-    review.isActive = false;
-    await review.save();
+    // Update the associated appointment
+    const appointment = await Appointment.findById(
+      review.appointmentId
+    ).session(session);
+    if (appointment) {
+      appointment.review = null;
+      appointment.hasReview = false;
+      await appointment.save({ session });
+    }
 
-    res.json({ message: "Review removed" });
+    // Delete the review
+    await Review.findByIdAndDelete(review._id).session(session);
+
+    await session.commitTransaction();
+    res.json({ message: "Review deleted successfully" });
   } catch (err) {
+    await session.abortTransaction();
     console.error(err.message);
     res.status(500).json({ message: "Server error" });
+  } finally {
+    session.endSession();
   }
 });
 
