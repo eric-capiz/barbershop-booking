@@ -1,0 +1,150 @@
+@use "@styles/variables" as *;
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  .rating-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+
+    label {
+      cursor: pointer;
+
+      input[type="radio"] {
+        display: none;
+      }
+
+      .star {
+        transition: color 200ms;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 1rem;
+    border-radius: 8px;
+    background: $black-light;
+    border: 1px solid $gold-dark;
+    color: $silver-primary;
+    font-family: $font-secondary;
+    resize: vertical;
+
+    &:focus {
+      outline: none;
+      border-color: $gold-primary;
+    }
+
+    &::placeholder {
+      color: $silver-dark;
+    }
+  }
+
+  .image-upload {
+    input[type="file"] {
+      display: none;
+    }
+
+    .upload-label {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: $black-light;
+      border: 1px dashed $gold-dark;
+      border-radius: 8px;
+      color: $gold-primary;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba($gold-primary, 0.1);
+        border-color: $gold-primary;
+      }
+    }
+
+    .image-preview {
+      margin-top: 1rem;
+      position: relative;
+      display: inline-block;
+
+      img {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 8px;
+        border: 2px solid $gold-dark;
+      }
+
+      .remove-image {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: $black-secondary;
+        border: 1px solid $gold-dark;
+        color: $gold-primary;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: $gold-primary;
+          color: $black-primary;
+        }
+      }
+    }
+  }
+
+  .submit-review {
+    background: $gold-primary;
+    color: $black-primary;
+    border: none;
+    border-radius: 8px;
+    padding: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: auto;
+
+    &:hover:not(:disabled) {
+      background: $gold-light;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: 768px) {
+  .review-form {
+    gap: 1rem;
+
+    .rating-container {
+      .star {
+        font-size: 24px;
+      }
+    }
+
+    textarea {
+      min-height: 100px;
+    }
+
+    .image-preview img {
+      max-width: 150px;
+      max-height: 150px;
+    }
+  }
+}

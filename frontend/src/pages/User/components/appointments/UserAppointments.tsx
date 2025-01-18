@@ -4,6 +4,7 @@ import { FaCalendarAlt } from "react-icons/fa";
 import { useAppointment } from "@/hooks/appointment/useAppointment";
 import Modal from "@/components/Modal/Modal";
 import DateTimeSelection from "@/components/appointment/dateStep/DateTimeSelection";
+import ReviewModal from "@/components/Modal/ReviewModal";
 import "./_userAppointments.scss";
 
 type TabType = "pending" | "upcoming" | "past";
@@ -18,12 +19,16 @@ const UserAppointments = () => {
     date: Date;
     timeSlot: { start: Date; end: Date };
   } | null>(null);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedAppointmentForReview, setSelectedAppointmentForReview] =
+    useState<Appointment | null>(null);
 
   const {
     userAppointments,
     isLoadingUserAppointments,
     updateAppointmentStatus,
     rescheduleAppointment,
+    createReview,
   } = useAppointment();
 
   const handleCancel = (appointmentId: string) => {
@@ -67,6 +72,29 @@ const UserAppointments = () => {
         },
       }
     );
+  };
+
+  const handleReviewSubmit = async (reviewData: {
+    rating: number;
+    feedback: string;
+    image?: File;
+  }) => {
+    if (!selectedAppointmentForReview) return;
+
+    try {
+      await createReview.mutateAsync({
+        appointmentId: selectedAppointmentForReview._id,
+        ...reviewData,
+      });
+
+      setIsReviewModalOpen(false);
+      setSelectedAppointmentForReview(null);
+    } catch (error) {
+      console.error("Failed to submit review:", {
+        message: error.response?.data?.message,
+        details: error.response?.data?.details,
+      });
+    }
   };
 
   const filteredAppointments = {
@@ -119,6 +147,27 @@ const UserAppointments = () => {
     return format(new Date(appointment.timeSlot.start), "h:mm a");
   };
 
+  const renderPastActions = (appointment: Appointment) => {
+    if (appointment.status !== "completed" || appointment.hasReview) {
+      return null;
+    }
+
+    return (
+      <td data-label="Actions" className="actions">
+        <button
+          className="btn-review"
+          onClick={() => {
+            setSelectedAppointmentForReview(appointment);
+            setIsReviewModalOpen(true);
+          }}
+        >
+          <span className="star-icon">⭐</span>
+          Add Review
+        </button>
+      </td>
+    );
+  };
+
   const renderAppointmentsTable = (appointments: typeof userAppointments) => {
     if (!appointments?.length) {
       return <div className="no-appointments">No appointments found</div>;
@@ -133,15 +182,13 @@ const UserAppointments = () => {
               <th>Date</th>
               <th>Time</th>
               <th>Status</th>
-              {(activeTab === "pending" || activeTab === "upcoming") && (
-                <th>Actions</th>
-              )}
-              {activeTab === "past" &&
-                appointments.some(
-                  (apt) =>
-                    ["rejected", "reschedule-rejected"].includes(apt.status) &&
-                    apt.rejectionDetails?.note
-                ) && <th>Notes</th>}
+              {(activeTab === "pending" ||
+                activeTab === "upcoming" ||
+                (activeTab === "past" &&
+                  appointments.some(
+                    (apt) => apt.status === "completed" && !apt.hasReview
+                  ))) && <th>Actions</th>}
+              {activeTab === "past" && <th>Notes</th>}
             </tr>
           </thead>
           <tbody>
@@ -155,7 +202,12 @@ const UserAppointments = () => {
                     {appointment.status}
                   </span>
                 </td>
-                {(activeTab === "pending" || activeTab === "upcoming") && (
+                {(activeTab === "pending" ||
+                  activeTab === "upcoming" ||
+                  (activeTab === "past" &&
+                    appointments.some(
+                      (apt) => apt.status === "completed" && !apt.hasReview
+                    ))) && (
                   <td data-label="Actions" className="actions">
                     <button
                       className="btn-cancel"
@@ -177,15 +229,7 @@ const UserAppointments = () => {
                       )}
                   </td>
                 )}
-                {activeTab === "past" &&
-                  ["rejected", "reschedule-rejected"].includes(
-                    appointment.status
-                  ) &&
-                  appointment.rejectionDetails?.note && (
-                    <td data-label="Notes" className="rejection-note">
-                      {appointment.rejectionDetails.note}
-                    </td>
-                  )}
+                {activeTab === "past" && renderPastActions(appointment)}
               </tr>
             ))}
           </tbody>
@@ -272,6 +316,16 @@ const UserAppointments = () => {
           </div>
         </div>
       </Modal>
+
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => {
+          setIsReviewModalOpen(false);
+          setSelectedAppointmentForReview(null);
+        }}
+        onSubmit={handleReviewSubmit}
+        isSubmitting={createReview.isPending}
+      />
     </div>
   );
 };

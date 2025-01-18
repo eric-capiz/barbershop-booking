@@ -36,7 +36,16 @@ router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { appointmentId, rating, feedback } = req.body;
 
-    const appointment = await UserAppointment.findOne({
+    // Log the request data for debugging
+    console.log("Review Request:", {
+      appointmentId,
+      rating,
+      feedback,
+      userId: req.user.id,
+      file: req.file,
+    });
+
+    const appointment = await Appointment.findOne({
       _id: appointmentId,
       userId: req.user.id,
       status: "completed",
@@ -45,6 +54,7 @@ router.post("/", upload.single("image"), async (req, res) => {
     if (!appointment) {
       return res.status(404).json({
         message: "Appointment not found or not eligible for review",
+        details: { appointmentId, userId: req.user.id },
       });
     }
 
@@ -52,6 +62,7 @@ router.post("/", upload.single("image"), async (req, res) => {
     if (existingReview) {
       return res.status(400).json({
         message: "Review already exists for this appointment",
+        reviewId: existingReview._id,
       });
     }
 
@@ -64,6 +75,7 @@ router.post("/", upload.single("image"), async (req, res) => {
           publicId: result.public_id,
         };
       } catch (error) {
+        console.error("Cloudinary upload error:", error);
         return res.status(400).json({
           message: "Failed to upload image",
           error: error.message,
@@ -74,20 +86,22 @@ router.post("/", upload.single("image"), async (req, res) => {
     const newReview = new Review({
       userId: req.user.id,
       appointmentId,
-      rating,
+      rating: Number(rating),
       feedback,
       image,
       isActive: true,
     });
 
     const review = await newReview.save();
-    await review.populate("userId", "name");
-    await review.populate("appointmentId", "appointmentDate");
+    await review.populate([
+      { path: "userId", select: "name" },
+      { path: "appointmentId", select: "appointmentDate" },
+    ]);
 
     res.json(review);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ message: "Server error" });
+    console.error("Review creation error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 });
 

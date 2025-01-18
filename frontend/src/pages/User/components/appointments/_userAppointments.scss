@@ -236,6 +236,41 @@
         background: #f44336;
         color: white;
       }
+
+      .btn-review {
+        background: linear-gradient(135deg, $gold-dark 0%, $gold-primary 100%);
+        color: $black-primary;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 2px 4px rgba($black-primary, 0.2);
+
+        &:hover {
+          background: linear-gradient(
+            135deg,
+            $gold-primary 0%,
+            $gold-light 100%
+          );
+          transform: translateY(-1px);
+          box-shadow: 0 4px 8px rgba($black-primary, 0.3);
+        }
+
+        &:active {
+          transform: translateY(0);
+          box-shadow: 0 2px 4px rgba($black-primary, 0.2);
+        }
+
+        .star-icon {
+          color: #ffd700;
+          font-size: 1.1em;
+        }
+      }
     }
   }
 

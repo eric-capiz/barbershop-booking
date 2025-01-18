@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { appointmentService } from "@/services/appointment/appointmentService";
+import { reviewService } from "@/services/review.service";
 import {
   CreateAppointmentDTO,
   RescheduleRequest,
 } from "@/types/appointment/appointment.types";
 import { useUserStore } from "@/store/user/userStore";
+import axios from "axios";
 
 export const useAppointment = () => {
   const queryClient = useQueryClient();
@@ -113,6 +115,13 @@ export const useAppointment = () => {
     },
   });
 
+  const createReview = useMutation({
+    mutationFn: reviewService.createReview,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userAppointments"] });
+    },
+  });
+
   return {
     // Mutations
     createAppointment,
@@ -135,5 +144,6 @@ export const useAppointment = () => {
     // Reschedule Appointment
     rescheduleAppointment,
     respondToReschedule,
+    createReview,
   };
 };
