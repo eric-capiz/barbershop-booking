@@ -23,10 +23,9 @@ app.use((req, res, next) => {
 
 // CORS configuration
 const allowedOrigins = [
-  "https://sanchez-barbershop.vercel.app",
-  "https://barbershop-wcjp.vercel.app",
-  "http://localhost:5173", //  local development
-  "http://localhost:3000", //  local development
+  "https://barbershop-pi-three.vercel.app", // Your current Vercel deployment
+  "http://localhost:5173", // Local development
+  "http://localhost:3000", // Local development
 ];
 
 // Middleware
@@ -34,8 +33,7 @@ app.use(
   cors({
     origin: function (origin, callback) {
       console.log("Request origin:", origin);
-      // allow requests with no origin (like mobile apps or curl requests)
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      if (!origin || allowedOrigins.includes(origin)) {
         console.log("CORS allowed for origin:", origin);
         callback(null, true);
       } else {
@@ -44,7 +42,9 @@ app.use(
         callback(new Error(msg));
       }
     },
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json());
