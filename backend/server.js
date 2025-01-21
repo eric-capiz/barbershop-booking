@@ -13,8 +13,30 @@ require("dotenv").config();
 
 const app = express();
 
+const allowedOrigins = [
+  "https://sanchez-barbershop.vercel.app",
+  "https://barbershop-wcjp.vercel.app",
+  "http://localhost:5173", //  local development
+  "http://localhost:3000", //  local development
+];
+
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  })
+);
 app.use(express.json());
 app.use(morgan("dev"));
 
