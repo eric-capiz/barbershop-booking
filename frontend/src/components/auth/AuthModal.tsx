@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLogin, useRegister } from "@/hooks/useAuth";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Toast from "../common/Toast";
 import "./_auth-modal.scss";
 
@@ -11,6 +12,7 @@ interface AuthModalProps {
 
 const AuthModal = ({ isOpen, onClose, initialView }: AuthModalProps) => {
   const [isLogin, setIsLogin] = useState(initialView === "login");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setIsLogin(initialView === "login");
@@ -108,18 +110,28 @@ const AuthModal = ({ isOpen, onClose, initialView }: AuthModalProps) => {
               disabled={isLoading}
             />
 
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              required
-              autoComplete="new-password"
-              disabled={isLoading}
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                required
+                autoComplete="new-password"
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={isLoading}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
 
             {!isLogin && (
               <>
