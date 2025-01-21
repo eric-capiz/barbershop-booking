@@ -35,16 +35,14 @@ app.use(
     origin: function (origin, callback) {
       console.log("Request origin:", origin);
       // allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg =
-          "The CORS policy for this site does not allow access from the specified Origin.";
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        console.log("CORS allowed for origin:", origin);
+        callback(null, true);
+      } else {
+        const msg = "Not allowed by CORS";
         console.log("CORS blocked for origin:", origin);
-        return callback(new Error(msg), false);
+        callback(new Error(msg));
       }
-      console.log("CORS allowed for origin:", origin);
-      return callback(null, true);
     },
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   })
