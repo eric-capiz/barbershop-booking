@@ -8,6 +8,7 @@ const userRoutes = require("./routes/user");
 const appointmentRoutes = require("./routes/appointment/appointment");
 const availabilityRoutes = require("./routes/appointment/availability");
 const reviewRoutes = require("./routes/user/reviews");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -29,6 +30,17 @@ app.use("/api/user", userRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/availability", availabilityRoutes);
 app.use("/api/user/reviews", reviewRoutes);
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+// Handle React routing, return all requests to React app
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api")) {
+    return next();
+  }
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+});
 
 // Database connection
 mongoose
