@@ -53,12 +53,20 @@ export const appointmentService = {
 
   // Get user's appointments
   getUserAppointments: async (): Promise<Appointment[]> => {
-    const { data } = await axios.get<Appointment[]>(`${APPOINTMENT_URL}/user`, {
-      headers: {
-        ...getAuthHeader(),
-      },
-    });
-    return data;
+    try {
+      const { data } = await axios.get<Appointment[]>(
+        `${APPOINTMENT_URL}/user`,
+        {
+          headers: {
+            ...getAuthHeader(),
+          },
+        }
+      );
+      return data;
+    } catch (error) {
+      console.error("Error fetching user appointments:", error);
+      throw error;
+    }
   },
 
   // Get admin's appointments
@@ -74,7 +82,10 @@ export const appointmentService = {
       );
       return data;
     } catch (error) {
-      console.error("Error fetching admin appointments:", error);
+      // Only log errors that aren't 403
+      if (error?.response?.status !== 403) {
+        console.error("Error fetching admin appointments:", error);
+      }
       throw error;
     }
   },

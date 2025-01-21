@@ -3,35 +3,48 @@ import { authService } from "@/services/auth.service";
 import { LoginCredentials, RegisterData } from "@types/auth.types";
 import { useAuthStore } from "@/store/authStore";
 import { useNavigate } from "react-router-dom";
+import { useUserStore } from "@/store/user/userStore";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
-  const { setIsAuthenticated, setIsAdmin, setAuthToken, setUser } =
-    useAuthStore();
+  const { setIsAuthenticated, setIsAdmin, setAuthToken } = useAuthStore();
+  const { setUser } = useUserStore();
+  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: (credentials: LoginCredentials) =>
       authService.login(credentials),
     onSuccess: async (data) => {
+      // First set the auth token and basic auth state
       setAuthToken(data.token);
       setIsAuthenticated(true);
       setIsAdmin(!!data.isAdmin);
 
-      // Fetch and set user data immediately after login
+      // Immediately fetch and set user data
       try {
         const userData = await authService.getCurrentUser();
-        setUser(userData);
+        // Set user in user store with all necessary data
+        setUser({
+          id: userData._id,
+          role: userData.role || (data.isAdmin ? "admin" : "user"),
+          username: userData.username,
+        });
+
+        // Invalidate and refetch relevant queries
+        queryClient.invalidateQueries({ queryKey: ["user"] });
+        queryClient.invalidateQueries({ queryKey: ["appointments"] });
+        queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
+        if (data.isAdmin) {
+          queryClient.invalidateQueries({
+            queryKey: ["appointments", "admin"],
+          });
+        }
+
+        // Force a refetch of the user data
+        await queryClient.refetchQueries({ queryKey: ["user"] });
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       }
-
-      // Invalidate all relevant queries after login
-      queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
-      queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
-      queryClient.invalidateQueries({
-        queryKey: [data.isAdmin ? "admin" : "user"],
-      });
     },
   });
 };

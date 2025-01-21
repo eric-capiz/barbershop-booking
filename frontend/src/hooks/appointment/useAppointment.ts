@@ -7,22 +7,31 @@ import {
 } from "@/types/appointment/appointment.types";
 import { useUserStore } from "@/store/user/userStore";
 import axios from "axios";
+import React from "react";
 
 export const useAppointment = () => {
   const queryClient = useQueryClient();
   const { user } = useUserStore();
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.role === "admin" || user?.role === "superadmin";
+
+  // Re-run initialization if user is null but we have a token
+  React.useEffect(() => {
+    if (!user && localStorage.getItem("token")) {
+      useUserStore.getState().initializeFromStorage();
+    }
+  }, [user]);
 
   // Create Appointment Mutation
   const createAppointment = useMutation({
     mutationFn: (appointmentData: CreateAppointmentDTO) =>
       appointmentService.createAppointment(appointmentData),
     onSuccess: () => {
-      // Invalidate all relevant queries
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
       queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
       queryClient.invalidateQueries({ queryKey: ["booking-availability"] });
+      if (isAdmin) {
+        queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
+      }
     },
   });
 
@@ -38,38 +47,39 @@ export const useAppointment = () => {
     }) => appointmentService.updateAppointmentStatus(params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      queryClient.invalidateQueries({ queryKey: ["adminAppointments"] });
       queryClient.invalidateQueries({ queryKey: ["booking-availability"] });
+      if (isAdmin) {
+        queryClient.invalidateQueries({ queryKey: ["adminAppointments"] });
+      }
     },
   });
 
   // Get User Appointments Query
   const getUserAppointments = useQuery({
-    queryKey: ["appointments", "user", user?.id],
+    queryKey: ["appointments", "user"],
     queryFn: appointmentService.getUserAppointments,
-    enabled: !!user?.id,
+    enabled: !!user,
     staleTime: 30000,
     retry: 2,
     retryDelay: 1000,
     refetchOnMount: "always",
-    onError: (error) => {
-      console.error("Error fetching user appointments:", error);
-    },
   });
 
-  // Get Admin Appointments Query
-  const getAdminAppointments = useQuery({
-    queryKey: ["appointments", "admin", user?.id],
-    queryFn: appointmentService.getAdminAppointments,
-    enabled: !!user?.id && user?.role === "admin",
-    staleTime: 30000,
-    retry: 2,
-    retryDelay: 1000,
-    refetchOnMount: "always",
-    onError: (error) => {
-      console.error("Error fetching admin appointments:", error);
-    },
-  });
+  // Get Admin Appointments Query - Only create if user is admin
+  const getAdminAppointments = isAdmin
+    ? useQuery({
+        queryKey: ["appointments", "admin"],
+        queryFn: appointmentService.getAdminAppointments,
+        enabled: isAdmin,
+        staleTime: 30000,
+        retry: (failureCount, error: any) => {
+          if (error?.response?.status === 403) return false;
+          return failureCount < 2;
+        },
+        retryDelay: 1000,
+        refetchOnMount: "always",
+      })
+    : null;
 
   // Reschedule Appointment Mutation
   const rescheduleAppointment = useMutation({
@@ -83,9 +93,11 @@ export const useAppointment = () => {
       appointmentService.rescheduleAppointment(appointmentId, rescheduleData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
       queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
       queryClient.invalidateQueries({ queryKey: ["booking-availability"] });
+      if (isAdmin) {
+        queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
+      }
     },
   });
 
@@ -109,16 +121,18 @@ export const useAppointment = () => {
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointments"] });
-      queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
       queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
       queryClient.invalidateQueries({ queryKey: ["booking-availability"] });
+      if (isAdmin) {
+        queryClient.invalidateQueries({ queryKey: ["appointments", "admin"] });
+      }
     },
   });
 
   const createReview = useMutation({
     mutationFn: reviewService.createReview,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["userAppointments"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments", "user"] });
     },
   });
 
@@ -133,13 +147,13 @@ export const useAppointment = () => {
 
     // User Appointments
     userAppointments: getUserAppointments.data,
-    isLoadingUserAppointments: getUserAppointments.isLoading || !user?.id,
+    isLoadingUserAppointments: getUserAppointments.isPending,
     userAppointmentsError: getUserAppointments.error,
 
     // Admin Appointments
-    adminAppointments: getAdminAppointments.data,
-    isLoadingAdminAppointments: getAdminAppointments.isLoading || !user?.id,
-    adminAppointmentsError: getAdminAppointments.error,
+    adminAppointments: getAdminAppointments?.data ?? null,
+    isLoadingAdminAppointments: getAdminAppointments?.isPending ?? false,
+    adminAppointmentsError: getAdminAppointments?.error ?? null,
 
     // Reschedule Appointment
     rescheduleAppointment,

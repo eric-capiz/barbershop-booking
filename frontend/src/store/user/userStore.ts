@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 interface User {
   id: string;
-  role: "user" | "admin";
+  role: "user" | "admin" | "superadmin";
   username: string;
 }
 
@@ -18,23 +18,21 @@ export const useUserStore = create<UserState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
   clearUser: () => set({ user: null }),
+  updateUser: (user) => set({ user }),
   initializeFromStorage: () => {
-    const isAdmin = localStorage.getItem("isAdmin") === "true";
     const token = localStorage.getItem("token");
-    const username = localStorage.getItem("username");
-
-    if (token) {
-      // Decode the JWT token to get user info
-      const tokenData = JSON.parse(atob(token.split(".")[1]));
-      const user = {
-        id: tokenData.user.id,
-        role: tokenData.user.role,
-        username: tokenData.user.username || username,
-      };
-      set({ user });
+    if (!token) {
+      set({ user: null });
+      return;
     }
+    // Let the auth process handle setting the user
   },
 }));
 
 // Initialize the store when the file is loaded
 useUserStore.getState().initializeFromStorage();
+
+// Re-initialize when local storage changes
+window.addEventListener("storage", () => {
+  useUserStore.getState().initializeFromStorage();
+});

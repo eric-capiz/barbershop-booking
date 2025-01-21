@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { User, BarberProfile } from "@/types/auth.types";
 import { authService } from "@/services/auth.service";
+import { useUserStore } from "@/store/user/userStore";
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -54,6 +55,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.removeItem("isAdmin");
       localStorage.removeItem("adminExpiry");
       set({ isAuthenticated: false, isAdmin: false, user: null });
+      useUserStore.getState().clearUser();
       return;
     }
 
@@ -72,6 +74,11 @@ export const useAuthStore = create<AuthState>((set) => ({
           isAuthenticated: true,
           isAdmin: user.role === "admin" || user.role === "superadmin",
         });
+        useUserStore.getState().setUser({
+          id: user._id,
+          role: user.role,
+          username: user.username,
+        });
       } catch (error) {
         localStorage.removeItem("token");
         localStorage.removeItem("tokenExpiry");
@@ -82,6 +89,7 @@ export const useAuthStore = create<AuthState>((set) => ({
           isAdmin: false,
           user: null,
         });
+        useUserStore.getState().clearUser();
       }
     }
   },

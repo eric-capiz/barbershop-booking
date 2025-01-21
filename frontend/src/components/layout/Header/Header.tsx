@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
 import { useLogout } from "@hooks/useAuth";
 import { useAuthStore } from "@/store/authStore";
-import { useUser } from "@hooks/useUser";
+import { useUserStore } from "@/store/user/userStore";
 import AuthModal from "@components/auth/AuthModal";
 import { FaUser } from "react-icons/fa";
 import "./_header.scss";
@@ -15,7 +15,9 @@ const Header = () => {
   const logout = useLogout();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isAdmin = useAuthStore((state) => state.isAdmin);
-  const user = useAuthStore((state) => state.user);
+  const user = useUserStore((state) => state.user);
+
+  useEffect(() => {}, [isAuthenticated, isAdmin, user]);
 
   const handleAuthClick = (type: "login" | "register") => {
     setAuthType(type);
@@ -89,7 +91,7 @@ const Header = () => {
                       className="nav-link auth-link profile"
                     >
                       <FaUser className="profile-icon" />
-                      <span>{user?.username}</span>
+                      <span>{user?.username || "Loading..."}</span>
                     </Link>
                   )}
                   <button
