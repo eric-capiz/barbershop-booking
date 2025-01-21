@@ -9,6 +9,7 @@ interface User {
 interface UserState {
   user: User | null;
   setUser: (user: User | null) => void;
+  updateUser: (user: User) => void;
   clearUser: () => void;
   initializeFromStorage: () => void;
 }

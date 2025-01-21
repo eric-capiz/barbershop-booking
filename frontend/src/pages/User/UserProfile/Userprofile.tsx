@@ -10,7 +10,7 @@ const UserProfile = () => {
   const [activeSection, setActiveSection] = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
   const { data: user, isLoading } = useUser();
-  const updateUser = useUpdateUser();
+  const { mutateAsync: updateUserProfile } = useUpdateUser();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -52,7 +52,7 @@ const UserProfile = () => {
         ...(formData.password && { password: formData.password }),
       };
 
-      await updateUser.mutateAsync(updateData);
+      await updateUserProfile(updateData);
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to update profile:", error);

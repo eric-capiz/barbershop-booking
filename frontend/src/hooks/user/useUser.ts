@@ -5,28 +5,32 @@ import { User } from "@/types/user/user.types";
 import { useAuthStore } from "@/store/authStore";
 
 export const useUser = () => {
-  const setUser = useUserStore((state) => state.setUser);
+  const isAdmin = useAuthStore((state) => state.isAdmin);
+  const setUser = useAuthStore((state) => state.setUser);
+  const setUserStore = useUserStore((state) => state.setUser);
 
   return useQuery({
-    queryKey: ["userProfile"],
-    queryFn: userService.getProfile,
+    queryKey: [isAdmin ? "admin" : "user"],
+    queryFn: userService.getCurrentUser,
+    enabled: !!localStorage.getItem("token"),
     onSuccess: (data) => {
       setUser(data);
+      setUserStore(data);
     },
   });
 };
 
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
-  const updateUser = useUserStore((state) => state.updateUser);
   const setUser = useAuthStore((state) => state.setUser);
+  const setUserStore = useUserStore((state) => state.setUser);
 
   return useMutation({
     mutationFn: (data: Partial<User>) => userService.updateProfile(data),
     onSuccess: (data) => {
-      updateUser(data);
+      setUserStore(data);
       setUser(data);
-      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
 };
