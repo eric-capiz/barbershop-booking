@@ -5,11 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --emptyOutDir",
+    "build": "tsc && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.15",
