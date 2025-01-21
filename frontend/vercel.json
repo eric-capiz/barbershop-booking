@@ -1,21 +1,12 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://barbershop-jfeb0q.fly.dev/api/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
-    }
-  ],
-  "routes": [
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "https://barbershop-jfeb0q.fly.dev/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
     }
   ],
   "headers": [
