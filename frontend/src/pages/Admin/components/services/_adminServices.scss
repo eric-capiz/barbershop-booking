@@ -126,13 +126,28 @@
 
       .meta {
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+        gap: 0.5rem;
         color: $silver-dark;
         font-family: $font-secondary;
         font-size: 0.9rem;
 
+        .duration {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
+
         .category {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
           text-transform: capitalize;
+          color: $gold-light;
+          background: rgba($gold-primary, 0.1);
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          width: fit-content;
         }
       }
     }

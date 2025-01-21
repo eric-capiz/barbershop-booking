@@ -95,10 +95,12 @@ router.delete("/:id", async (req, res) => {
       return res.status(401).json({ message: "Not authorized" });
     }
 
-    await service.remove();
+    // Option 1: Use findByIdAndDelete
+    await Service.findByIdAndDelete(req.params.id);
+
     res.json({ message: "Service removed" });
   } catch (err) {
-    console.error(err.message);
+    console.error("Delete service error:", err.message); // Added more detailed logging
     res.status(500).json({ message: "Server error" });
   }
 });

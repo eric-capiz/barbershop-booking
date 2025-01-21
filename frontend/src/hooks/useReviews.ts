@@ -37,6 +37,8 @@ export const useUserReviews = () => {
     mutationFn: reviewService.createReview,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userReviews"] });
+      queryClient.invalidateQueries({ queryKey: ["userAppointments"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
     },
   });
 

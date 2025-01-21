@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useServices } from "@hooks/admin/useService";
 import { Service } from "@types/service.types";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaClock, FaTag } from "react-icons/fa";
 import AddServiceModal from "./AddServiceModal";
 import EditServiceModal from "./EditServiceModal";
 import DeleteServiceModal from "./DeleteServiceModal";
@@ -51,8 +51,12 @@ const AdminServices = () => {
             <div className="service-details">
               <p className="description">{service.description}</p>
               <div className="meta">
-                <span className="duration">{service.duration} mins</span>
-                <span className="category">{service.category}</span>
+                <span className="duration">
+                  <FaClock /> {service.duration} mins
+                </span>
+                <span className="category">
+                  <FaTag /> {service.category}
+                </span>
               </div>
             </div>
             <div className="service-actions">

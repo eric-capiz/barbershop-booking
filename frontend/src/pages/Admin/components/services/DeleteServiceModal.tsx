@@ -15,8 +15,11 @@ const DeleteServiceModal = ({ service, onClose }: DeleteServiceModalProps) => {
     try {
       await deleteService.mutateAsync(service._id);
       onClose();
-    } catch (error) {
-      console.error("Failed to delete service:", error);
+    } catch (error: any) {
+      console.error(
+        "Failed to delete service:",
+        error.response?.data?.message || error.message
+      );
     }
   };
 

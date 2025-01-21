@@ -95,24 +95,6 @@ const UserAppointments = () => {
         ...reviewData,
       });
 
-      const updatedAppointments = userAppointments?.map((apt) => {
-        if (apt._id === selectedAppointmentForReview._id) {
-          return {
-            ...apt,
-            hasReview: true,
-            review: {
-              rating: reviewData.rating,
-              feedback: reviewData.feedback,
-            },
-          };
-        }
-        return apt;
-      });
-
-      if (updatedAppointments) {
-        queryClient.setQueryData(["userAppointments"], updatedAppointments);
-      }
-
       setIsReviewModalOpen(false);
       setSelectedAppointmentForReview(null);
       setToast({

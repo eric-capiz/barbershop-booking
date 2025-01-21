@@ -158,6 +158,21 @@
     }
   }
 
+  .no-reviews {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    text-align: center;
+    color: $silver-primary;
+    font-size: 1.1rem;
+
+    p {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+
   @media (max-width: 768px) {
     margin-top: 2rem;
 
