@@ -27,8 +27,9 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        target: "https://barbershop-jfeb0q.fly.dev",
         changeOrigin: true,
+        secure: true,
       },
     },
     historyApiFallback: true,

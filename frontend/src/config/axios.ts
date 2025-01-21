@@ -1,10 +1,7 @@
 import axios from "axios";
 
 // Development
-axios.defaults.baseURL = "http://localhost:5000";
-
-// when deployed
-// axios.defaults.baseURL = 'https://production-api.com';
+axios.defaults.baseURL = "https://barbershop-jfeb0q.fly.dev";
 
 // Add default headers
 axios.defaults.headers.common["Content-Type"] = "application/json";
