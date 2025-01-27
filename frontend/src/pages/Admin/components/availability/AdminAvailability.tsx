@@ -16,15 +16,27 @@ const AdminAvailability = () => {
   const events =
     availability?.schedule
       ?.filter((day) => day.isWorkingDay)
-      .map((day) => ({
-        title: `${format(new Date(day.workHours.start), "h:mm a")} - ${format(
-          new Date(day.workHours.end),
-          "h:mm a"
-        )}`,
-        // Use the date directly from the API without timezone conversion
-        date: day.date.split("T")[0],
-        classNames: ["working-day"],
-      })) || [];
+      .map((day) => {
+        // Parse the times but preserve the hours by explicitly setting them
+        const startParts = day.workHours.start.split("T")[1].split(":");
+        const endParts = day.workHours.end.split("T")[1].split(":");
+
+        const startDate = new Date(day.workHours.start);
+        const endDate = new Date(day.workHours.end);
+
+        // Set the hours directly to preserve the original input times
+        startDate.setHours(parseInt(startParts[0]));
+        endDate.setHours(parseInt(endParts[0]));
+
+        return {
+          title: `${format(startDate, "h:mm a")} - ${format(
+            endDate,
+            "h:mm a"
+          )}`,
+          date: day.date.split("T")[0],
+          classNames: ["working-day"],
+        };
+      }) || [];
 
   const handleDateClick = (arg: DateClickArg) => {
     const clickedDate = new Date(arg.date);

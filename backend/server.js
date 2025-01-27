@@ -15,9 +15,6 @@ const app = express();
 
 // Add detailed logging middleware before other middleware
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-  console.log("Headers:", req.headers);
-  console.log("Origin:", req.headers.origin);
   next();
 });
 
@@ -32,13 +29,10 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      console.log("Request origin:", origin);
       if (!origin || allowedOrigins.includes(origin)) {
-        console.log("CORS allowed for origin:", origin);
         callback(null, true);
       } else {
         const msg = "Not allowed by CORS";
-        console.log("CORS blocked for origin:", origin);
         callback(new Error(msg));
       }
     },
@@ -90,7 +84,6 @@ app.use((err, req, res, next) => {
 
 // Add a catch-all route at the end to log unmatched routes
 app.use("*", (req, res) => {
-  console.log(`[404] Route not found: ${req.method} ${req.originalUrl}`);
   res.status(404).json({
     message: "Route not found",
     requestedPath: req.originalUrl,

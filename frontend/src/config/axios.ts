@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Development
 axios.defaults.baseURL = "https://barbershop-jfeb0q.fly.dev";
-
+// axios.defaults.baseURL = "http://localhost:5000";
 // Add default headers
 axios.defaults.headers.common["Content-Type"] = "application/json";
 

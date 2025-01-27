@@ -9,7 +9,7 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-content">
         <span className="location">
-          Location: 7105 Unit #17 Virginia Rd, Crystal Lake, IL 60014
+          Location: 123 fake street Unit #17 State Rd, Crystal Lake, IL 60014
         </span>
         <div className="social-links">
           {profile?.socialMedia.instagram && (
@@ -41,10 +41,10 @@ const Footer = () => {
           )}
         </div>
         <span className="contact">
-          Contact: <a href="tel:+12244788364">(224) 478-8364</a>
+          Contact: <a>(555) 555-5555</a>
         </span>
         <span className="copyright">
-          © {new Date().getFullYear()} Sanchez Barber. All rights reserved.
+          © {new Date().getFullYear()} Barber Shop. All rights reserved.
         </span>
       </div>
     </footer>

@@ -54,31 +54,36 @@ const DateTimeSelection = ({
       selectedDateStart.getFullYear() === now.getFullYear();
 
     const scheduleDay = availability.schedule.find((day) => {
-      const scheduleDate = new Date(day.date);
-      return (
-        scheduleDate.getUTCFullYear() === date.getFullYear() &&
-        scheduleDate.getUTCMonth() === date.getMonth() &&
-        scheduleDate.getUTCDate() === date.getDate()
-      );
+      const dayDate = day.date.split("T")[0];
+      const selectedDate = format(date, "yyyy-MM-dd");
+      return dayDate === selectedDate;
     });
 
     if (!scheduleDay?.isWorkingDay || !scheduleDay.workHours) {
       return [];
     }
 
-    const workStart = new Date(scheduleDay.workHours.start);
-    const workEnd = new Date(scheduleDay.workHours.end);
+    const workStartParts = scheduleDay.workHours.start.split("T")[1].split(":");
+    const workEndParts = scheduleDay.workHours.end.split("T")[1].split(":");
 
-    workStart.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
-    workEnd.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+    const workStart = new Date(date);
+    const workEnd = new Date(date);
+
+    workStart.setHours(
+      parseInt(workStartParts[0]),
+      parseInt(workStartParts[1]),
+      0
+    );
+    workEnd.setHours(parseInt(workEndParts[0]), parseInt(workEndParts[1]), 0);
 
     const slots = [];
     let currentTime = new Date(workStart);
 
     while (currentTime <= workEnd) {
+      const slotEnd = new Date(currentTime.getTime() + 30 * 60000);
       const slot = {
         start: new Date(currentTime),
-        end: new Date(currentTime.getTime() + 30 * 60000),
+        end: slotEnd,
       };
 
       const isSlotBooked = isTimeSlotBooked(slot, availability.bookedSlots);
@@ -120,6 +125,12 @@ const DateTimeSelection = ({
                 .filter((day) => day.isWorkingDay)
                 .map((day) => new Date(day.date).getDay()) || [],
           }}
+          dateClick={({ date }) => setSelectedDate(date)}
+          longPressDelay={0}
+          eventLongPressDelay={0}
+          selectLongPressDelay={0}
+          height="auto"
+          fixedWeekCount={false}
         />
       </div>
 

@@ -86,36 +86,34 @@ router.post("/month", async (req, res) => {
 router.put("/day/:date", async (req, res) => {
   try {
     let { startTime, endTime } = req.body;
+
     const date = new Date(req.params.date);
 
-    // Validate and round times to nearest half hour
     if (startTime && endTime) {
-      // Parse the times
-      let start = new Date(startTime);
-      let end = new Date(endTime);
+      const [dateStr] = startTime.split("T");
+      const [startTimeStr] = startTime.split("T")[1].split(".");
+      const [endTimeStr] = endTime.split("T")[1].split(".");
 
-      // Round minutes to nearest 30
-      const startMinutes = start.getMinutes();
-      const endMinutes = end.getMinutes();
+      startTime = new Date(`${dateStr}T${startTimeStr}Z`);
+      endTime = new Date(`${dateStr}T${endTimeStr}Z`);
 
-      // Round start time
+      // Round minutes to nearest 30 (keeping the rest of the rounding logic)
+      const startMinutes = startTime.getMinutes();
+      const endMinutes = endTime.getMinutes();
+
       if (startMinutes > 0 && startMinutes < 30) {
-        start = setMinutes(start, 30);
+        startTime.setMinutes(30);
       } else if (startMinutes > 30) {
-        start = setMinutes(start, 0);
-        start.setHours(start.getHours() + 1);
+        startTime.setMinutes(0);
+        startTime.setHours(startTime.getHours() + 1);
       }
 
-      // Round end time
       if (endMinutes > 0 && endMinutes < 30) {
-        end = setMinutes(end, 30);
+        endTime.setMinutes(30);
       } else if (endMinutes > 30) {
-        end = setMinutes(end, 0);
-        end.setHours(end.getHours() + 1);
+        endTime.setMinutes(0);
+        endTime.setHours(endTime.getHours() + 1);
       }
-
-      startTime = start;
-      endTime = end;
     }
 
     let availability = await BarberAvailability.findOne({

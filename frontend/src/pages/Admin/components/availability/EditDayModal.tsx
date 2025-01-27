@@ -42,12 +42,20 @@ const EditDayModal = ({
   );
   const [startTime, setStartTime] = useState(
     availability?.workHours?.start
-      ? format(new Date(availability.workHours.start), "HH:mm")
+      ? availability.workHours.start
+          .split("T")[1]
+          .split(":")
+          .slice(0, 2)
+          .join(":")
       : "09:00"
   );
   const [endTime, setEndTime] = useState(
     availability?.workHours?.end
-      ? format(new Date(availability.workHours.end), "HH:mm")
+      ? availability.workHours.end
+          .split("T")[1]
+          .split(":")
+          .slice(0, 2)
+          .join(":")
       : "18:00"
   );
   const [isSaving, setIsSaving] = useState(false);
@@ -135,9 +143,12 @@ const EditDayModal = ({
         await onSave({ startTime: null, endTime: null });
       } else {
         const dateStr = format(date, "yyyy-MM-dd");
+        const fullStartTime = `${dateStr}T${startTime}:00`;
+        const fullEndTime = `${dateStr}T${endTime}:00`;
+
         await onSave({
-          startTime: `${dateStr}T${startTime}:00`,
-          endTime: `${dateStr}T${endTime}:00`,
+          startTime: fullStartTime,
+          endTime: fullEndTime,
         });
       }
     } catch (error) {

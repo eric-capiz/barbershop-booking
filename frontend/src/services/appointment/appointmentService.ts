@@ -7,6 +7,7 @@ import {
 } from "@/types/appointment/appointment.types";
 
 const BASE_URL = "https://barbershop-jfeb0q.fly.dev";
+// const BASE_URL = "http://localhost:5000";
 const APPOINTMENT_URL = `${BASE_URL}/api/appointments`;
 
 // Helper function to get auth token
