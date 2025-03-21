@@ -44,7 +44,15 @@ const Footer = () => {
           Contact: <a>(555) 555-5555</a>
         </span>
         <span className="copyright">
-          © {new Date().getFullYear()} Barber Shop. All rights reserved.
+          Developed by{" "}
+          <a
+            href="https://www.ericcapiz.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Eric Capiz
+          </a>{" "}
+          © {new Date().getFullYear()}
         </span>
       </div>
     </footer>
