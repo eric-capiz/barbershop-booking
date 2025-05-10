@@ -83,3 +83,61 @@ A full-stack web application for managing a barber shop's appointments, services
   - dotenv for environment variables
 
 This application streamlines the barber shop management process while providing a professional and user-friendly experience for both customers and administrators.
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- MongoDB
+- Git
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/sanchez-barber.git
+cd sanchez-barber
+```
+
+2. Install dependencies for both frontend and backend:
+
+```bash
+# Install backend dependencies
+cd backend
+npm install
+
+# Install frontend dependencies
+cd ../frontend
+npm install
+```
+
+3. Set up environment variables:
+
+   - Create a `.env` file in the backend directory
+   - Create a `.env` file in the frontend directory
+   - Add necessary environment variables (see `.env.example` files for reference)
+
+4. Start the development servers:
+
+```bash
+# Start backend server (from backend directory)
+npm run dev
+
+# Start frontend server (from frontend directory)
+npm run dev
+```
+
+The application should now be running at:
+
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3000
+
+### Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+### License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
