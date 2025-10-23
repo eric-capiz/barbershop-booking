@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://barbershop-jfeb0q.fly.dev/api/:path*"
+      "destination": "https://barbershop-new.fly.dev/api/:path*"
     },
     {
       "source": "/(.*)",
